@@ -54,6 +54,8 @@ Cada agente usa a IA dele de forma independente (pi = deepseek, Claude Code = Cl
 
 **Regra simples: a IA é de cada um; a conversa é no painel.**
 
+**Orion = orquestra; opencode = executa** (decisão do Everton, 2026-09-27). Quando o Orion é acionado (`/personas`, "Orion", `@aiox-master`), o trabalho é feito pelo opencode (`opencode run -m opencode-go/deepseek-v4.1-flash` em `D:\studio`) e o Claude revisa. Push, deploy, dinheiro e mensagem a cliente nunca vão para o opencode. Ver `~/.claude/commands/personas.md` e `opencode.md`.
+
 ## Perfil do cliente alvo
 
 Empresas/locais em Salvador/BA e região metropolitana: presença digital ativa, **site fraco** (2+ problemas verificáveis), porte pequeno/médio, pagam por resultado. Foco atual: **Villa Flamboyan Pousada** (paubrasilinternational.com) em Contato.
