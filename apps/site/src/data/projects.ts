@@ -9,6 +9,14 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    slug: "dr-guilherme-vieira",
+    title: "Dr. Guilherme Vieira — Psiquiatria",
+    category: "One Page · Web Design",
+    url: "https://drguilhermevieira.com.br",
+    cover: "/projects/dr-guilherme-vieira.webp",
+    year: 2026,
+  },
+  {
     slug: "concept-implantes",
     title: "Concept Implantes Dentários",
     category: "One Page · Web Design",

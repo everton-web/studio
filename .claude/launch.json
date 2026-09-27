@@ -4,7 +4,7 @@
     {
       "name": "everton-site",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--prefix", "apps/site"],
+      "runtimeArgs": ["run", "dev", "--prefix", "D:/studio/apps/site"],
       "port": 3000
     }
   ]
