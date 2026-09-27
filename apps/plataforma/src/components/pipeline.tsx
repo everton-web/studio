@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import { Check, Trash2 } from "lucide-react";
+import { AnalisePresenca } from "./analise-presenca";
 
 // ---------- tipos ----------
 export type Lead = {
@@ -25,6 +26,8 @@ export type Lead = {
   mensagem: string;
   movs: string[];
   criado: string;
+  presenca?: number | null;
+  analiseEm?: string;
 };
 
 const ESTAGIOS = [
@@ -171,6 +174,12 @@ function LeadCard({ lead, onEdit, onMove, onAbordar, onValidar, onApagar, onOpen
         </a>
       )}
       {!lead.site && <div className="mono mb-1.5" style={{ fontSize: "0.7rem", color: "#5d5d58" }}>sem site — o ponto</div>}
+      {lead.presenca != null && (
+        <div className="mono mb-1.5 flex items-center gap-1.5" style={{ fontSize: "0.7rem" }} title="nota de presença digital (análise na ficha)">
+          <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: lead.presenca >= 75 ? "#3ddc84" : lead.presenca >= 50 ? "#d9a03a" : "#ff6b4a" }} />
+          presença {lead.presenca}/100
+        </div>
+      )}
 
       {lead.email && (
         <div className="mono mb-1 truncate text-[#54b8f0]/85 hover:text-[#54b8f0]" style={{ fontSize: "0.7rem" }}>{lead.email}</div>
@@ -763,6 +772,8 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
                 {detalhe.site.replace(/^https?:\/\//, "")}
               </a>
             )}
+
+            <AnalisePresenca leadId={detalhe.id} onAtualizada={refresh} />
 
             <div className="mb-5">
               <div className="mono mb-2" style={{ fontSize: "0.68rem" }}>por que é bom lead</div>

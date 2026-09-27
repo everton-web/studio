@@ -120,7 +120,7 @@ async function listLeads() {
     const fm = frontmatter(raw);
     if (!fm.lead) continue;
     const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
-    const movs = (body.match(/^## Movimentações\r?\n([\s\S]*)$/m)?.[1] || "")
+    const movs = (body.match(/^## Movimentações\r?\n([\s\S]*?)(?=^## |(?![\s\S]))/m)?.[1] || "")
       .split(/\r?\n/).map((l) => l.replace(/^\s*-\s*/, "").trim()).filter(Boolean);
     const nota = Number(String(fm["nota-google"] || "").replace(",", "."));
     const avaliacoes = Number(String(fm.avaliacoes || "").replace(/\./g, ""));
@@ -144,6 +144,8 @@ async function listLeads() {
       mensagem: fm.mensagem || "",
       movs,
       criado: fm.criado || "",
+      presenca: fm.presenca ? Number(fm.presenca) : null,
+      analiseEm: fm["analise-em"] || "",
     });
   }
   leads.sort((a, b) => (a.estagio - b.estagio) || a.criado.localeCompare(b.criado));
@@ -340,8 +342,44 @@ export async function kanbanOp(op: { action: string; column?: string; text?: str
     const tr = sectionRange(lines, op.to!);
     if (!tr) throw new Error(`coluna destino '${op.to}' não encontrada`);
     addListItem(lines, tr, `- [${done}] ${op.text}`);
+  } else if (op.action === "delete") {
+    const r = sectionRange(lines, op.column!);
+    const c = r && findCheckbox(lines, r, op.text!);
+    if (!c) throw new Error("cartão não encontrado");
+    lines.splice(c.index, 1);
   } else {
     throw new Error("ação desconhecida");
   }
   await writeFile(p, lines.join("\n"), "utf8");
+}
+
+// ---------- análise de presença na ficha do lead ----------
+export async function leadBase(id: string) {
+  if (!/^[a-z0-9-]+$/.test(id)) return null;
+  const raw = await read(`40 Comercial/Leads/${id}.md`);
+  if (!raw) return null;
+  const fm = frontmatter(raw);
+  const num = (v: string) => { const n = Number(String(v || "").replace(/\.(?=\d{3})/g, "").replace(",", ".")); return Number.isFinite(n) ? n : 0; };
+  return {
+    id, nome: fm.lead || id, cidade: fm.cidade || "", site: fm["site-atual"] || "",
+    nota: num(fm["nota-google"]), avaliacoes: num(fm.avaliacoes),
+    whatsapp: fm.whatsapp || "", contato: fm.contato || "", email: fm.email || "",
+  };
+}
+
+export async function gravarAnaliseNaFicha(id: string, resumoMd: string, pontuacao: number) {
+  const p = join(VAULT, "40 Comercial", "Leads", `${id}.md`);
+  const raw = await read(`40 Comercial/Leads/${id}.md`);
+  if (!raw) throw new Error("lead não encontrado");
+  const fm = frontmatter(raw);
+  fm.presenca = String(pontuacao);
+  fm["analise-em"] = new Date().toISOString().slice(0, 10);
+  let body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
+  // tira a análise anterior: da seção até o próximo título "## " (subtítulos "###" ficam dentro dela)
+  body = body.replace(/^## Análise de presença[\s\S]*?(?=^## (?!#)|(?![\s\S]))/m, "");
+  const bloco = resumoMd.trim() + "\n\n";
+  body = body.includes("## Movimentações")
+    ? body.replace("## Movimentações", bloco + "## Movimentações")
+    : body.replace(/\s*$/, "") + "\n\n" + bloco;
+  await writeFile(p, fmBlock(fm) + "\n" + body, "utf8");
 }

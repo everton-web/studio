@@ -10,7 +10,8 @@
 import { readdir, mkdir, writeFile, readFile } from "node:fs/promises";
 import { join, dirname } from "node:path";
 import { spawn } from "node:child_process";
-import { pipelineOp } from "./vault";
+import { pipelineOp, leadBase, gravarAnaliseNaFicha } from "./vault";
+import { analisarLead, salvarAnalise, resumoMd } from "./analise";
 
 const VAULT = process.env.VAULT || "D:/Obsidian - Claude/🏢 Agência";
 const LEADS_DIR = join(VAULT, "40 Comercial", "Leads");
@@ -309,7 +310,7 @@ export async function prospectar(op: { nicho?: string; cidade?: string; limite?:
 
         const notaTxt = c.nota && c.nota > 0 ? String(c.nota).replace(".", ",") : "";
         const porque = `Auditoria automática do agente: ${aud.problemas.join("; ")}. Fonte da ficha: ${res.fonte}${c.nota ? ` · nota Google ${c.nota}` : ""}${c.avaliacoes ? ` · ${c.avaliacoes} avaliações` : ""}.`;
-        await pipelineOp({
+        const novo = await pipelineOp({
           action: "add",
           nome: c.nome,
           segmento: c.segmento || nicho,
@@ -323,6 +324,17 @@ export async function prospectar(op: { nicho?: string; cidade?: string; limite?:
           porque,
         });
         res.adicionados.push(c.nome);
+        // o lead já chega no quadro com a análise de presença (Google, site, redes, o que falta)
+        if (novo && "id" in novo && novo.id) {
+          try {
+            const base = await leadBase(novo.id);
+            if (base) {
+              const a = await analisarLead(base);
+              await salvarAnalise(a);
+              await gravarAnaliseNaFicha(base.id, resumoMd(a), a.pontuacao);
+            }
+          } catch { /* a análise pode ser refeita pela ficha */ }
+        }
       } catch (e: any) {
         res.erros.push({ nome: c.nome, motivo: e?.message || "erro" });
       }
