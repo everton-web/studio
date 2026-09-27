@@ -1,0 +1,50 @@
+[
+  {
+    "id": "dem-mia-douro-planejados",
+    "engine": "bulk",
+    "model": null,
+    "prompt": "Voce e a Mia (conteudo/portfolio da agencia Marca Digital). Tarefa: finalizar a peca de portfolio (Behance) do site Douro Planejados (https://douroplanejados.com.br). Leia o vault em 'D:/Obsidian - Claude/🏢 Agência/50 Conteúdo/Portfolio/douro-planejados/case.md' e produza a 'behance-estrutura.md' do mesmo case: shot list (desktop 1440 + mobile 390), secoes do post, textos curtos e placeholders de imagem. NAO invente metricas nem depoimentos. Um site por vez.",
+    "status": "pendente",
+    "criado": "2026-09-26T04:33:09.147Z"
+  },
+  {
+    "id": "dem-mia-multibela-joias",
+    "engine": "bulk",
+    "model": null,
+    "prompt": "Voce e a Mia (conteudo/portfolio da agencia Marca Digital). Tarefa: finalizar a peca de portfolio (Behance) do site Multibela Joias (https://lp.multibelajoias.com.br). Leia o vault em 'D:/Obsidian - Claude/🏢 Agência/50 Conteúdo/Portfolio/multibela-joias/case.md' e produza a 'behance-estrutura.md' do mesmo case: shot list (desktop 1440 + mobile 390), secoes do post, textos curtos e placeholders de imagem. NAO invente metricas nem depoimentos. Um site por vez.",
+    "status": "pendente",
+    "criado": "2026-09-26T04:33:09.206Z"
+  },
+  {
+    "id": "dem-mia-sandy-chambo",
+    "engine": "bulk",
+    "model": null,
+    "prompt": "Voce e a Mia (conteudo/portfolio da agencia Marca Digital). Tarefa: finalizar a peca de portfolio (Behance) do site Sandy Chambe (https://nutrisandychambo.com.br). Leia o vault em 'D:/Obsidian - Claude/🏢 Agência/50 Conteúdo/Portfolio/sandy-chambo/case.md' e produza a 'behance-estrutura.md' do mesmo case: shot list (desktop 1440 + mobile 390), secoes do post, textos curtos e placeholders de imagem. NAO invente metricas nem depoimentos. Um site por vez.",
+    "status": "pendente",
+    "criado": "2026-09-26T04:33:09.273Z"
+  },
+  {
+    "id": "dem-mia-essenza-oral-care",
+    "engine": "bulk",
+    "model": null,
+    "prompt": "Voce e a Mia (conteudo/portfolio da agencia Marca Digital). Tarefa: finalizar a peca de portfolio (Behance) do site Essenza Oral Care (https://essenzaoralcare.com.br). Leia o vault em 'D:/Obsidian - Claude/🏢 Agência/50 Conteúdo/Portfolio/essenza-oral-care/case.md' e produza a 'behance-estrutura.md' do mesmo case: shot list (desktop 1440 + mobile 390), secoes do post, textos curtos e placeholders de imagem. NAO invente metricas nem depoimentos. Um site por vez.",
+    "status": "pendente",
+    "criado": "2026-09-26T04:33:09.333Z"
+  },
+  {
+    "id": "dem-mia-dr-guilherme-vieira",
+    "engine": "bulk",
+    "model": null,
+    "prompt": "Voce e a Mia (conteudo/portfolio da agencia Marca Digital). Tarefa: finalizar a peca de portfolio (Behance) do site Dr. Guilherme Vieira (https://drguilhermevieira.com.br). Leia o vault em 'D:/Obsidian - Claude/🏢 Agência/50 Conteúdo/Portfolio/dr-guilherme-vieira/case.md' e produza a 'behance-estrutura.md' do mesmo case: shot list (desktop 1440 + mobile 390), secoes do post, textos curtos e placeholders de imagem. NAO invente metricas nem depoimentos. Um site por vez.",
+    "status": "pendente",
+    "criado": "2026-09-26T04:33:09.388Z"
+  },
+  {
+    "id": "dem-muif8jiz",
+    "engine": "claude",
+    "model": "claude-opus-4-8",
+    "prompt": "Davi: auditoria visual impeccable (desktop+mobile) do agencia-app — identidade visual/design/UI. A IDV atual parece feita de qualquer jeito. Base: 20 Playbooks/Reformulação da Plataforma.md (refs Impact. + Predictive Churn Flagging, accent #FF4000) e agencia-app/DESIGN-SYSTEM.md. Entregar diagnóstico + direção visual, SEM implementar (Fase A consolidação). Reconciliar com a IDV v2 Comando (branch feat/dashboard-analytics-ref). --ia claude",
+    "status": "pendente",
+    "criado": "2026-09-26T13:24:24.209Z"
+  }
+]

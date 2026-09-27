@@ -1,0 +1,3 @@
+@echo off
+cd /d "%~dp0.."
+"C:\Program Files\nodejs\node.exe" _scripts\ia.mjs "ESCREVA os arquivos requisitados no plano (contexto em C:\Users\evert\.claude\plans\mode-execute-o-plano-soft-sun.md). Crie: 50 Conteúdo/Portfolio/multibela-joias/case.md e behance-estrutura.md (conteúdo real: H1 'sua paixão por semijoias virando negócio lucrativo', modelos atacado/consignação, dourado premium; SEM métricas inventadas — 'resultado a acompanhar'; marque pendência de screenshots). Atualize 00 Painel.md (link rápido), 50 Conteúdo/ideias.md, e dossiê cases-05-sites.md. Escreva REALMENTE os arquivos no disco e responda por resumo de 3 linhas." --engine claude --model claude-opus-4-8 --timeout 300 > _scripts\exec-multibela.log 2>&1
