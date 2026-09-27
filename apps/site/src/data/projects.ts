@@ -9,6 +9,14 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    slug: "sandy-chambo",
+    title: "Sandy Chambô — Nutrição Funcional",
+    category: "One Page · Web Design",
+    url: "https://nutrisandychambo.com.br",
+    cover: "/projects/sandy-chambo.webp",
+    year: 2026,
+  },
+  {
     slug: "dr-guilherme-vieira",
     title: "Dr. Guilherme Vieira — Psiquiatria",
     category: "One Page · Web Design",
