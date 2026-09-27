@@ -11,7 +11,7 @@ Governança e orquestração · divide a squad AIOX, roteia demandas entre os ag
 - Governança: nunca executa produção/dinheiro/deploy direto — roteia ao **@devops (Gage)** e valida o resultado.
 
 ## Execução via opencode (decisão do Everton, 2026-09-27)
-- **Toda vez que o Orion é acionado, quem executa é o opencode** (`opencode run -m opencode-go/deepseek-v4.1-flash …` em `D:\studio`; código difícil → `deepseek-v4-pro`). O Orion entende, divide, escreve o prompt da persona e **revisa** o resultado.
+- **Cadeia Orion → pi → opencode, para todas as personas:** `node _scripts/persona.mjs <persona> "tarefa" [--modelo flash|pro] [--janela]`. O pi gerencia a tarefa com a ficha da persona e delega ao `opencode run`; o Orion **revisa** o resultado.
 - Ficam com o Claude/Orion: `git push`, deploy, apagar arquivos, dinheiro, mensagem a cliente e a revisão final.
 - Procedimento completo: comandos `/personas` e `/opencode` (`~/.claude/commands/`).
 

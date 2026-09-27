@@ -41,3 +41,5 @@ _scripts/orquestra/fila.backup-*.json
 out/
 *.tsbuildinfo
 .vercel/
+
+_scripts/.persona-tmp/

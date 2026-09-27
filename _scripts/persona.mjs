@@ -1,81 +1,122 @@
 #!/usr/bin/env node
 // ─────────────────────────────────────────────────────────────────────────────
-//  PERSONA — deixa os agentes da Marca Digital (Caio, Davi, Theo, Mia) usarem
-//  as IAs de forma independente e "flutuarem" entre elas.
+//  PERSONA — aciona um agente do Studio pela cadeia oficial:
+//
+//      Orion (Claude)  →  pi (gerente da tarefa)  →  opencode (executa)
+//
+//  Decisão do Everton (2026-09-27): vale para TODAS as personas.
+//  O pi recebe a ficha da persona + a regra de execução (personas/_EXECUCAO.md),
+//  delega o trabalho ao `opencode run`, confere o resultado e devolve um relatório.
 //
 //  Uso:
-//    node _scripts/persona.mjs <orion|caio|davi|theo|mia|ops> "tarefa" [--ia barata|claude] [--model X]
+//    node _scripts/persona.mjs <persona> "tarefa" [--modelo flash|pro|glm|kimi] [--janela]
 //
-//  --ia barata (padrão, o 80%) → engine bulk (deepseek via gateway pi.dev)
-//     --ia leitura            → kimi (contexto gigante)
-//     --ia claude             → Claude subscription (o 20%: decide, valida, entrega)
+//    personas: orion caio davi theo mia fabio olga lia ops
+//    --modelo  modelo do opencode (padrão flash = opencode-go/deepseek-v4.1-flash)
+//    --janela  abre uma janela visível do pi para acompanhar (não espera o fim)
 //
-//  Regra de flutuação por persona (ver 20 Playbooks/Roteamento de Modelos.md):
-//    Orion → orquestrar/dividir/decidir: claude · rotina de fila/painel: barata
-//    Caio → mensagem final/benchmark comercial: claude · volume/rotina: barata
-//    Davi → auditoria visual (impeccable) e proposta criativa: claude · ajuste UI: barata
-//    Theo → deploy, dinheiro, integração nova: claude · refactor/docs/testes: barata
-//    Mia  → voz final e case: claude · rascunho em massa/tradução: barata
-//
-//  Log de cada persona → D:/Obsidian - Claude/🏢 Agência/SaaS/Agentes/<persona>.log
+//  Log de cada persona → vault/SaaS/Agentes/<persona>.log
 // ─────────────────────────────────────────────────────────────────────────────
 import { spawn } from "node:child_process";
-import { appendFile, mkdir } from "node:fs/promises";
+import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { homedir } from "node:os";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, "..");
-const VAULT = process.env.VAULT || "D:/Obsidian - Claude/🏢 Agência";
+const VAULT = process.env.VAULT || join(ROOT, "vault");
 const LOG_DIR = join(VAULT, "SaaS", "Agentes");
+const TMP = join(HERE, ".persona-tmp");
+const PI_CLI = process.env.PI_CLI || join(process.env.APPDATA || join(homedir(), "AppData", "Roaming"), "npm", "node_modules", "@earendil-works", "pi-coding-agent", "dist", "cli.js");
+
+const PERSONAS = ["orion", "caio", "davi", "theo", "mia", "fabio", "olga", "lia", "ops"];
+const MODELOS = {
+  flash: "opencode-go/deepseek-v4.1-flash",
+  pro: "opencode-go/deepseek-v4-pro",
+  glm: "opencode-go/glm-5.3",
+  kimi: "opencode-go/kimi-k3",
+};
 
 const args = process.argv.slice(2);
 const persona = (args[0] || "").toLowerCase();
-const VALIDAS = ["orion", "caio", "davi", "theo", "mia", "ops"];
-if (!VALIDAS.includes(persona)) {
-  console.log(`Uso: node _scripts/persona.mjs <orion|caio|davi|theo|mia|ops> "tarefa" [--ia barata|leitura|claude] [--model X]`);
+if (!PERSONAS.includes(persona)) {
+  console.log(`Uso: node _scripts/persona.mjs <${PERSONAS.join("|")}> "tarefa" [--modelo flash|pro|glm|kimi] [--janela]`);
   process.exit(1);
 }
-
-let ia = "barata", model = null, task = [];
+let modelo = MODELOS.flash, janela = false;
+const task = [];
 for (let i = 1; i < args.length; i++) {
-  if (args[i] === "--ia") { ia = args[i + 1]; i++; continue; }
-  if (args[i] === "--model") { model = args[i + 1]; i++; continue; }
-  task.push(args[i]);
+  const a = args[i];
+  if (a === "--modelo" || a === "--model") { const v = args[++i] || ""; modelo = MODELOS[v] || v || modelo; continue; }
+  if (a === "--janela") { janela = true; continue; }
+  if (a === "--ia") { i++; continue; } // legado: a cadeia agora é sempre pi → opencode
+  task.push(a);
 }
-const prompt = task.join(" ").trim();
-if (!prompt) { console.error("tarefa vazia"); process.exit(1); }
+const tarefa = task.join(" ").trim();
+if (!tarefa) { console.error("tarefa vazia"); process.exit(1); }
+if (!existsSync(PI_CLI)) { console.error(`pi não encontrado em ${PI_CLI} (defina PI_CLI)`); process.exit(2); }
 
-// mapeia o pedido "barata/leitura/claude" para o motor do ia.mjs
-const MOTOR = { barata: "bulk", leitura: "leitura", claude: "claude", raciocinio: "raciocinio" }[ia] || "bulk";
-const IA_NOME = ia === "claude" ? "Claude (20%)" : ia === "leitura" ? "Kimi (contexto)" : "DeepSeek (80%)";
+// ficha da persona: personas/<nome>/CLAUDE.md → ~/.claude/agents/<nome>.md
+async function fichaDaPersona() {
+  for (const p of [join(ROOT, "personas", persona, "CLAUDE.md"), join(homedir(), ".claude", "agents", `${persona}.md`)]) {
+    if (existsSync(p)) return readFile(p, "utf8");
+  }
+  return `# ${persona}\nPersona do Studio (Marca Digital). Siga D:\\studio\\CLAUDE.md.`;
+}
 
-function rodar() {
+async function prepararArquivos() {
+  await mkdir(TMP, { recursive: true });
+  const nome = persona.charAt(0).toUpperCase() + persona.slice(1);
+  const regra = (await readFile(join(ROOT, "personas", "_EXECUCAO.md"), "utf8"))
+    .replaceAll("{{MODELO}}", modelo).replaceAll("{{PERSONA}}", nome);
+  const carimbo = Date.now();
+  const fRegra = join(TMP, `${persona}-${carimbo}-regra.md`);
+  const fFicha = join(TMP, `${persona}-${carimbo}-ficha.md`);
+  const fTarefa = join(TMP, `${persona}-${carimbo}-tarefa.md`);
+  await writeFile(fRegra, regra, "utf8");
+  await writeFile(fFicha, await fichaDaPersona(), "utf8");
+  await writeFile(fTarefa, `# Tarefa para ${nome} (enviada pelo Orion)\n\n${tarefa}\n`, "utf8");
+  return { fRegra, fFicha, fTarefa, nome };
+}
+
+function rodarPi({ fRegra, fFicha, fTarefa }) {
   return new Promise((res, rej) => {
-    const cmd = process.execPath;
-    const cArgs = [join(HERE, "ia.mjs"), prompt, "--engine", MOTOR, ...(model ? ["--model", model] : []), ...(MOTOR === "claude" ? ["--timeout", "480"] : [])];
-    const c = spawn(cmd, cArgs, { cwd: ROOT, shell: false, stdio: ["ignore", "pipe", "pipe"] });
+    const pArgs = [PI_CLI, "-p", "--no-session", "--append-system-prompt", fFicha, "--append-system-prompt", fRegra,
+      `@${fTarefa}`, "Execute a tarefa anexada seguindo a regra de execução (delegue ao opencode, confira e responda com o relatório)."];
+    const c = spawn(process.execPath, pArgs, { cwd: ROOT, shell: false, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
     let out = "", err = "";
-    c.stdout.on("data", (d) => (out += d));
+    c.stdout.on("data", (d) => { out += d; process.stdout.write(d); });
     c.stderr.on("data", (d) => (err += d));
-    const t = setTimeout(() => c.kill("SIGKILL"), 600000);
+    const t = setTimeout(() => c.kill("SIGKILL"), 25 * 60 * 1000);
     c.on("error", rej);
-    c.on("close", (code) => { clearTimeout(t); code === 0 ? res(out) : rej(new Error(err.slice(0, 400) || `exit ${code}`)); });
+    c.on("close", (code) => { clearTimeout(t); code === 0 ? res(out) : rej(new Error(err.slice(-400) || `exit ${code}`)); });
   });
 }
 
+function abrirJanela({ fRegra, fFicha, fTarefa, nome }) {
+  const linha = `"${process.execPath}" "${PI_CLI}" --append-system-prompt "${fFicha}" --append-system-prompt "${fRegra}" "@${fTarefa}" "Execute a tarefa anexada seguindo a regra de execucao."`;
+  spawn("cmd.exe", ["/c", "start", `"${nome.toUpperCase()} - pi"`, "cmd", "/k", linha], { cwd: ROOT, detached: true, stdio: "ignore", windowsVerbatimArguments: true }).unref();
+}
+
 (async () => {
-  const linha = `[${new Date().toLocaleString("pt-BR")}] ${persona.toUpperCase()} · ${IA_NOME} · ${prompt.slice(0, 90).replace(/\s+/g, " ")}`;
-  console.log(`\n🧑‍🎨 ${persona.charAt(0).toUpperCase() + persona.slice(1)} → ${IA_NOME}\n`);
+  const arq = await prepararArquivos();
+  const cab = `[${new Date().toLocaleString("pt-BR")}] ${persona.toUpperCase()} · pi → opencode (${modelo}) · ${tarefa.slice(0, 90).replace(/\s+/g, " ")}`;
   await mkdir(LOG_DIR, { recursive: true });
-  await appendFile(join(LOG_DIR, `${persona}.log`), linha + "\n", "utf8").catch(() => {});
+  await appendFile(join(LOG_DIR, `${persona}.log`), cab + "\n", "utf8").catch(() => {});
+  console.log(`\n🧭 Orion → pi (${arq.nome}) → opencode · ${modelo}\n`);
+  if (janela) {
+    abrirJanela(arq);
+    console.log("Janela do pi aberta — acompanhe por lá.");
+    return;
+  }
   try {
-    const out = await rodar();
-    console.log(String(out).trim());
-    await appendFile(join(LOG_DIR, `${persona}.log`), `     → ${out.trim().slice(0, 120).replace(/\n/g, " ")}\n`, "utf8").catch(() => {});
+    const out = await rodarPi(arq);
+    await appendFile(join(LOG_DIR, `${persona}.log`), `     → ${out.trim().slice(-160).replace(/\n/g, " ")}\n`, "utf8").catch(() => {});
   } catch (e) {
-    console.error(`[${persona}] erro: ${e.message}`);
-    await appendFile(join(LOG_DIR, `${persona}.log`), `     → ERRO: ${e.message.slice(0, 120)}\n`, "utf8").catch(() => {});
+    console.error(`\n[${persona}] erro: ${e.message}`);
+    await appendFile(join(LOG_DIR, `${persona}.log`), `     → ERRO: ${e.message.slice(0, 160)}\n`, "utf8").catch(() => {});
     process.exit(3);
   }
 })();

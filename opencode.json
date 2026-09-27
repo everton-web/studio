@@ -1,0 +1,23 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "external_directory": {
+      "D:/Obsidian - Claude/**": "allow",
+      "D:\\Obsidian - Claude\\**": "allow"
+    },
+    "bash": {
+      "*": "allow",
+      "git push*": "deny",
+      "git reset --hard*": "deny",
+      "git clean*": "deny",
+      "git checkout -- *": "deny",
+      "rm *": "deny",
+      "rmdir *": "deny",
+      "del *": "deny",
+      "Remove-Item*": "deny",
+      "npm publish*": "deny",
+      "gh *": "deny",
+      "curl -X POST*": "deny"
+    }
+  }
+}

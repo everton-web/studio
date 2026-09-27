@@ -54,7 +54,7 @@ Cada agente usa a IA dele de forma independente (pi = deepseek, Claude Code = Cl
 
 **Regra simples: a IA é de cada um; a conversa é no painel.**
 
-**Orion = orquestra; opencode = executa** (decisão do Everton, 2026-09-27). Quando o Orion é acionado (`/personas`, "Orion", `@aiox-master`), o trabalho é feito pelo opencode (`opencode run -m opencode-go/deepseek-v4.1-flash` em `D:\studio`) e o Claude revisa. Push, deploy, dinheiro e mensagem a cliente nunca vão para o opencode. Ver `~/.claude/commands/personas.md` e `opencode.md`.
+**Cadeia oficial: Orion → pi → opencode** (decisão do Everton, 2026-09-27, todas as personas). Quando o Orion é acionado (`/personas`, "Orion", `@aiox-master`), ele chama `node _scripts/persona.mjs <persona> "tarefa"`: o pi assume a tarefa com a ficha da persona, delega ao `opencode run` e confere; o Claude revisa. Regra do pi: `personas/_EXECUCAO.md` · travas do opencode: `opencode.json`. Push, deploy, dinheiro e mensagem a cliente nunca vão para o opencode. Ver `~/.claude/commands/personas.md` e `opencode.md`.
 
 ## Perfil do cliente alvo
 
