@@ -1,7 +1,13 @@
 "use client";
 
 import { TriangleIcon } from "./TriangleIcon";
+import { LineReveal } from "./TextReveal";
+import { MagneticButton } from "./MagneticButton";
 import { useLang } from "@/context/LanguageContext";
+import { semViuva } from "@/lib/texto";
+
+const EMAIL = "contato@evertonbrito.com";
+const WHATSAPP = "https://wa.me/5571999261967";
 
 const socialLinks = [
   {
@@ -40,10 +46,67 @@ export function Footer() {
 
   return (
     <footer style={{ background: "var(--color-bg)" }}>
+      <section
+        className="relative z-[2]"
+        style={{ padding: "clamp(6rem, 14vh, 11rem) 0" }}
+      >
+        <div className="max-w-[1280px] mx-auto px-8 max-md:px-6 flex flex-col items-center text-center">
+          <LineReveal
+            as="h2"
+            lines={[
+              t.footer.ctaBefore,
+              <span key="accent" className="serif">
+                {semViuva(t.footer.ctaAccent)}
+              </span>,
+            ]}
+            className="mb-10"
+            style={{
+              fontFamily: "var(--font-sans)",
+              fontSize: "clamp(2.6rem, 8vw, 7rem)",
+              fontWeight: 500,
+              lineHeight: 1.05,
+              letterSpacing: "-0.03em",
+              textAlign: "center",
+            }}
+          />
+
+          <div className="flex flex-wrap items-center justify-center gap-6">
+            <a
+              href={`mailto:${EMAIL}`}
+              data-cursor={t.cursor.open}
+              className="text-[1rem] text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
+            >
+              {EMAIL}
+            </a>
+            <a
+              href={WHATSAPP}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-cursor={t.cursor.open}
+              className="text-[1rem] text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
+            >
+              {t.footer.whatsapp}
+            </a>
+            <MagneticButton
+              href="#contact"
+              as="a"
+              className="group inline-flex items-center gap-3 bg-[var(--color-text)] text-[var(--color-bg)] rounded-full font-medium text-sm"
+              style={{ padding: "13px 30px" }}
+              data-cursor={t.cursor.open}
+            >
+              {t.hero.cta}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-0.5 transition-transform">
+                <path d="m7 17 9.2-9.2M17 17V8H8" />
+              </svg>
+            </MagneticButton>
+          </div>
+        </div>
+      </section>
+
       <div className="divider" />
 
       <div
-        className="max-w-[1280px] mx-auto px-8 max-md:px-6"
+        className="max-w-[1280px] mx-auto px-8 max-md:px-6 relative z-[2]"
         style={{ padding: "clamp(3rem, 6vh, 5rem) 2rem clamp(2rem, 4vh, 3rem)" }}
       >
         <div className="flex items-start justify-between gap-16 max-md:flex-col max-md:gap-10 mb-12 max-md:mb-8">

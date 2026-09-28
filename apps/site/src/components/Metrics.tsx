@@ -47,7 +47,7 @@ export function Metrics() {
     <section className="relative" style={{ background: "var(--color-bg-soft)" }}>
       <div className="divider" />
       <div
-        className="max-w-[1280px] mx-auto px-8 max-md:px-6 grid grid-cols-3 max-md:grid-cols-1 max-md:gap-8"
+        className="relative z-[2] max-w-[1280px] mx-auto px-8 max-md:px-6 grid grid-cols-3 max-md:grid-cols-1 max-md:gap-8"
         style={{ padding: "clamp(3rem, 5vh, 4rem) 2rem" }}
       >
         {metrics.map((m, i) => (

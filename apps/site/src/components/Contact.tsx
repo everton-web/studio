@@ -74,7 +74,7 @@ export function Contact() {
       id="contact"
       style={{ background: "var(--color-bg-soft)", padding: "clamp(6rem, 12vh, 10rem) 0" }}
     >
-      <div className="max-w-[1280px] mx-auto px-8 max-md:px-6">
+      <div className="relative z-[2] max-w-[1280px] mx-auto px-8 max-md:px-6">
         <div className="flex items-start gap-20 max-lg:flex-col max-lg:gap-16">
           <div className="flex-1 max-w-[520px]">
             <AnimatedSection>

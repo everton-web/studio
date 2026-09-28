@@ -11,6 +11,21 @@ export const translations = {
       subtitle: "Landing Pages, Páginas de Vendas e Sites que transformam visitantes em clientes.",
       cta: "Solicite um orçamento",
     },
+    cursor: {
+      view: "ver",
+      open: "abrir",
+    },
+    menu: {
+      label: "menu",
+      close: "fechar",
+      items: [
+        { label: "Início", anchor: "#hero" },
+        { label: "Sobre", anchor: "#about" },
+        { label: "Serviços", anchor: "#services" },
+        { label: "Portfólio", anchor: "#portfolio" },
+        { label: "Contato", anchor: "#contact" },
+      ],
+    },
     metrics: {
       projects: "Projetos entregues",
       years: "Anos de experiência",
@@ -124,6 +139,9 @@ export const translations = {
       tagline: "Landing Pages, Páginas de Vendas e Sites para marcas que querem resultado real no digital.",
       rights: "Todos os direitos reservados.",
       backToTop: "Voltar ao topo",
+      ctaBefore: "Vamos construir",
+      ctaAccent: "seu site?",
+      whatsapp: "WhatsApp",
     },
     promo: {
       banner: "Mês do Zeca 🎈 · 20% OFF em todos os projetos até 30/09",
@@ -131,6 +149,10 @@ export const translations = {
       hours: "h",
       minutes: "m",
       seconds: "s",
+    },
+    notFound: {
+      title: "Essa página se perdeu no escuro.",
+      cta: "Voltar ao início",
     },
   },
 
@@ -143,6 +165,21 @@ export const translations = {
       ],
       subtitle: "Landing Pages, Sales Pages and Websites that turn visitors into customers.",
       cta: "Get a quote",
+    },
+    cursor: {
+      view: "view",
+      open: "open",
+    },
+    menu: {
+      label: "menu",
+      close: "close",
+      items: [
+        { label: "Home", anchor: "#hero" },
+        { label: "About", anchor: "#about" },
+        { label: "Services", anchor: "#services" },
+        { label: "Portfolio", anchor: "#portfolio" },
+        { label: "Contact", anchor: "#contact" },
+      ],
     },
     metrics: {
       projects: "Projects delivered",
@@ -257,6 +294,9 @@ export const translations = {
       tagline: "Landing Pages, Sales Pages and Websites for brands that want real results in the digital space.",
       rights: "All rights reserved.",
       backToTop: "Back to top",
+      ctaBefore: "Let's build",
+      ctaAccent: "your website?",
+      whatsapp: "WhatsApp",
     },
     promo: {
       banner: "Zeca's Month 🎈 · 20% OFF all projects until Sep 30",
@@ -264,6 +304,10 @@ export const translations = {
       hours: "h",
       minutes: "m",
       seconds: "s",
+    },
+    notFound: {
+      title: "This page got lost in the dark.",
+      cta: "Back to home",
     },
   },
 } as const;

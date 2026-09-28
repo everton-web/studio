@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { TriangleIcon } from "./TriangleIcon";
+import { MagneticButton } from "./MagneticButton";
 import { useLang } from "@/context/LanguageContext";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -48,6 +49,7 @@ export function Hero() {
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
       style={{ background: "#040404", paddingTop: "var(--header-h)" }}
     >
+      {/* SLOT IMAGEM DE FUNDO: <div className="absolute inset-0 z-[1]"><Image ... /></div> · a foto do Everton entra aqui quando enviada */}
       <motion.div
         style={{ y: contentY }}
         className="relative z-[2] w-full max-w-[1280px] mx-auto px-8 max-md:px-6 text-center flex flex-col items-center"
@@ -117,16 +119,18 @@ export function Hero() {
           transition={{ duration: 0.8, ease, delay: 1.3 }}
           className="flex items-center gap-4 max-md:flex-col"
         >
-          <a
+          <MagneticButton
             href="#contact"
-            className="group inline-flex items-center gap-3 bg-[var(--color-text)] text-[var(--color-bg)] rounded-full font-medium text-sm hover:-translate-y-0.5 transition-all"
+            as="a"
+            className="group inline-flex items-center gap-3 bg-[var(--color-text)] text-[var(--color-bg)] rounded-full font-medium text-sm"
             style={{ padding: "13px 30px" }}
+            data-cursor={t.cursor.open}
           >
             {t.hero.cta}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-0.5 transition-transform">
               <path d="m7 17 9.2-9.2M17 17V8H8" />
             </svg>
-          </a>
+          </MagneticButton>
         </motion.div>
       </motion.div>
 

@@ -1,11 +1,19 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useScroll,
+  useTransform,
+  useReducedMotion,
+} from "framer-motion";
 import Image from "next/image";
 import { projects } from "@/data/projects";
 import { AnimatedSection } from "./AnimatedSection";
 import { TriangleIcon } from "./TriangleIcon";
+import { LineReveal } from "./TextReveal";
 import { useLang } from "@/context/LanguageContext";
 import { semViuva } from "@/lib/texto";
 
@@ -24,6 +32,14 @@ function ProjectCard({
   const imgY = useMotionValue(0);
   const springX = useSpring(imgX, springConfig);
   const springY = useSpring(imgY, springConfig);
+  const reduced = useReducedMotion();
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const rawParallaxY = useTransform(scrollYProgress, [0, 1], [18, -18]);
+  const parallaxY = reduced ? 0 : rawParallaxY;
 
   const handleMove = (e: React.MouseEvent) => {
     if (!ref.current) return;
@@ -63,17 +79,22 @@ function ProjectCard({
       >
         <motion.div
           className="absolute inset-[-10px]"
-          style={{ x: springX, y: springY, scale: hovered ? 1.06 : 1 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as const }}
+          style={{ y: parallaxY }}
         >
-          <Image
-            src={project.cover}
-            alt={project.title}
-            fill
-            className="object-cover"
-            sizes={featured ? "100vw" : "(max-width: 768px) 100vw, 50vw"}
-            priority={featured}
-          />
+          <motion.div
+            className="absolute inset-0"
+            style={{ x: springX, y: springY, scale: hovered ? 1.06 : 1 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as const }}
+          >
+            <Image
+              src={project.cover}
+              alt={project.title}
+              fill
+              className="object-cover"
+              sizes={featured ? "100vw" : "(max-width: 768px) 100vw, 50vw"}
+              priority={featured}
+            />
+          </motion.div>
         </motion.div>
 
         <div
@@ -113,7 +134,7 @@ export function Portfolio() {
       id="portfolio"
       style={{ background: "var(--color-bg)", padding: "clamp(6rem, 12vh, 10rem) 0" }}
     >
-      <div className="max-w-[1280px] mx-auto px-8 max-md:px-6">
+      <div className="relative z-[2] max-w-[1280px] mx-auto px-8 max-md:px-6">
         <AnimatedSection>
           <div className="flex items-center gap-6 mb-16 max-md:mb-10">
             <span className="section-number">03</span>
@@ -125,7 +146,11 @@ export function Portfolio() {
           </div>
 
           <div className="flex items-end justify-between gap-8 mb-16 max-md:flex-col max-md:items-start max-md:gap-4">
-            <h2
+            <LineReveal
+              lines={[
+                t.portfolio.titleBefore,
+                <span key="accent" className="serif">{t.portfolio.titleAccent}</span>,
+              ]}
               style={{
                 fontFamily: "var(--font-sans)",
                 fontSize: "clamp(1.9rem, 4vw, 3.2rem)",
@@ -133,10 +158,7 @@ export function Portfolio() {
                 lineHeight: 1.1,
                 letterSpacing: "-0.02em",
               }}
-            >
-              {t.portfolio.titleBefore}{" "}
-              <span className="serif">{t.portfolio.titleAccent}</span>
-            </h2>
+            />
             <a
               href="#contact"
               className="inline-flex items-center gap-2 px-7 py-3 text-sm font-medium text-[var(--color-text)] border border-[var(--color-border)] rounded-full hover:border-[var(--color-text)] transition-all hover:-translate-y-0.5 group"

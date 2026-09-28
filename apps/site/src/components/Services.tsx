@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { AnimatedSection } from "./AnimatedSection";
 import { TriangleIcon } from "./TriangleIcon";
+import { LineReveal } from "./TextReveal";
 import { useLang } from "@/context/LanguageContext";
 import { usePromo } from "@/hooks/usePromo";
 import { precoComDesconto, formatBRL } from "@/lib/promo";
@@ -20,7 +21,7 @@ export function Services() {
       id="services"
       style={{ background: "var(--color-bg-soft)", padding: "clamp(6rem, 12vh, 10rem) 0" }}
     >
-      <div className="max-w-[1280px] mx-auto px-8 max-md:px-6">
+      <div className="relative z-[2] max-w-[1280px] mx-auto px-8 max-md:px-6">
         <AnimatedSection>
           <div className="flex items-center gap-6 mb-16 max-md:mb-10">
             <span className="section-number">02</span>
@@ -32,7 +33,11 @@ export function Services() {
           </div>
 
           <div className="flex items-end justify-between gap-8 mb-16 max-md:flex-col max-md:items-start max-md:gap-4">
-            <h2
+            <LineReveal
+              lines={[
+                t.services.titleBefore,
+                <span key="accent" className="serif">{t.services.titleAccent}</span>,
+              ]}
               style={{
                 fontFamily: "var(--font-sans)",
                 fontSize: "clamp(1.9rem, 4vw, 3.2rem)",
@@ -40,10 +45,7 @@ export function Services() {
                 lineHeight: 1.1,
                 letterSpacing: "-0.02em",
               }}
-            >
-              {t.services.titleBefore}{" "}
-              <span className="serif">{t.services.titleAccent}</span>
-            </h2>
+            />
             <p className="text-sm text-[var(--color-text-muted)] max-w-[340px]" style={{ lineHeight: 1.7 }}>
               {t.services.intro}
             </p>
@@ -65,6 +67,19 @@ export function Services() {
                 }}
               >
                 <div className="absolute bottom-0 left-0 w-full h-[3px] bg-[var(--color-accent)] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
+
+                <span
+                  className="block transition-colors transition-opacity duration-300 text-[var(--color-text-dim)] opacity-[0.55] group-hover:opacity-100 group-hover:text-[var(--color-accent)]"
+                  style={{
+                    fontSize: "clamp(2.4rem, 4vw, 3.4rem)",
+                    fontWeight: 300,
+                    fontVariantNumeric: "tabular-nums",
+                    lineHeight: 1,
+                    marginBottom: "1rem",
+                  }}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
 
                 <h3
                   className="text-[var(--color-text)] mb-4"
