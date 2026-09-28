@@ -146,6 +146,7 @@ export const translations = {
     },
     promo: {
       banner: "Mês do Zeca 🎈 · 20% OFF em todos os projetos até 30/09",
+      micro: "Mês do Zeca · 20% OFF até 30/09",
       days: "d",
       hours: "h",
       minutes: "m",
@@ -302,6 +303,7 @@ export const translations = {
     },
     promo: {
       banner: "Zeca's Month 🎈 · 20% OFF all projects until Sep 30",
+      micro: "Zeca's Month · 20% OFF until Sep 30",
       days: "d",
       hours: "h",
       minutes: "m",

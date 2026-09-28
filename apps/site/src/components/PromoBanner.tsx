@@ -20,11 +20,50 @@ export function PromoBanner({ variant }: { variant: "top" | "inline" }) {
   const seconds = Math.floor((restante % MS_MIN) / MS_SEC);
   const pad = (n: number) => String(n).padStart(2, "0");
 
+  const isTop = variant === "top";
+
+  if (!isTop) {
+    const micro = `${days}${t.promo.days} ${pad(hours)}${t.promo.hours}`;
+
+    return (
+      <div
+        role="note"
+        aria-label={t.promo.banner}
+        className="w-full flex items-center gap-[0.5rem] mb-12 max-md:mb-8"
+        style={{
+          fontSize: "0.72rem",
+          fontWeight: 500,
+          letterSpacing: "0.14em",
+          textTransform: "uppercase",
+          lineHeight: 1.4,
+          color: "var(--color-text-secondary)",
+        }}
+      >
+        <span
+          aria-hidden
+          style={{
+            width: 6,
+            height: 6,
+            borderRadius: "50%",
+            background: "var(--color-accent)",
+            flex: "none",
+          }}
+        />
+        <span>{t.promo.micro}</span>
+        <span aria-hidden>·</span>
+        <span
+          className="tabular-nums"
+          style={{ color: "var(--color-accent)", whiteSpace: "nowrap" }}
+        >
+          {micro}
+        </span>
+      </div>
+    );
+  }
+
   const countdown = `${days}${t.promo.days} ${pad(hours)}${t.promo.hours} ${pad(
     minutes
   )}${t.promo.minutes} ${pad(seconds)}${t.promo.seconds}`;
-
-  const isTop = variant === "top";
 
   return (
     <div
