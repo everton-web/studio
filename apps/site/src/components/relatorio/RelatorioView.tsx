@@ -9,6 +9,7 @@ import {
   doresVisiveis,
 } from "@/lib/relatorio";
 import { TriangleIcon } from "@/components/TriangleIcon";
+import { semViuva } from "@/lib/texto";
 import styles from "./RelatorioView.module.css";
 
 const WHATSAPP_NUMBER = "5571999261967";
@@ -31,9 +32,9 @@ function scoreLabel(pontuacao: number): string {
     return "Presença digital forte. O foco agora é transformar essa base em ainda mais clientes.";
   }
   if (pontuacao >= 50) {
-    return "Base sólida, com espaço para crescer. Sua presença já tem fundação saudável — o foco é transformar isso em mais clientes encontrando você.";
+    return "Base sólida, com espaço para crescer. Sua presença já tem fundação saudável: o foco é transformar isso em mais clientes encontrando você.";
   }
-  return "Há muito espaço para crescer. Sua presença digital hoje deixa clientes de fora — dá para mudar isso.";
+  return "Há muito espaço para crescer. Sua presença digital hoje deixa clientes de fora. Dá para mudar isso.";
 }
 
 function formatPct(v: number): string {
@@ -182,7 +183,7 @@ export function RelatorioView({ data }: { data: RelatorioPublico }) {
 
           <div className={styles.hero}>
             <span className={styles.microLabel}>Diagnóstico de presença digital</span>
-            <h1>{data.empresa}</h1>
+            <h1>{semViuva(data.empresa)}</h1>
             <p className={styles.metaLine}>
               <span>{data.cidade}</span>
               <span className={styles.sep}>·</span>
@@ -234,7 +235,7 @@ export function RelatorioView({ data }: { data: RelatorioPublico }) {
               </div>
 
               <div className={styles.strengths}>
-                <h2>O que já está forte</h2>
+                <h2>{semViuva("O que já está forte")}</h2>
                 <ul>
                   {data.fortes.map((f) => (
                     <li key={f}>
@@ -243,7 +244,7 @@ export function RelatorioView({ data }: { data: RelatorioPublico }) {
                           <path d="M3 8.5L6.5 12L13 4.5" />
                         </svg>
                       </span>
-                      <span>{f}</span>
+                      <span>{semViuva(f)}</span>
                     </li>
                   ))}
                 </ul>
@@ -256,21 +257,21 @@ export function RelatorioView({ data }: { data: RelatorioPublico }) {
           <div className={styles.wrap}>
             <div className={styles.sectionHead}>
               <span className={styles.microLabel}>Oportunidades</span>
-              <h2>O que o seu negócio pode ganhar</h2>
+              <h2>{semViuva("O que o seu negócio pode ganhar")}</h2>
               <p>
                 Veja, em linguagem simples, o que a {data.empresa} pode destravar para
-                ser vista — e escolhida — por quem procura {SEGMENTO_ROTULO[data.segmento]}{" "}
+                ser vista, e escolhida, por quem procura {SEGMENTO_ROTULO[data.segmento]}{" "}
                 em {data.cidade}.
               </p>
             </div>
 
             {grupos.map(({ area, faltas }) => (
               <div className={styles.oppGroup} key={area}>
-                <h3>{AREA_TITULO[area]}</h3>
+                <h3>{semViuva(AREA_TITULO[area])}</h3>
                 {faltas.map((f) => (
                   <div className={styles.oppCard} key={f.tag}>
                     <span className={styles.tag}>{f.tag}</span>
-                    <p>{f.oportunidade}</p>
+                    <p>{semViuva(f.oportunidade)}</p>
                   </div>
                 ))}
               </div>
@@ -282,7 +283,7 @@ export function RelatorioView({ data }: { data: RelatorioPublico }) {
           <div className={styles.wrap}>
             <div className={styles.sectionHead}>
               <span className={styles.microLabel}>Diagnóstico rápido</span>
-              <h2>Marque o que dói no seu dia a dia</h2>
+              <h2>{semViuva("Marque o que dói no seu dia a dia")}</h2>
               <p>Toque nos itens que você reconhece. Isso ajuda a enxergar o tamanho da oportunidade.</p>
             </div>
 
@@ -300,7 +301,7 @@ export function RelatorioView({ data }: { data: RelatorioPublico }) {
                         <path d="M3 8.5L6.5 12L13 4.5" />
                       </svg>
                     </span>
-                    <span className={styles.label}>{d.texto}</span>
+                    <span className={styles.label}>{semViuva(d.texto)}</span>
                   </span>
                 </label>
               ))}
@@ -313,7 +314,7 @@ export function RelatorioView({ data }: { data: RelatorioPublico }) {
             <div className={styles.calcCard}>
               <div className={styles.sectionHead}>
                 <span className={styles.microLabel}>Potencial de receita</span>
-                <h2>Quanto você pode estar deixando de ganhar por mês</h2>
+                <h2>{semViuva("Quanto você pode estar deixando de ganhar por mês")}</h2>
               </div>
 
               <div className={styles.formula}>
@@ -378,7 +379,7 @@ export function RelatorioView({ data }: { data: RelatorioPublico }) {
               </p>
 
               <p className={styles.disclaimer}>
-                Estimativa de marketing para fins ilustrativos — não é promessa de
+                Estimativa de marketing para fins ilustrativos. Não é promessa de
                 receita nem garantia de resultado. Reflete o que o negócio
                 potencialmente deixa de capturar sem uma presença digital completa.
               </p>
@@ -419,7 +420,7 @@ export function RelatorioView({ data }: { data: RelatorioPublico }) {
             </span>
             <span className={styles.domain}>evertonbrito.com</span>
           </div>
-          <p>Diagnóstico de presença digital — documento ilustrativo.</p>
+          <p>Diagnóstico de presença digital: documento ilustrativo.</p>
         </div>
       </footer>
     </div>

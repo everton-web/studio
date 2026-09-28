@@ -192,3 +192,6 @@
   .relatorio .inputs { flex-direction: row; gap: 16px; }
   .relatorio .input-row { flex: 1; }
 }
+
+.relatorio h1, .relatorio h2, .relatorio h3, .relatorio h4, .relatorio h5, .relatorio h6 { text-wrap: balance; }
+.relatorio p, .relatorio li { text-wrap: pretty; }

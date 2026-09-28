@@ -38,7 +38,7 @@ export async function POST(req: Request) {
   const porque = [
     String(body.mensagem || body.message || "").trim(),
     `Formulário de ${origem}${body.project ? ` · projeto: ${String(body.project).trim()}` : ""}`,
-  ].filter(Boolean).join(" — ") || `Lead do formulário de ${origem} (categoria ${category})`;
+  ].filter(Boolean).join(" · ") || `Lead do formulário de ${origem} (categoria ${category})`;
 
   try {
     const out = await pipelineOp({

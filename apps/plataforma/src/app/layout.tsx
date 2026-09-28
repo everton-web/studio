@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Agência — Comando",
+  title: "Agência · Comando",
   description: "Ambiente da agência: kanban, leads, agentes e segundo cérebro.",
   appleWebApp: {
     capable: true,

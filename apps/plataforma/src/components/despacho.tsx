@@ -11,8 +11,8 @@ type Tarefa = {
 type Health = Record<string, boolean>;
 
 const ENGINES: { id: string; label: string; uso: string }[] = [
-  { id: "leitura", label: "leitura · Kimi", uso: "contexto gigante — listar, ler, resumir" },
-  { id: "bulk", label: "bulk · DeepSeek", uso: "mecânico e barato — alto volume" },
+  { id: "leitura", label: "leitura · Kimi", uso: "contexto gigante: listar, ler, resumir" },
+  { id: "bulk", label: "bulk · DeepSeek", uso: "mecânico e barato: alto volume" },
   { id: "bulk-pro", label: "bulk-pro · DeepSeek", uso: "mecânico que exige mais cabeça" },
   { id: "raciocinio", label: "raciocínio · GLM", uso: "segunda opinião barata" },
   { id: "claude", label: "claude · Claude Code", uso: "decide, valida, produz (20%)" },
@@ -28,7 +28,7 @@ const Frase = ({ a }: { a: { nome: string; departamento: string } }) => {
   const n = a.nome.toLowerCase();
   if (n.includes("caio")) return "Qualifique 5 leads novos do pipeline (estágio 0) com motivo objetivo.";
   if (n.includes("davi")) return "Faça o pré-projeto (briefing, arquitetura, copy) da ficha do cliente X.";
-  if (n.includes("theo")) return "Audite tecnicamente o site Y: segurança, SEO local, performance — com prova.";
+  if (n.includes("theo")) return "Audite tecnicamente o site Y: segurança, SEO local, performance, com prova.";
   if (n.includes("mia")) return "Transforme o projeto Z em case para o portfólio / post."
   return "Analise a operação e aponte as 3 prioridades da semana.";
 };
@@ -102,7 +102,7 @@ export function Despacho({ agentes }: { agentes: { nome: string; departamento: s
               <span className={`w-2 h-2 rounded-full ${painelOk ? "bg-[#3ddc84]" : "bg-[#fb7185]"}`} />
             </div>
             <p className="text-[.78rem] text-[#8a8a85] mt-1">
-              despacha do app pra <span className="text-[#b8b8b3]">_scripts/ia.mjs</span> (kimi/deepseek/claude/shell) — resultado fica na fila.
+              despacha do app pra <span className="text-[#b8b8b3]">_scripts/ia.mjs</span> (kimi/deepseek/claude/shell): resultado fica na fila.
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -189,7 +189,7 @@ export function Despacho({ agentes }: { agentes: { nome: string; departamento: s
           <div className="mono" style={{ fontSize: "0.68rem" }}>fila da operação</div>
           <span className="mono" style={{ fontSize: "0.7rem" }}>{fila.length} tarefas</span>
         </div>
-        {fila.length === 0 && <div className="text-[.76rem] italic text-[#5d5d58]">vazia — despache um agente acima</div>}
+        {fila.length === 0 && <div className="text-[.76rem] italic text-[#5d5d58]">vazia: despache um agente acima</div>}
         <div className="space-y-0">
           <AnimatePresence initial={false}>
             {[...fila].reverse().map((t) => (

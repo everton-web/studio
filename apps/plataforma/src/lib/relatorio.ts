@@ -76,7 +76,7 @@ function oportunidadeDe(f: Analise["faltas"][number], seg: Segmento): { area: An
   if (i.includes("pixel")) return { area: f.area, tag: "Meta Pixel", oportunidade: `Reimpactar quem já visitou seu site, transformando interesse em ${acao}.` };
   if (i.includes("compartilhar") || i.includes("imagem")) return { area: f.area, tag: "WhatsApp · Instagram", oportunidade: "Link com imagem bonita ao compartilhar no WhatsApp e no Instagram." };
   if (i.includes("rodapé") || i.includes("parado em")) return { area: f.area, tag: "Atualização", oportunidade: "Parecer um negócio atual e ativo, sem cara de site abandonado." };
-  if (i.includes("horário") || i.includes("fotos") || i.includes("avaliaç") || i.includes("nota")) return { area: f.area, tag: "Perfil do Google", oportunidade: "Um perfil completo — com horários, fotos e avaliações — que passa profissionalismo de cara." };
+  if (i.includes("horário") || i.includes("fotos") || i.includes("avaliaç") || i.includes("nota")) return { area: f.area, tag: "Perfil do Google", oportunidade: "Um perfil completo, com horários, fotos e avaliações, que passa profissionalismo de cara." };
   if (i.includes("não tem site") || i.includes("fora do ar")) return { area: f.area, tag: "Site no ar", oportunidade: `Ter um site no ar e no seu nome, para quem procura ${quem} achar um lugar para clicar.` };
   if (i.includes("https")) return { area: f.area, tag: "Navegação segura", oportunidade: "Mostrar o cadeado de segurança no navegador e passar confiança para quem visita." };
   if (i.includes("celular")) return { area: f.area, tag: "Site no celular", oportunidade: "Abrir perfeitamente no celular, onde a maioria das buscas locais acontece." };
@@ -90,7 +90,7 @@ function oportunidadeDe(f: Analise["faltas"][number], seg: Segmento): { area: An
   return { area: f.area, tag: "Oportunidade", oportunidade: "Um ponto a melhorar para fortalecer sua presença digital." };
 }
 
-export async function exportarRelatorio(id: string, slug?: string): Promise<{ slug: string; url: string }> {
+export async function exportarRelatorio(id: string, slug?: string): Promise<{ slug: string; url: string; empresa: string }> {
   if (!/^[a-z0-9-]+$/.test(id)) throw new Error("lead inválido");
   const a = await lerAnalise(id);
   if (!a) throw new Error("rode a análise do lead antes de exportar");
@@ -116,5 +116,5 @@ export async function exportarRelatorio(id: string, slug?: string): Promise<{ sl
   await writeFile(join(dir, slugFinal + ".json"), JSON.stringify(rel, null, 2), "utf8");
   const url = "https://evertonbrito.com/relatorio/" + slugFinal;
   await gravarRelatorio(id, url);
-  return { slug: slugFinal, url };
+  return { slug: slugFinal, url, empresa: a.nome };
 }

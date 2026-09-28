@@ -6,6 +6,7 @@ import {
   Home, LayoutGrid, Target, Users, Inbox, ListChecks, MessageCircle, ListTodo,
   FolderOpen, Ellipsis, Activity, Wallet, BarChart3,
   Search, Calendar, MoreHorizontal, Info, Trash2,
+  LogOut, ChevronsRight, ChevronsLeft,
 } from "lucide-react";
 import { Chat } from "./chat";
 import { Files } from "./files";
@@ -66,11 +67,11 @@ const fmt = (v: number) => "R$ " + Math.round(v).toLocaleString("pt-BR");
 
 // cabeçalho padrão do SaaS (título + subtítulo) por view
 const VIEW_META: Record<string, { titulo: string; sub: string }> = {
-  comando: { titulo: "Início", sub: "A operação num só lugar — placar, o que precisa de decisão e a captura rápida." },
-  demandas: { titulo: "Time & Fila", sub: "A agência virtual: agentes, demandas em execução e a fila priorizada — tudo num lugar." },
+  comando: { titulo: "Início", sub: "A operação num só lugar: placar, o que precisa de decisão e a captura rápida." },
+  demandas: { titulo: "Time & Fila", sub: "A agência virtual: agentes, demandas em execução e a fila priorizada. Tudo num lugar." },
   kanban: { titulo: "Projetos", sub: "A fábrica da operação: do backlog à entrega. Vendas ficam no Comercial." },
-  pipeline: { titulo: "Comercial", sub: "Leads do estágio 0 ao 5 — o agente audita os sites, você aprova e aborda." },
-  analytics: { titulo: "Resultados", sub: "Como estamos: tráfego, CPL e ROI + o placar dos R$ 100k — a vitrine da plataforma." },
+  pipeline: { titulo: "Comercial", sub: "Leads do estágio 0 ao 5: o agente audita os sites, você aprova e aborda." },
+  analytics: { titulo: "Resultados", sub: "Como estamos: tráfego, CPL e ROI + o placar dos R$ 100k. A vitrine da plataforma." },
   arquivos: { titulo: "Conteúdo", sub: "Insumo (uploads do cliente) e saída (cases/portfólio) no mesmo lugar." },
 };
 
@@ -103,7 +104,18 @@ function Md({ html }: { html: string }) {
 }
 
 // ---------- hero do placar (na sidebar) ----------
-function Placar({ p }: { p: Data["placar"] }) {
+function Placar({ p, menor }: { p: Data["placar"]; menor?: boolean }) {
+  if (menor) {
+    const title = `${fmt(p.acumulado)} de ${fmt(p.meta)} (progresso ${p.progresso}%)`;
+    return (
+      <div className="flex justify-center" title={title}>
+        <svg viewBox="0 0 36 36" className="w-9 h-9 -rotate-90" role="img" aria-label={title}>
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="rgba(255,255,255,.08)" strokeWidth="3" />
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#3ddc84" strokeWidth="3" strokeLinecap="round" pathLength="100" strokeDasharray={`${Math.min(100, p.progresso)} 100`} />
+        </svg>
+      </div>
+    );
+  }
   return (
     <div>
       <div className="mono mb-2">Faturado</div>
@@ -119,7 +131,7 @@ function Placar({ p }: { p: Data["placar"] }) {
         />
       </div>
       <div className="flex items-center justify-between">
-        <span className="text-[.75rem] text-[var(--warn)]">{p.fase || "—"}</span>
+        <span className="text-[.75rem] text-[var(--warn)]">{p.fase || "-"}</span>
         <span className="mono">{p.progresso}%</span>
       </div>
     </div>
@@ -255,7 +267,9 @@ export function Dashboard() {
   const [moreOpen, setMoreOpen] = useState(false);
   const [kanDragging, setKanDragging] = useState<string | null>(null);
   const [kanOver, setKanOver] = useState<number | null>(null);
-  const [navMenor, setNavMenor] = useState(false);
+  const [navMenor, setNavMenor] = useState<boolean>(() => {
+    try { return typeof window !== "undefined" && localStorage.getItem("navMenor") === "1"; } catch { return false; }
+  });
   const [chatOpen, setChatOpen] = useState(false);
   const [homeTab, setHomeTab] = useState<"visao" | "atividade">("visao");
   const [homeQuery, setHomeQuery] = useState("");
@@ -267,6 +281,10 @@ export function Dashboard() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    try { localStorage.setItem("navMenor", navMenor ? "1" : "0"); } catch {}
+  }, [navMenor]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -345,23 +363,21 @@ export function Dashboard() {
     <MotionConfig reducedMotion="user">
       <div className="grain flex min-h-screen">
         {/* ===== sidebar (desktop ≥ 1024) ===== */}
-        <aside className={`hidden lg:flex ${navMenor ? "w-[var(--sidebar-w-min)]" : "w-[var(--sidebar-w)]"} shrink-0 flex-col bg-[var(--bg-1)] border-r border-[var(--line)] transition-[width] sticky top-0 h-screen`}>
-          <div className="flex items-center gap-3 px-5 h-16 border-b border-[var(--line)]">
+        <aside className={`hidden lg:flex ${navMenor ? "w-[var(--sidebar-w-min)]" : "w-[var(--sidebar-w)]"} shrink-0 min-w-0 overflow-hidden flex-col bg-[var(--bg-1)] border-r border-[var(--line)] transition-[width] duration-200 sticky top-0 h-screen`}>
+          <div className={`flex items-center gap-3 h-16 border-b border-[var(--line)] ${navMenor ? "justify-center px-2" : "px-5"}`}>
             <motion.span whileHover={{ rotate: 180 }} transition={{ duration: 0.5 }}>
               <Triangle className="w-[17px] h-[17px] text-[#FF4000]" />
             </motion.span>
-            {!navMenor && (
-              <div>
-                <div className="text-[.92rem] font-medium tracking-[-.02em] leading-none">Agência</div>
-                <div className="mono mt-1" style={{ fontSize: "0.7rem" }}>{data.placar.fase || "Comando"}</div>
-              </div>
-            )}
+            <div className="overflow-hidden whitespace-nowrap transition-[max-width,opacity] duration-200" style={{ maxWidth: navMenor ? 0 : 220, opacity: navMenor ? 0 : 1 }}>
+              <div className="text-[.92rem] font-medium tracking-[-.02em] leading-none">Agência</div>
+              <div className="mono mt-1" style={{ fontSize: "0.7rem" }}>{data.placar.fase || "Comando"}</div>
+            </div>
           </div>
 
           <nav className="flex-1 py-4 px-2.5 space-y-4 overflow-y-auto">
             {NAV_GRUPOS.map((g) => (
               <div key={g.nome}>
-                {!navMenor && <div className="mono px-3 mb-1.5" style={{ fontSize: "0.68rem" }}>{g.nome}</div>}
+                <div className={`mono mb-1.5 overflow-hidden whitespace-nowrap transition-[max-width,opacity] duration-200 ${navMenor ? "px-0" : "px-3"}`} style={{ maxWidth: navMenor ? 0 : 220, opacity: navMenor ? 0 : 1, fontSize: "0.68rem" }}>{g.nome}</div>
                 <div className="space-y-0.5">
                   {g.ids.map((id) => {
                     const n = NAV.find((x) => x.id === id)!;
@@ -376,7 +392,7 @@ export function Dashboard() {
                         title={n.label}
                         className={`w-full group flex items-center gap-3 px-3 py-2.5 rounded-xl relative transition-colors ${
                           active ? "bg-white/5 text-white" : "text-[#7d7d78] hover:text-[#d8d8d4] hover:bg-white/3"
-                        } ${navMenor ? "justify-center !px-2" : ""}`}
+                        } ${navMenor ? "justify-center !px-2 !gap-0" : ""}`}
                       >
                         {active && (
                           <motion.span
@@ -386,7 +402,7 @@ export function Dashboard() {
                           />
                         )}
                         <Icon className="w-[17px] h-[17px] shrink-0" strokeWidth={1.7} />
-                        {!navMenor && <span className="text-[.83rem] tracking-[-.01em]">{n.label}</span>}
+                        <span className="text-[.83rem] tracking-[-.01em] overflow-hidden whitespace-nowrap transition-[max-width,opacity] duration-200" style={{ maxWidth: navMenor ? 0 : 200, opacity: navMenor ? 0 : 1 }}>{n.label}</span>
                       </button>
                     );
                   })}
@@ -397,23 +413,35 @@ export function Dashboard() {
 
           {!navMenor && (
             <button onClick={() => setNavMenor(true)} aria-label="recolher menu"
-              className="ml-auto mr-3 mb-1 h-8 flex items-center mono text-[#5c5c58] hover:text-white transition-colors" style={{ fontSize: "0.68rem" }}>
-              ⟨ recolher
+              className="ml-auto mr-3 mb-1 h-8 flex items-center gap-1.5 mono text-[#5c5c58] hover:text-white transition-colors" style={{ fontSize: "0.68rem" }}>
+              <ChevronsLeft className="w-4 h-4" strokeWidth={1.7} />
+              recolher
             </button>
           )}
           <div className={`py-4 border-t border-[var(--line)] ${navMenor ? "px-3" : "px-5"}`}>
-            <Placar p={data.placar} />
-            <button
-              onClick={logout}
-              className="w-full mt-4 flex items-center justify-center gap-2 mono py-2.5 rounded-lg border border-[var(--line)] hover:border-white/20 hover:text-white text-[#7d7d78] transition-colors"
-              style={{ fontSize: "0.66rem" }}
-            >
-              sair da sessão
-            </button>
+            <Placar p={data.placar} menor={navMenor} />
+            {navMenor ? (
+              <button
+                onClick={logout}
+                title="sair da sessão"
+                aria-label="sair da sessão"
+                className="w-10 h-10 mt-4 mx-auto flex items-center justify-center rounded-lg border border-[var(--line)] hover:border-white/20 hover:text-white text-[#7d7d78] transition-colors"
+              >
+                <LogOut className="w-[18px] h-[18px]" strokeWidth={1.7} />
+              </button>
+            ) : (
+              <button
+                onClick={logout}
+                className="w-full mt-4 flex items-center justify-center gap-2 mono py-2.5 rounded-lg border border-[var(--line)] hover:border-white/20 hover:text-white text-[#7d7d78] transition-colors"
+                style={{ fontSize: "0.66rem" }}
+              >
+                sair da sessão
+              </button>
+            )}
             {navMenor && (
-              <button onClick={() => setNavMenor(false)} aria-label="expandir menu"
-                className="w-full mt-3 mono py-2 rounded-lg border border-[var(--line)] text-[#5c5c58] hover:text-white transition-colors" style={{ fontSize: "0.68rem" }}>
-                ⟨⟨ expandir
+              <button onClick={() => setNavMenor(false)} title="expandir menu" aria-label="expandir menu"
+                className="w-10 h-10 mt-3 mx-auto flex items-center justify-center rounded-lg border border-[var(--line)] text-[#5c5c58] hover:text-white transition-colors">
+                <ChevronsRight className="w-4 h-4" strokeWidth={1.7} />
               </button>
             )}
           </div>
@@ -581,16 +609,16 @@ export function Dashboard() {
                                       >
                                         <div className="min-w-0 flex-1 md:flex-none">
                                           <div className="text-[.9rem] font-medium truncate">{l.nome}</div>
-                                          <div className="mono truncate" style={{ fontSize: "0.6rem" }}>{[l.segmento, l.cidade].filter(Boolean).join(" · ") || "—"}</div>
+                                          <div className="mono truncate" style={{ fontSize: "0.6rem" }}>{[l.segmento, l.cidade].filter(Boolean).join(" · ") || "-"}</div>
                                         </div>
-                                        <div className="nums text-[.9rem] hidden md:block">{Number(l.nota) ? Number(l.nota).toFixed(1) : "—"}</div>
+                                        <div className="nums text-[.9rem] hidden md:block">{Number(l.nota) ? Number(l.nota).toFixed(1) : "-"}</div>
                                         <div className="hidden md:flex items-center gap-2 min-w-0">
                                           <div className="flex-1 h-[6px] rounded-full bg-white/8 overflow-hidden max-w-[120px]">
                                             <div className="h-full rounded-full" style={{ width: `${(l.estagio / 5) * 100}%`, background: ESTAGIO_CORES[l.estagio] || "#FF4000" }} />
                                           </div>
-                                          <span className="mono whitespace-nowrap" style={{ fontSize: "0.58rem" }}>{ESTAGIOS[l.estagio] || "—"}</span>
+                                          <span className="mono whitespace-nowrap" style={{ fontSize: "0.58rem" }}>{ESTAGIOS[l.estagio] || "-"}</span>
                                         </div>
-                                        <div className="nums text-[.85rem] hidden md:block">{l.avaliacoes || "—"}</div>
+                                        <div className="nums text-[.85rem] hidden md:block">{l.avaliacoes || "-"}</div>
                                         <div className="shrink-0 md:justify-self-start">
                                           <span className="nums inline-block px-2 py-1 rounded-md" style={{ fontSize: "0.72rem", color: "#FF4000", background: "rgba(255,64,0,.12)", border: "1px solid rgba(255,64,0,.25)" }}>{l.score.toFixed(2)}</span>
                                         </div>
@@ -614,7 +642,7 @@ export function Dashboard() {
                                 {/* funil em carrossel (shadcn/ui) */}
                                 <div className="rounded-2xl border border-[var(--line)] bg-[var(--bg-2)] p-5 sm:p-6">
                                   <div className="flex items-center justify-between mb-4">
-                                    <div className="mono" style={{ fontSize: "0.68rem" }}>funil rápido — swipe</div>
+                                    <div className="mono" style={{ fontSize: "0.68rem" }}>funil rápido · swipe</div>
                                     <span className="mono" style={{ fontSize: "0.7rem" }}>{ativos.length} leads</span>
                                   </div>
                                   <Carousel opts={{ align: "start" }} className="w-full">
@@ -706,7 +734,7 @@ export function Dashboard() {
                               })}
                               {c.itens.length === 0 && (
                                 <div className="rounded-xl border border-dashed border-[var(--line)] px-3 py-6 text-center text-[.78rem] text-[var(--dim)]">
-                                  Nada aqui — arraste um cartão
+                                  Nada aqui: arraste um cartão
                                 </div>
                               )}
                             </div>
@@ -1062,7 +1090,7 @@ function Financas({ p }: { p: Data["placar"] }) {
           </div>
           <span className="mono tabular-nums" style={{ fontSize: "0.68rem" }}>{p.progresso}% · meta R$ 100k</span>
         </div>
-        <p className="mono mt-4" style={{ fontSize: "0.7rem" }}>fase atual · {p.fase || "—"}</p>
+        <p className="mono mt-4" style={{ fontSize: "0.7rem" }}>fase atual · {p.fase || "-"}</p>
       </div>
 
       {/* gerar link de pagamento (InfinitePay) */}
@@ -1073,7 +1101,7 @@ function Financas({ p }: { p: Data["placar"] }) {
             <p className="text-[.78rem] text-[#8a8a85] mt-1">
               {handle
                 ? <>conta conectada · handle <b className="text-[#b8b8b3]">${handle}</b> · webhook ativo: <span className="text-[#b8b8b3]">app.evertonbrito.com/api/infinitepay/webhook</span></>
-                : "conta não conectada — coloque INFINITEPAY_HANDLE no .env.local da agência"}
+                : "conta não conectada: coloque INFINITEPAY_HANDLE no .env.local da agência"}
             </p>
           </div>
           {handle && <span className="mono px-2.5 py-1.5 rounded-lg bg-[#3ddc84]/10 border border-[#3ddc84]/25 text-[#3ddc84]" style={{ fontSize: "0.66rem" }}>online</span>}
@@ -1084,7 +1112,7 @@ function Financas({ p }: { p: Data["placar"] }) {
             <span className="mono block mb-2" style={{ fontSize: "0.66rem" }}>O que é</span>
             <input
               value={descricao} onChange={(e) => setDescricao(e.target.value)}
-              placeholder="ex.: LP — Clínica X"
+              placeholder="ex.: LP · Clínica X"
               className="w-full h-[50px] bg-white/3 border border-[var(--line)] rounded-xl px-4 text-[.92rem] text-[#f7f7f5] outline-none focus:border-[#FF4000]/70 transition-colors placeholder:text-[#5d5d58]"
             />
           </label>
@@ -1175,7 +1203,7 @@ function Financas({ p }: { p: Data["placar"] }) {
             ["Recebimentos", "consultar status do link (payment_check) e marcar como pago no placar", "#3ddc84"],
             ["Placar automático", "faturamento entra direto quando o pagamento confirmar", "#54b8f0"],
             ["QR code", "mostrar o Pix na tela do app pro cliente escanear", "#d9a03a"],
-            ["MRR", "recorrências (R$ 350–500/mês) cobradas no dia certo", "#a86ff0"],
+            ["MRR", "recorrências (R$ 350 a 500/mês) cobradas no dia certo", "#a86ff0"],
           ].map(([t, d, c], i) => (
             <div key={i} className="flex items-start gap-4 py-3.5 border-b border-[var(--line)] last:border-0">
               <span className="mono w-6 h-6 shrink-0 rounded-lg grid place-items-center text-[var(--accent-ink)] mt-0.5" style={{ fontSize: "0.66rem", background: c }}>{i}</span>

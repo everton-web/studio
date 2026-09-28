@@ -13,7 +13,7 @@ const code = (s: string) => (
   </code>
 );
 
-const snippet = (site: string) => `<!-- Marca Digital — pixel de rastreamento (instalar antes de </head>) -->
+const snippet = (site: string) => `<!-- Marca Digital · pixel de rastreamento (instalar antes de </head>) -->
 <script>
   fetch("https://app.evertonbrito.com/api/t?site=${site}", { mode: "no-cors" }).catch(() => {});
 </script>`;
@@ -75,7 +75,7 @@ export function Rastreamento({ data, site }: { data: RastreamentoData; site: str
       {/* painel por site */}
       <div className="card p-6">
         <div className="mono mb-4" style={{ fontSize: "0.66rem" }}>hits por site</div>
-        {sites.length === 0 && <div className="text-[.8rem] italic text-[#5d5d58]">nenhum hit ainda — instale o pixel e visite o site</div>}
+        {sites.length === 0 && <div className="text-[.8rem] italic text-[#5d5d58]">nenhum hit ainda: instale o pixel e visite o site</div>}
         <div className="space-y-0">
           {sites.map(([s, h]) => (
             <div key={s} className="flex items-center gap-4 py-3 border-b border-[var(--line)] last:border-0">
@@ -97,9 +97,9 @@ export function Rastreamento({ data, site }: { data: RastreamentoData; site: str
         </div>
         <p className="text-[.8rem] text-[#b8b8b3] mb-4">
           Script no <code className="text-[#54b8f0]">&lt;head&gt;</code> do evertonbrito.com (Next `layout.tsx` + versão estática `index.html`).
-          Mapas de calor, gravações de sessão e funis — confere no painel do Clarity.
+          Mapas de calor, gravações de sessão e funis: confere no painel do Clarity.
         </p>
-        <div className="mono" style={{ fontSize: "0.7rem" }}>usa a mesma conta pra qualquer site — só troca o ID</div>
+        <div className="mono" style={{ fontSize: "0.7rem" }}>usa a mesma conta pra qualquer site: só troca o ID</div>
       </div>
 
       {/* roteiro: próximos passos */}

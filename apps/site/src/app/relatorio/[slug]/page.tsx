@@ -35,7 +35,7 @@ export async function generateMetadata({
   const rel = await getRelatorio(slug);
   if (!rel) return { title: "Não encontrado" };
   return {
-    title: `${rel.empresa} — Diagnóstico de presença digital`,
+    title: `${rel.empresa} · Diagnóstico de presença digital`,
     robots: { index: false, follow: false },
   };
 }

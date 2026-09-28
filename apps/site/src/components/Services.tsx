@@ -7,6 +7,7 @@ import { useLang } from "@/context/LanguageContext";
 import { usePromo } from "@/hooks/usePromo";
 import { precoComDesconto, formatBRL } from "@/lib/promo";
 import { PromoBanner } from "./PromoBanner";
+import { semViuva } from "@/lib/texto";
 
 const cardTransition = { duration: 0.4, ease: [0.22, 1, 0.36, 1] as const };
 
@@ -74,7 +75,7 @@ export function Services() {
                     letterSpacing: "-0.01em",
                   }}
                 >
-                  {service.title}
+                  {semViuva(service.title)}
                 </h3>
 
                 <p className="text-sm text-[var(--color-text-muted)] mb-8" style={{ lineHeight: 1.7 }}>
@@ -184,7 +185,7 @@ export function Services() {
                   <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[var(--color-accent)] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
 
                   <h4 className="text-[var(--color-text)] text-lg font-medium mb-3">
-                    {item.title}
+                    {semViuva(item.title)}
                   </h4>
                   <p
                     className="text-sm text-[var(--color-text-muted)] mb-8"

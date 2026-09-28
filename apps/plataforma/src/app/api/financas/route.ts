@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   }
 
   if (body.action === "link") {
-    if (!HANDLE) return NextResponse.json({ ok: false, error: "handle não configurado — INFINITEPAY_HANDLE no .env.local" }, { status: 400 });
+    if (!HANDLE) return NextResponse.json({ ok: false, error: "handle não configurado: INFINITEPAY_HANDLE no .env.local" }, { status: 400 });
     const descricao = String(body.descricao || "").trim();
     const valor = Number(String(body.valor || "").replace(",", "."));
     if (!descricao) return NextResponse.json({ ok: false, error: "descrição ausente" }, { status: 400 });

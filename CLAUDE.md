@@ -69,3 +69,7 @@ Empresas/locais em Salvador/BA e região metropolitana: presença digital ativa,
 
 - Core instalado e **ativo** (`.aiox-core/`) — CLI: `node .aiox-core/cli/index.js <config|generate|qa>`
 - Ativação dos squads no Claude Code: 1x no terminal interativo `npx aiox-core install` → Enter (IDE: Claude Code). Pendência do agente `ops`.
+
+## Regras de escrita (Everton, 2026-09-28) — valem para todo texto de projeto
+- **Não usamos travessão (—) nem meia-risca (–) como pontuação.** Troque por vírgula, dois-pontos, ponto ou parênteses, conforme o sentido. (Hífen em palavras compostas continua normal.)
+- **Sem viúvas:** nenhuma linha pode terminar com uma palavra sozinha na última linha de títulos e parágrafos. No código: `text-wrap: balance` em títulos e `text-wrap: pretty` em parágrafos; em textos curtos críticos, junte as duas últimas palavras com espaço não quebrável.

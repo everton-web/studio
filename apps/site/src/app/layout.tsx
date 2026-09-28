@@ -11,7 +11,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Everton Brito — Web Designer · UX/UI",
+  title: "Everton Brito · Web Designer · UX/UI",
   description:
     "I create strategic digital experiences that connect your essence to the right audience. 7+ years, 200+ projects.",
   keywords: [
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://evertonbrito.com"),
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Everton Brito — Web Designer · UX/UI",
+    title: "Everton Brito · Web Designer · UX/UI",
     description:
       "Strategic digital experiences that connect your essence to the right audience.",
     url: "https://evertonbrito.com",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Everton Brito — Web Designer · UX/UI",
+    title: "Everton Brito · Web Designer · UX/UI",
     description:
       "Strategic digital experiences that connect your essence to the right audience.",
   },
@@ -59,7 +59,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "ProfessionalService",
-              name: "Everton Brito — Web Designer",
+              name: "Everton Brito · Web Designer",
               url: "https://evertonbrito.com",
               description:
                 "I create strategic digital experiences that connect your essence to the right audience.",

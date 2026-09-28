@@ -17,5 +17,5 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
-  return NextResponse.json({ ok: true, mensagem: "webhook infinitepay — envie POST com o payload da InfinitePay" });
+  return NextResponse.json({ ok: true, mensagem: "webhook infinitepay: envie POST com o payload da InfinitePay" });
 }

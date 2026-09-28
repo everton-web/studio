@@ -131,7 +131,7 @@ export function Console({ active = true }: { active?: boolean }) {
       </div>
       <div ref={ref} className="h-[70vh] rounded-2xl border border-white/10 overflow-hidden bg-[#050505] p-2" />
       <p className="mono" style={{ fontSize: "0.7rem" }}>
-        é o mesmo agente da máquina, sempre vivo — digite aqui e ele executa. trocar de aba não mata a sessão.
+        é o mesmo agente da máquina, sempre vivo: digite aqui e ele executa. trocar de aba não mata a sessão.
       </p>
     </div>
   );

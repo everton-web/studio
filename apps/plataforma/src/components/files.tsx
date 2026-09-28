@@ -119,7 +119,7 @@ export function Files() {
         ))}
       </div>
       {files.length === 0 && (
-        <p className="mono mt-6 text-center" style={{ fontSize: "0.66rem" }}>nenhum arquivo ainda — tudo aqui fica guardado no vault</p>
+        <p className="mono mt-6 text-center" style={{ fontSize: "0.66rem" }}>nenhum arquivo ainda: tudo aqui fica guardado no vault</p>
       )}
     </div>
   );

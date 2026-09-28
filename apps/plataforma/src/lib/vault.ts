@@ -196,7 +196,7 @@ export async function pipelineOp(op: {
       await writeFile(p, fmBlock(fm) + "\n" + appendMov(body, `${oggi} · avançou para ${ESTAGIOS[to]}`), "utf8");
     } else {
       const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
-      await writeFile(p, fmBlock(fm) + "\n" + appendMov(body, `${oggi} · entregue — pedir indicação`), "utf8");
+      await writeFile(p, fmBlock(fm) + "\n" + appendMov(body, `${oggi} · entregue · pedir indicação`), "utf8");
     }
     return { ok: true };
   }
@@ -222,7 +222,7 @@ export async function pipelineOp(op: {
     fm.status = "arquivado";
     fm["motivo-arquivo"] = (op.motivo || "").replace(/\r?\n/g, " ");
     const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
-    await writeFile(p, fmBlock(fm) + "\n" + appendMov(body, `${oggi} · arquivado — ${op.motivo || "sem motivo"}`), "utf8");
+    await writeFile(p, fmBlock(fm) + "\n" + appendMov(body, `${oggi} · arquivado · ${op.motivo || "sem motivo"}`), "utf8");
     return { ok: true };
   }
   if (op.action === "reactivate") {

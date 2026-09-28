@@ -200,18 +200,18 @@ function diagnosticar(a: Omit<Analise, "faltas" | "fortes" | "pontuacao">) {
 
   // Google Meu Negócio
   if (g.nota != null) {
-    if (g.nota >= 4.7) fortes.push(`Nota ${g.nota.toLocaleString("pt-BR")} no Google — reputação é argumento de venda`);
+    if (g.nota >= 4.7) fortes.push(`Nota ${g.nota.toLocaleString("pt-BR")} no Google: reputação é argumento de venda`);
     else if (g.nota < 4.3) f("google", "alta", `Nota ${g.nota.toLocaleString("pt-BR")} no Google`, "Abaixo de 4,3 o cliente compara e escolhe o concorrente. Pedir avaliação a cada atendimento e responder as negativas.");
   } else f("google", "media", "Nota do Google não confirmada", "Abra o perfil no Maps e confira se ele existe e está verificado.");
   if (g.avaliacoes != null) {
     if (g.avaliacoes < 30) f("google", "alta", `Só ${g.avaliacoes} avaliações`, "Poucas avaliações passam pouca confiança. Meta: 50+ com rotina de pedir avaliação (QR code / link no WhatsApp).");
-    else if (g.avaliacoes >= 100) fortes.push(`${g.avaliacoes} avaliações — prova social forte`);
+    else if (g.avaliacoes >= 100) fortes.push(`${g.avaliacoes} avaliações: prova social forte`);
   }
   if (g.fonte === "places") {
     if (!g.horario.length) f("google", "alta", "Perfil sem horário de funcionamento", "O Google mostra 'horário desconhecido' e o cliente desiste de ligar/ir.");
     if ((g.fotos ?? 0) < 10) f("google", "media", `Poucas fotos no perfil (${g.fotos ?? 0})`, "Perfis com 10+ fotos recebem mais cliques em rotas e ligações. Fotos da fachada, equipe e serviço.");
-    if (!g.siteNoPerfil) f("google", "alta", "Perfil do Google sem site", "Quem pesquisa não tem para onde clicar — perde a venda para quem tem.");
-    else if (a.site && !a.site.ok) f("google", "alta", "O site do perfil do Google está fora do ar", "O botão 'Site' do Google leva a um erro — pior do que não ter.");
+    if (!g.siteNoPerfil) f("google", "alta", "Perfil do Google sem site", "Quem pesquisa não tem para onde clicar: perde a venda para quem tem.");
+    else if (a.site && !a.site.ok) f("google", "alta", "O site do perfil do Google está fora do ar", "O botão 'Site' do Google leva a um erro: pior do que não ter.");
     if (!g.telefone) f("google", "alta", "Perfil sem telefone", "O botão 'Ligar' some do Google.");
     if (g.status && g.status !== "OPERATIONAL") f("google", "alta", `Status no Google: ${g.status}`, "O Google indica que o negócio não está operando normalmente.");
     if (g.ultimaAvaliacao) {
@@ -224,16 +224,16 @@ function diagnosticar(a: Omit<Analise, "faltas" | "fortes" | "pontuacao">) {
 
   // Site
   if (!s) f("site", "alta", "Não tem site", "Depende só do Google e das redes: sem página própria para converter quem pesquisa.");
-  else if (!s.ok) f("site", "alta", `Site fora do ar (HTTP ${s.status ?? "sem resposta"})`, "Quem clica encontra erro — perda direta de clientes e de posição no Google.");
+  else if (!s.ok) f("site", "alta", `Site fora do ar (HTTP ${s.status ?? "sem resposta"})`, "Quem clica encontra erro: perda direta de clientes e de posição no Google.");
   else {
     if (!s.https) f("site", "alta", "Site sem HTTPS (cadeado)", "O navegador marca como 'Não seguro' e afasta o cliente.");
     if (!s.celular) f("site", "alta", "Site não adaptado ao celular", "A maioria das buscas locais é pelo celular; a página fica ilegível.");
     if (s.ms != null && s.ms > 4000) f("site", "media", `Site lento (${(s.ms / 1000).toFixed(1)}s para responder)`, "Acima de 3s metade dos visitantes desiste antes de carregar.");
-    if (!s.titulo || s.titulo.length < 15) f("site", "media", "Título da página fraco ou ausente", "É o texto azul que aparece no Google — sem ele, ninguém entende o que o negócio faz.");
+    if (!s.titulo || s.titulo.length < 15) f("site", "media", "Título da página fraco ou ausente", "É o texto azul que aparece no Google: sem ele, ninguém entende o que o negócio faz.");
     if (!s.descricao) f("site", "media", "Sem descrição para o Google (meta description)", "O Google inventa um resumo aleatório no resultado da busca.");
     if (!s.schemaLocal) f("site", "baixa", "Sem marcação de negócio local (schema)", "Ajuda o Google a ligar o site ao perfil do Maps (endereço, horário, nota).");
-    if (!s.ogImagem) f("site", "baixa", "Link sem imagem ao compartilhar", "No WhatsApp/Instagram o link aparece sem foto — menos cliques.");
-    if (s.soJavascript) f("site", "media", "Conteúdo do site só aparece via JavaScript", "O Google lê uma página quase vazia — o site perde posição na busca. Precisa de pré-renderização (SSR).");
+    if (!s.ogImagem) f("site", "baixa", "Link sem imagem ao compartilhar", "No WhatsApp/Instagram o link aparece sem foto: menos cliques.");
+    if (s.soJavascript) f("site", "media", "Conteúdo do site só aparece via JavaScript", "O Google lê uma página quase vazia: o site perde posição na busca. Precisa de pré-renderização (SSR).");
     if (!s.formulario && !a.redes.whatsapp) f("contato", "alta", "Site sem formulário e sem botão de WhatsApp", "O visitante interessado não tem como chamar em um clique.");
     if (s.anoRodape && s.anoRodape < new Date().getFullYear() - 1) f("site", "media", `Rodapé parado em ${s.anoRodape}`, "Passa a impressão de site abandonado.");
     if (s.ok && s.https && s.celular) fortes.push(`Site no ar, com HTTPS e versão para celular (${s.plataforma})`);
@@ -330,8 +330,8 @@ export async function lerAnalise(id: string): Promise<Analise | null> {
 export function resumoMd(a: Analise) {
   const data = a.geradoEm.slice(0, 10);
   const redes = Object.entries(a.redes).filter(([, v]) => v).map(([k, v]) => `[${k}](${v})`).join(" · ") || "nenhuma encontrada no site";
-  const faltas = a.faltas.map((x) => `- **${x.prioridade.toUpperCase()}** · ${x.item} — ${x.porque}`).join("\n") || "- nada crítico";
-  const fortes = a.fortes.map((x) => `- ${x}`).join("\n") || "- —";
+  const faltas = a.faltas.map((x) => `- **${x.prioridade.toUpperCase()}** · ${x.item} · ${x.porque}`).join("\n") || "- nada crítico";
+  const fortes = a.fortes.map((x) => `- ${x}`).join("\n") || "-";
   return `## Análise de presença (${data})
 
 **Presença digital:** ${a.pontuacao}/100 · Google: ${a.google.fonte === "places" ? "dados do Places" : "dados da ficha"} · [Maps](${a.links.maps})${a.links.whatsapp ? ` · [WhatsApp](${a.links.whatsapp})` : ""}

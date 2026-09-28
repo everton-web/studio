@@ -7,6 +7,7 @@ import { projects } from "@/data/projects";
 import { AnimatedSection } from "./AnimatedSection";
 import { TriangleIcon } from "./TriangleIcon";
 import { useLang } from "@/context/LanguageContext";
+import { semViuva } from "@/lib/texto";
 
 const springConfig = { damping: 20, stiffness: 200, mass: 0.5 };
 
@@ -84,13 +85,13 @@ function ProjectCard({
           <div className="flex items-end justify-between w-full max-md:flex-col max-md:items-start max-md:gap-2">
             <div>
               <span className="text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-[var(--color-accent)] block mb-1">
-                {project.category}
+                {semViuva(project.category)}
               </span>
               <h3
                 className="text-[var(--color-text)] font-medium"
                 style={{ fontSize: featured ? "1.5rem" : "1.1rem", letterSpacing: "-0.01em" }}
               >
-                {project.title}
+                {semViuva(project.title)}
               </h3>
             </div>
             <span className="text-[0.75rem] text-[var(--color-text-dim)]">

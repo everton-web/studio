@@ -102,14 +102,38 @@ function abrirJanela({ fRegra, fFicha, fTarefa, nome }) {
   spawn("cmd.exe", ["/c", "start", `"${nome.toUpperCase()} - pi"`, "cmd", "/k", `"${linha}"`], { cwd: ROOT, detached: true, stdio: "ignore", windowsVerbatimArguments: true }).unref();
 }
 
+// ---------- painel ao vivo ----------
+// Cada execução grava seu estado em vault/SaaS/Agentes/ao-vivo/<id>.json (um arquivo por execução,
+// para personas em paralelo não se sobrescreverem). A plataforma lê essa pasta e mostra quem está trabalhando.
+const AO_VIVO = join(LOG_DIR, "ao-vivo");
+const EXEC_ID = `${new Date().toISOString().replace(/[:.]/g, "-")}-${persona}-${process.pid}`;
+const execucao = {
+  id: EXEC_ID, persona, tarefa: tarefa.replace(/\s+/g, " ").slice(0, 220), modelo,
+  estado: "trabalhando", tentativa: 1, inicio: new Date().toISOString(), fim: null, resumo: "", erro: "",
+};
+async function registrar(parcial = {}) {
+  Object.assign(execucao, parcial, { atualizado: new Date().toISOString() });
+  try {
+    await mkdir(AO_VIVO, { recursive: true });
+    await writeFile(join(AO_VIVO, `${EXEC_ID}.json`), JSON.stringify(execucao, null, 2), "utf8");
+  } catch { /* painel é acessório: nunca derruba a execução */ }
+}
+// resumo curto do relatório do pi: a linha "FEITO:" (ou o fim da saída)
+function resumoDoRelatorio(out) {
+  const m = out.match(/FEITO:\s*([\s\S]*?)(?:\n\s*[A-ZÇÃ]{4,}:|$)/);
+  return (m ? m[1] : out.slice(-300)).replace(/\s+/g, " ").trim().slice(0, 400);
+}
+
 (async () => {
   const arq = await prepararArquivos();
+  await registrar();
   const cab = `[${new Date().toLocaleString("pt-BR")}] ${persona.toUpperCase()} · pi → opencode (${modelo}) · ${tarefa.slice(0, 90).replace(/\s+/g, " ")}`;
   await mkdir(LOG_DIR, { recursive: true });
   await appendFile(join(LOG_DIR, `${persona}.log`), cab + "\n", "utf8").catch(() => {});
   console.log(`\n🧭 Orion → pi (${arq.nome}) → opencode · ${modelo}\n`);
   if (janela) {
     abrirJanela(arq);
+    await registrar({ estado: "janela", resumo: "rodando numa janela visível do pi" });
     console.log("Janela do pi aberta — acompanhe por lá.");
     return;
   }
@@ -120,12 +144,14 @@ function abrirJanela({ fRegra, fFicha, fTarefa, nome }) {
   for (let n = 0; n < TENTATIVAS.length; n++) {
     if (n > 0) {
       console.log(`\n↻ [${persona}] tentativa ${n + 1}/${TENTATIVAS.length}${TENTATIVAS[n] ? ` (pi em ${TENTATIVAS[n]})` : ""} — motivo: ${ultimoErro?.message.slice(0, 120)}\n`);
+      await registrar({ estado: "tentando de novo", tentativa: n + 1, erro: ultimoErro?.message.slice(0, 200) || "" });
       await new Promise((r) => setTimeout(r, 5000));
     }
     try {
       const out = await rodarPi(arq, TENTATIVAS[n]);
       if (!/PERSONA:/i.test(out)) throw new Error("pi terminou sem relatório (PERSONA: ...)");
       await appendFile(join(LOG_DIR, `${persona}.log`), `     → ${out.trim().slice(-160).replace(/\n/g, " ")}\n`, "utf8").catch(() => {});
+      await registrar({ estado: "pronto", fim: new Date().toISOString(), resumo: resumoDoRelatorio(out), erro: "" });
       return;
     } catch (e) {
       ultimoErro = e;
@@ -134,6 +160,7 @@ function abrirJanela({ fRegra, fFicha, fTarefa, nome }) {
   }
   {
     console.error(`\n[${persona}] erro após ${TENTATIVAS.length} tentativas: ${ultimoErro?.message}`);
+    await registrar({ estado: "falhou", fim: new Date().toISOString(), erro: ultimoErro?.message.slice(0, 300) || "" });
     process.exit(3);
   }
 })();

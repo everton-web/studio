@@ -3,6 +3,7 @@
 import { AnimatedSection } from "./AnimatedSection";
 import { TriangleIcon } from "./TriangleIcon";
 import { useLang } from "@/context/LanguageContext";
+import { semViuva } from "@/lib/texto";
 
 export function About() {
   const { t } = useLang();
@@ -44,7 +45,7 @@ export function About() {
                 </strong>{" "}
                 {t.about.statementMiddle}{" "}
                 <span className="serif">{t.about.statementAccent}</span>
-                {t.about.statementAfter}
+                {semViuva(t.about.statementAfter)}
               </p>
             </AnimatedSection>
 

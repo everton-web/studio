@@ -215,6 +215,7 @@
 .scoreLabel {
   font-size: 0.95rem;
   color: var(--color-text-secondary);
+  text-wrap: pretty;
 }
 
 /* strengths */
@@ -427,6 +428,7 @@
   color: var(--color-text-secondary);
   transition: color 0.2s ease;
   line-height: 1.4;
+  text-wrap: pretty;
 }
 
 .painItem input:checked + .painBox {
@@ -504,6 +506,7 @@
   font-size: 1.05rem;
   color: var(--color-text-muted);
   padding: 8px 0 14px;
+  text-wrap: pretty;
 }
 
 .chip {
@@ -694,3 +697,6 @@
     flex: 1;
   }
 }
+
+.root h1, .root h2, .root h3, .root h4, .root h5, .root h6 { text-wrap: balance; }
+.root p, .root li { text-wrap: pretty; }

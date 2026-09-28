@@ -143,16 +143,16 @@ export function AnalisePresenca({ leadId, onAtualizada }: { leadId: string; onAt
       {/* Google Meu Negócio (réplica) */}
       <Lbl>google meu negócio {g.fonte === "places" ? "· dados do Google" : "· dados da ficha (sem chave do Google)"}</Lbl>
       <div className="rounded-xl border border-[var(--line)] px-3.5 py-1 mb-5">
-        <Linha k="nota" v={g.nota != null ? `★ ${g.nota.toLocaleString("pt-BR")}` : "—"} />
-        <Linha k="avaliações" v={g.avaliacoes ?? "—"} />
+        <Linha k="nota" v={g.nota != null ? `★ ${g.nota.toLocaleString("pt-BR")}` : "-"} />
+        <Linha k="avaliações" v={g.avaliacoes ?? "-"} />
         {g.fonte === "places" && (
           <>
-            <Linha k="categorias" v={g.categorias.join(", ") || "—"} />
-            <Linha k="endereço" v={g.endereco || "—"} />
+            <Linha k="categorias" v={g.categorias.join(", ") || "-"} />
+            <Linha k="endereço" v={g.endereco || "-"} />
             <Linha k="telefone" v={g.telefone || <span className="text-[#ff6b4a]">não cadastrado</span>} />
             <Linha k="site no perfil" v={g.siteNoPerfil || <span className="text-[#ff6b4a]">não cadastrado</span>} />
-            <Linha k="fotos" v={g.fotos != null ? (g.fotos >= 10 ? "10+" : g.fotos) : "—"} />
-            <Linha k="última avaliação" v={g.ultimaAvaliacao ? new Date(g.ultimaAvaliacao).toLocaleDateString("pt-BR") : "—"} />
+            <Linha k="fotos" v={g.fotos != null ? (g.fotos >= 10 ? "10+" : g.fotos) : "-"} />
+            <Linha k="última avaliação" v={g.ultimaAvaliacao ? new Date(g.ultimaAvaliacao).toLocaleDateString("pt-BR") : "-"} />
             <Linha k="horário" v={g.horario.length ? <span className="block text-left">{g.horario.map((h) => <span key={h} className="block">{h}</span>)}</span> : <span className="text-[#ff6b4a]">não informado</span>} />
           </>
         )}
@@ -178,7 +178,7 @@ export function AnalisePresenca({ leadId, onAtualizada }: { leadId: string; onAt
             <Linha k="plataforma" v={s.plataforma} />
             <Linha k="https" v={sn(s.https)} />
             <Linha k="celular" v={sn(s.celular)} />
-            <Linha k="título" v={s.titulo || "—"} />
+            <Linha k="título" v={s.titulo || "-"} />
             <Linha k="descrição Google" v={s.descricao || <span className="text-[#ff6b4a]">ausente</span>} />
             <Linha k="formulário" v={sn(s.formulario)} />
             <Linha k="analytics / gtm" v={sn(s.rastreio.ga4 || s.rastreio.gtm)} />

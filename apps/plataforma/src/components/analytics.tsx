@@ -17,7 +17,7 @@ const CANAIS: [string, string, string][] = [
 const canais = (c: string) => CANAIS.find(([k]) => k === c) || CANAIS[3];
 
 const fmt = (v: number) => "R$ " + Math.round(v).toLocaleString("pt-BR");
-const pct = (a: number, b: number) => (b > 0 ? ((a / b) * 100).toFixed(1).replace(".", ",") + "%" : "—");
+const pct = (a: number, b: number) => (b > 0 ? ((a / b) * 100).toFixed(1).replace(".", ",") + "%" : "-");
 
 export function Analytics({ sites, leads, siteAlvo }: {
   sites: Record<string, Pixel>; leads: {
@@ -86,12 +86,12 @@ export function Analytics({ sites, leads, siteAlvo }: {
             {fmt(totalCampanhas * ticket)}
           </div>
           <p className="text-[.82rem] text-[#9a9a95] mt-2">
-            {totalCampanhas} conversão(ões) registrada(s) × ticket — se cada uma virar projeto.
+            {totalCampanhas} conversão(ões) registrada(s) × ticket: se cada uma virar projeto.
           </p>
           <div className="flex flex-wrap gap-x-8 gap-y-2 mt-5">
             <div><div className="mono" style={{ fontSize: "0.66rem" }}>conversões</div><div className="nums text-[1.15rem] font-semibold">{totalCampanhas}</div></div>
-            <div><div className="mono" style={{ fontSize: "0.66rem" }}>CPL médio</div><div className="nums text-[1.15rem] font-semibold">{cpl ? fmt(cpl) : "—"}</div></div>
-            <div><div className="mono" style={{ fontSize: "0.66rem" }}>ROI</div><div className="nums text-[1.15rem] font-semibold text-[#3ddc84]">{totalInv > 0 ? `${(((totalCampanhas * ticket) / totalInv) * 100).toFixed(0)}%` : "—"}</div></div>
+            <div><div className="mono" style={{ fontSize: "0.66rem" }}>CPL médio</div><div className="nums text-[1.15rem] font-semibold">{cpl ? fmt(cpl) : "-"}</div></div>
+            <div><div className="mono" style={{ fontSize: "0.66rem" }}>ROI</div><div className="nums text-[1.15rem] font-semibold text-[#3ddc84]">{totalInv > 0 ? `${(((totalCampanhas * ticket) / totalInv) * 100).toFixed(0)}%` : "-"}</div></div>
           </div>
         </div>
         <div className="grid gap-4">
@@ -109,7 +109,7 @@ export function Analytics({ sites, leads, siteAlvo }: {
 
       {/* funil real do tráfego */}
       <div className="card p-6">
-        <div className="mono mb-1" style={{ fontSize: "0.66rem" }}>funil — do clique ao cliente</div>
+        <div className="mono mb-1" style={{ fontSize: "0.66rem" }}>funil · do clique ao cliente</div>
         <p className="text-[.8rem] text-[#8a8a85] mb-5">visitas reais do pixel + leads + aprovações + entregas</p>
         <div className="space-y-3">
           {funil.map(([n, lbl, cor]) => (
@@ -136,7 +136,7 @@ export function Analytics({ sites, leads, siteAlvo }: {
         <div className="grid grid-cols-1 sm:grid-cols-6 gap-3 mb-4">
           <label className="block sm:col-span-2">
             <span className="mono block mb-2" style={{ fontSize: "0.68rem" }}>Nome</span>
-            <input value={f.nome} onChange={(e) => setF({ ...f, nome: e.target.value })} id="campanha-nome" placeholder="ex.: Meta — Odonto Salvador" className="w-full h-[48px] bg-white/3 border border-[var(--line)] rounded-xl px-4 text-[.9rem] outline-none focus:border-[#FF4000]/70 transition-colors placeholder:text-[#5d5d58]" />
+            <input value={f.nome} onChange={(e) => setF({ ...f, nome: e.target.value })} id="campanha-nome" placeholder="ex.: Meta · Odonto Salvador" className="w-full h-[48px] bg-white/3 border border-[var(--line)] rounded-xl px-4 text-[.9rem] outline-none focus:border-[#FF4000]/70 transition-colors placeholder:text-[#5d5d58]" />
           </label>
           <label className="block">
             <span className="mono block mb-2" style={{ fontSize: "0.68rem" }}>Canal</span>
@@ -178,7 +178,7 @@ export function Analytics({ sites, leads, siteAlvo }: {
               <tbody>
                 {campanhas.map((c) => {
                   const [, cl] = canais(c.canal);
-                  const ctr = c.cliques && c.cliques > 0 && c.conversoes > 0 ? ((c.conversoes / c.cliques) * 100).toFixed(1) : "—";
+                  const ctr = c.cliques && c.cliques > 0 && c.conversoes > 0 ? ((c.conversoes / c.cliques) * 100).toFixed(1) : "-";
                   const cplC = c.conversoes > 0 && c.investimento > 0 ? c.investimento / c.conversoes : null;
                   return (
                     <tr key={c.id} className="border-t border-[var(--line)]">
@@ -190,7 +190,7 @@ export function Analytics({ sites, leads, siteAlvo }: {
                         </div>
                       </td>
                       <td className="nums py-3 pr-4 text-[.82rem]">{ctr}%</td>
-                      <td className="nums py-3 pr-4 text-[.82rem]">{cplC ? fmt(cplC) : "—"}</td>
+                      <td className="nums py-3 pr-4 text-[.82rem]">{cplC ? fmt(cplC) : "-"}</td>
                       <td className="nums py-3 pr-4 text-[.82rem]">{fmt(c.investimento)}</td>
                       <td className="nums py-3 pr-4 text-[.82rem] text-[#3ddc84]">{c.conversoes}</td>
                       <td className="py-3">

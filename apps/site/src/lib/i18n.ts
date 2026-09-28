@@ -74,7 +74,7 @@ export const translations = {
         label: "Além do projeto",
         titleBefore: "Consultoria e",
         titleAccent: "mentoria",
-        intro: "Acompanhamento para quem quer direção, clareza e evolução contínua — não um entregável, um caminho.",
+        intro: "Acompanhamento para quem quer direção, clareza e evolução contínua. Não um entregável, um caminho.",
         items: [
           {
             title: "Consultoria",
@@ -126,7 +126,7 @@ export const translations = {
       backToTop: "Voltar ao topo",
     },
     promo: {
-      banner: "Mês do Zeca 🎈 — 20% OFF em todos os projetos até 30/09",
+      banner: "Mês do Zeca 🎈 · 20% OFF em todos os projetos até 30/09",
       days: "d",
       hours: "h",
       minutes: "m",
@@ -207,7 +207,7 @@ export const translations = {
         label: "Beyond the project",
         titleBefore: "Consulting and",
         titleAccent: "mentoring",
-        intro: "Ongoing guidance for those who want direction, clarity and steady progress — not a deliverable, a path.",
+        intro: "Ongoing guidance for those who want direction, clarity and steady progress. Not a deliverable, a path.",
         items: [
           {
             title: "Consulting",
@@ -259,7 +259,7 @@ export const translations = {
       backToTop: "Back to top",
     },
     promo: {
-      banner: "Zeca's Month 🎈 — 20% OFF all projects until Sep 30",
+      banner: "Zeca's Month 🎈 · 20% OFF all projects until Sep 30",
       days: "d",
       hours: "h",
       minutes: "m",

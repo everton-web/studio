@@ -125,7 +125,7 @@ export function Demandas({ agentes }: { agentes?: { nome: string; departamento: 
           <span className="mono" style={{ fontSize: "0.68rem" }}>{data.fila.length} na agência</span>
         </div>
         <div className="space-y-2">
-          {data.fila.length === 0 && <div className="text-[.8rem] italic text-[#5d5d58]">nenhuma demanda — a agência está quieta</div>}
+          {data.fila.length === 0 && <div className="text-[.8rem] italic text-[#5d5d58]">nenhuma demanda: a agência está quieta</div>}
           {data.fila.map((d) => (
             <div key={d.id} className="flex items-center gap-3 py-2.5 px-3 rounded-xl bg-white/3 border border-[var(--line)]">
               <span className="w-2 h-2 rounded-full shrink-0" style={{ background: statusCor(d.status) }} />
@@ -157,7 +157,7 @@ export function Demandas({ agentes }: { agentes?: { nome: string; departamento: 
           <span className="mono" style={{ fontSize: "0.68rem" }}>agentes se encontram aqui</span>
         </div>
         <div ref={salaRef} className="max-h-[320px] overflow-y-auto space-y-2 pr-1 scrollbar-thin" aria-live="polite">
-          {data.sala.length === 0 && <div className="text-[.8rem] italic text-[#5d5d58]">sala vazia — envie o 1º assunto</div>}
+          {data.sala.length === 0 && <div className="text-[.8rem] italic text-[#5d5d58]">sala vazia: envie o 1º assunto</div>}
           {data.sala.map((m, i) => (
             <div key={i} className="flex gap-3 items-start">
               <AgentAvatar nome={m.de} cor={CORES[m.de] || "#8a8a85"} size={30} />

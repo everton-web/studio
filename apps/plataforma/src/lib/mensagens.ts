@@ -25,21 +25,21 @@ const CONTATO_B = `Olá! Tudo bem? Me chamo Everton, crio experiências digitais
 Vi a {empresa} e fiquei curioso sobre um ponto na presença digital de vocês ({site}). Com quem posso falar sobre isso? Se preferir, posso te explicar por aqui.`;
 
 // ---------- ETAPA 2 — Detalhe (após a pessoa responder) ----------
-const DETALHE_A = `Que bom te encontrar! Vi que dá pra fortalecer a presença digital de vocês — {ponto}. Isso passa mais confiança e traz cliente novo.
+const DETALHE_A = `Que bom te encontrar! Vi que dá pra fortalecer a presença digital de vocês: {ponto}. Isso passa mais confiança e traz cliente novo.
 
 Estou com 20% OFF no Mês do Zeca, até 30/09. Dá uma olhada nos meus trabalhos em evertonbrito.com e me diz o que acha.`;
 
-const DETALHE_B = `Que bom te encontrar! Vi que dá pra fortalecer a presença digital de vocês — {ponto}. Isso passa mais confiança e traz cliente novo.
+const DETALHE_B = `Que bom te encontrar! Vi que dá pra fortalecer a presença digital de vocês: {ponto}. Isso passa mais confiança e traz cliente novo.
 
 Dá uma olhada nos meus trabalhos em evertonbrito.com e me diz o que acha.`;
 
 // ---------- ETAPA 3 — Oferta (só depois do interesse) ----------
 const OFERTA_A = `Perfeito! Deixa eu te mostrar os formatos e o investimento. Estou com 20% de desconto neste mês:
 
-🔹 *Landing Page* — ~R$ 1.997~ por *R$ 1.597*: uma página focada em captar contato e converter quem já te procura.
-🔹 *One Page* — ~R$ 1.897~ por *R$ 1.517*: seu negócio inteiro numa página só, direto ao ponto.
-🔹 *Página de Vendas* — ~R$ 2.297~ por *R$ 1.837*: página longa pra apresentar a oferta, responder às dúvidas e vender no automático.
-🔹 *Site Institucional* — ~R$ 3.097~ por *R$ 2.477*: várias páginas, mais autoridade e melhor posição no Google.
+🔹 *Landing Page* · ~R$ 1.997~ por *R$ 1.597*: uma página focada em captar contato e converter quem já te procura.
+🔹 *One Page* · ~R$ 1.897~ por *R$ 1.517*: seu negócio inteiro numa página só, direto ao ponto.
+🔹 *Página de Vendas* · ~R$ 2.297~ por *R$ 1.837*: página longa pra apresentar a oferta, responder às dúvidas e vender no automático.
+🔹 *Site Institucional* · ~R$ 3.097~ por *R$ 2.477*: várias páginas, mais autoridade e melhor posição no Google.
 
 Todos feitos com a identidade da {empresa}, funcionando bem no celular e no computador, com botão de contato direto no seu WhatsApp. Posso parcelar.
 
@@ -47,10 +47,10 @@ Quer que eu monte a estrutura que imagino pra {empresa}? Se sim, me responde: *Q
 
 const OFERTA_B = `Perfeito! Deixa eu te mostrar os formatos e o investimento:
 
-🔹 *Landing Page* — *R$ 1.997*: uma página focada em captar contato e converter quem já te procura.
-🔹 *One Page* — *R$ 1.897*: seu negócio inteiro numa página só, direto ao ponto.
-🔹 *Página de Vendas* — *R$ 2.297*: página longa pra apresentar a oferta, responder às dúvidas e vender no automático.
-🔹 *Site Institucional* — *R$ 3.097*: várias páginas, mais autoridade e melhor posição no Google.
+🔹 *Landing Page* · *R$ 1.997*: uma página focada em captar contato e converter quem já te procura.
+🔹 *One Page* · *R$ 1.897*: seu negócio inteiro numa página só, direto ao ponto.
+🔹 *Página de Vendas* · *R$ 2.297*: página longa pra apresentar a oferta, responder às dúvidas e vender no automático.
+🔹 *Site Institucional* · *R$ 3.097*: várias páginas, mais autoridade e melhor posição no Google.
 
 Todos feitos com a identidade da {empresa}, funcionando bem no celular e no computador, com botão de contato direto no seu WhatsApp. Posso parcelar.
 
@@ -59,7 +59,7 @@ Quer que eu monte a estrutura que imagino pra {empresa}? Se sim, me responde: *Q
 // ---------- ETAPA 4 — Follow-ups (sem pressionar) ----------
 const FOLLOW1_A = `Olá, {nome}! Passando só pra confirmar se você viu minha mensagem sobre a {empresa}.
 
-A ideia é um site que apresenta os serviços, fortalece a presença no Google e facilita o contato de cliente novo — e a *condição de 20% segue disponível até 30/09*.
+A ideia é um site que apresenta os serviços, fortalece a presença no Google e facilita o contato de cliente novo, e a *condição de 20% segue disponível até 30/09*.
 
 Se tiver interesse, me responde *SIM* que te envio os detalhes. Se preferir, também tiro dúvidas por aqui.`;
 
@@ -71,7 +71,7 @@ Se tiver interesse, me responde *SIM* que te envio os detalhes. Se preferir, tam
 
 const FOLLOW2_A = `Olá, {nome}! Vou encerrar meu contato por aqui pra não te incomodar.
 
-Se um dia a {empresa} quiser um site que fortaleça a presença dela na internet, fico à disposição. Meus trabalhos estão em evertonbrito.com — e, enquanto a condição de 20% estiver de pé, consigo manter pra você.
+Se um dia a {empresa} quiser um site que fortaleça a presença dela na internet, fico à disposição. Meus trabalhos estão em evertonbrito.com, e, enquanto a condição de 20% estiver de pé, consigo manter pra você.
 
 Sucesso por aí!`;
 

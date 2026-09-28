@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import { Check, Trash2 } from "lucide-react";
 import { AnalisePresenca } from "./analise-presenca";
@@ -33,7 +33,7 @@ export type Lead = {
 };
 
 const ESTAGIOS = [
-  { nome: "Prospecção", cor: "#54b8f0", qui: "diário 18h–19h · caio" },
+  { nome: "Prospecção", cor: "#54b8f0", qui: "diário 18h a 19h · caio" },
   { nome: "Aprovação", cor: "#FF4000", qui: "você decide" },
   { nome: "Contato", cor: "#d9a03a", qui: "pitch · whatsapp" },
   { nome: "Negociação", cor: "#a86ff0", qui: "proposta → fechamento" },
@@ -44,7 +44,7 @@ const WIP_MAX = 3;
 const ease = [0.22, 1, 0.36, 1] as const;
 
   const notaCor = (n: number) => (n >= 4.5 ? "#3ddc84" : n >= 4 ? "#d9a03a" : "#8a8a85");
-const notaLbl = (n: number) => (n > 0 ? n.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "—");
+const notaLbl = (n: number) => (n > 0 ? n.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "-");
 const avalLbl = (a: number) => (a > 0 ? `${a}` : "");
 
 function waLink(numero: string, msg: string) {
@@ -135,7 +135,7 @@ function LeadCard({ lead, onEdit, onMove, onAbordar, onValidar, onApagar, onOpen
             <span className="mono shrink-0 rounded px-1.5 py-0.5" style={{ fontSize: "0.68rem", color: "#b8b8b3", background: "rgba(255,255,255,.05)", border: "1px solid rgba(255,255,255,.1)" }}>{catLbl(lead.categoria)}</span>
           </div>
           <div className="mono mt-1 truncate" style={{ fontSize: "0.7rem" }}>
-            {lead.segmento || "segmento —"}{lead.cidade ? ` · ${lead.cidade}` : ""}
+            {lead.segmento || "segmento"}{lead.cidade ? ` · ${lead.cidade}` : ""}
             {avalLbl(lead.avaliacoes) ? ` · ${avalLbl(lead.avaliacoes)} aval.` : ""}
           </div>
         </div>
@@ -159,7 +159,7 @@ function LeadCard({ lead, onEdit, onMove, onAbordar, onValidar, onApagar, onOpen
           <span className="truncate">{lead.site.replace(/^https?:\/\//, "")}</span>
         </a>
       )}
-      {!lead.site && <div className="mono mb-1.5" style={{ fontSize: "0.7rem", color: "#5d5d58" }}>sem site — o ponto</div>}
+      {!lead.site && <div className="mono mb-1.5" style={{ fontSize: "0.7rem", color: "#5d5d58" }}>sem site · o ponto</div>}
       {lead.presenca != null && (
         <div className="mono mb-1.5 flex items-center gap-1.5" style={{ fontSize: "0.7rem" }} title="nota de presença digital (análise na ficha)">
           <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: lead.presenca >= 75 ? "#3ddc84" : lead.presenca >= 50 ? "#d9a03a" : "#ff6b4a" }} />
@@ -269,6 +269,8 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
   const [relatorioRes, setRelatorioRes] = useState<{ slug: string; url: string } | null>(null);
   const [relatorioBusy, setRelatorioBusy] = useState(false);
   const [relatorioCopiado, setRelatorioCopiado] = useState(false);
+  const [relatorioStatus, setRelatorioStatus] = useState<"" | "entrando" | "noAr" | "demorado">("");
+  const relatorioPollRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // status da fonte de prospecção (chave Google? IA Router no ar?)
   useEffect(() => {
@@ -277,6 +279,15 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
       .then((j) => j && setFonteInfo(j))
       .catch(() => {});
   }, []);
+
+  // cancela o polling do relatório quando a ficha fecha/troca ou o componente desmonta
+  useEffect(() => {
+    return () => { if (relatorioPollRef.current) clearTimeout(relatorioPollRef.current); };
+  }, []);
+  useEffect(() => {
+    if (relatorioPollRef.current) clearTimeout(relatorioPollRef.current);
+    relatorioPollRef.current = null;
+  }, [detalhe]);
 
   const ativos = leads.filter((l) => l.status !== "arquivado");
   const arq = leads.filter((l) => l.status === "arquivado");
@@ -339,7 +350,7 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
     await post({ action: "move", id: l.id, estagio: 2 });
   };
   const apagar = async (l: Lead) => {
-    if (!confirm(`Apagar "${l.nome}"? A ficha sai do vault — é permanente.`)) return;
+    if (!confirm(`Apagar "${l.nome}"? A ficha sai do vault. É permanente.`)) return;
     await post({ action: "delete", id: l.id });
   };
 
@@ -373,13 +384,30 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
   const copiarRelatorio = async (url: string) => {
     try { await navigator.clipboard.writeText(url); setRelatorioCopiado(true); setTimeout(() => setRelatorioCopiado(false), 1800); } catch {}
   };
+  const pollRelatorio = (slug: string, tentativa: number) => {
+    if (relatorioPollRef.current) clearTimeout(relatorioPollRef.current);
+    relatorioPollRef.current = setTimeout(async () => {
+      let noAr = false;
+      try {
+        const r = await fetch("/api/relatorio?slug=" + encodeURIComponent(slug));
+        const j = await r.json();
+        noAr = !!j.ok;
+      } catch { /* rede — tenta de novo */ }
+      if (noAr) { setRelatorioStatus("noAr"); return; }
+      if (tentativa + 1 >= 20) { setRelatorioStatus("demorado"); return; }
+      pollRelatorio(slug, tentativa + 1);
+    }, 15000);
+  };
   const gerarRelatorio = async (lead: Lead) => {
-    setRelatorioBusy(true); setRelatorioRes(null);
+    setRelatorioBusy(true); setRelatorioRes(null); setRelatorioStatus("");
+    if (relatorioPollRef.current) { clearTimeout(relatorioPollRef.current); relatorioPollRef.current = null; }
     try {
       const r = await fetch("/api/relatorio", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: lead.id }) });
       const j = await r.json();
       if (!j.ok) { alert(j.error || "erro ao gerar relatório"); return; }
       setRelatorioRes({ slug: j.slug, url: j.url });
+      setRelatorioStatus("entrando");
+      pollRelatorio(j.slug, 0);
       await refresh();
     } catch { alert("falha de rede"); }
     finally { setRelatorioBusy(false); }
@@ -489,7 +517,7 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
               <div className="mono mb-1 text-[#fb7185]" style={{ fontSize: "0.68rem" }}>erros da fonte</div>
               <div className="space-y-1">
                 {prospectRes.erros.slice(0, 6).map((e: { nome: string; motivo: string }, i: number) => (
-                  <div key={i} className="text-[.74rem] text-[#fb7185]/85">— {e.nome}: {e.motivo}</div>
+                  <div key={i} className="text-[.74rem] text-[#fb7185]/85">· {e.nome}: {e.motivo}</div>
                 ))}
               </div>
             </div>
@@ -506,7 +534,7 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
               <div className="mono mb-1" style={{ fontSize: "0.68rem" }}>descartados</div>
               <div className="space-y-1">
                 {prospectRes.descartados.slice(0, 12).map((d, i) => (
-                  <div key={i} className="text-[.74rem] text-[#8a8a85]">— {d.nome}: <span className="text-[#fb7185]/80">{d.motivo}</span></div>
+                  <div key={i} className="text-[.74rem] text-[#8a8a85]">· {d.nome}: <span className="text-[#fb7185]/80">{d.motivo}</span></div>
                 ))}
               </div>
             </>
@@ -569,7 +597,7 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
                   <div className="mono mt-2 truncate" style={{ fontSize: "0.68rem" }}>{s.qui}</div>
                   {over && (
                     <div className="mono mt-2 text-[#fb7185]" style={{ fontSize: "0.68rem" }}>
-                      ⚠ acima do wip — não atropelar
+                      ⚠ acima do wip: não atropelar
                     </div>
                   )}
                 </div>
@@ -584,7 +612,7 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
                   }}
                 >
                   {col.length === 0 && (
-                    <div className="text-[.74rem] italic text-[#5d5d58] px-2 py-2">vazio — rotina 18h–19h</div>
+                    <div className="text-[.74rem] italic text-[#5d5d58] px-2 py-2">vazio · rotina 18h a 19h</div>
                   )}
                   {col.map((l) => (
                     <LeadCard
@@ -639,7 +667,7 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
       </div>
 
       {/* ===== modal novo / editar ===== */}
-      <Modal open={!!modal} title={modal?.kind === "editar" ? `ficha — ${modal.lead.nome}` : "novo lead"} onClose={() => setModal(null)}>
+      <Modal open={!!modal} title={modal?.kind === "editar" ? `ficha · ${modal.lead.nome}` : "novo lead"} onClose={() => setModal(null)}>
         <div className="space-y-4 pb-2">
           <Field label="Nome *" value={f.nome} onChange={(v) => setF({ ...f, nome: v })} placeholder="ex.: Clínica Sorriso Forte" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -678,7 +706,7 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
               onClick={salvar} disabled={busy}
               className="flex-1 h-[52px] rounded-[14px] bg-[#FF4000] hover:bg-[#ff5c22] disabled:opacity-60 text-white text-[.9rem] font-medium transition-colors"
             >
-              {busy ? "salvando…" : modal?.kind === "editar" ? "salvar ficha" : "criar lead — estágio 0"}
+              {busy ? "salvando…" : modal?.kind === "editar" ? "salvar ficha" : "criar lead · estágio 0"}
             </button>
             {modal?.kind === "editar" && modal.lead.estagio === 5 && (
               <button
@@ -709,9 +737,9 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
       </Modal>
 
       {/* ===== modal de abordagem (validação antes de enviar) ===== */}
-      <Modal open={!!abordar} title={abordar ? `abordar — ${abordar.lead.nome}` : ""} onClose={() => setAbordar(null)}>
+      <Modal open={!!abordar} title={abordar ? `abordar · ${abordar.lead.nome}` : ""} onClose={() => setAbordar(null)}>
         <p className="text-[.8rem] text-[#b8b8b3] mb-4">
-          Mensagem de abordagem (base: <span className="text-[#f7f7f5]">mensagens-whatsapp.md</span> — conversa primeiro, sem preço; a promoção do Mês do Zeca entra sozinha até 30/09).
+          Mensagem de abordagem (base: <span className="text-[#f7f7f5]">mensagens-whatsapp.md</span>, conversa primeiro, sem preço; a promoção do Mês do Zeca entra sozinha até 30/09).
           <b className="text-[#f7f7f5]"> Edite até ficar do seu jeito antes de abrir o WhatsApp.</b>
         </p>
         <textarea
@@ -761,17 +789,17 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
           )}
           {abordar && !waLink(abordar.lead.whatsapp || abordar.lead.contato, abordar.msg) && (
             <div className="flex-1 flex items-center justify-center h-[52px] rounded-[14px] border border-[var(--line)] text-[#8a8a85] text-[.82rem]">
-              sem WhatsApp cadastrado — edite a ficha e adicione
+              sem WhatsApp cadastrado: edite a ficha e adicione
             </div>
           )}
         </div>
         <p className="mono mt-4" style={{ fontSize: "0.7rem" }}>
-          você valida, edita e decide o envio — a mensagem fica salva na ficha do lead para o próximo contato
+          você valida, edita e decide o envio: a mensagem fica salva na ficha do lead para o próximo contato
         </p>
       </Modal>
 
       {/* ===== modal de ficha (clique no card) ===== */}
-      <Modal open={!!detalhe} title={detalhe ? `ficha — ${detalhe.nome}` : ""} onClose={() => setDetalhe(null)}>
+      <Modal open={!!detalhe} title={detalhe ? `ficha · ${detalhe.nome}` : ""} onClose={() => setDetalhe(null)}>
         {detalhe && (
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-5">
@@ -784,12 +812,12 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
 
             <div className="grid grid-cols-2 gap-3 mb-5">
               {[
-                ["Segmento", detalhe.segmento || "—"],
-                ["Cidade", detalhe.cidade || "—"],
-                ["Nota Google", detalhe.nota > 0 ? `★ ${detalhe.nota.toLocaleString("pt-BR")}` : "—"],
-                ["Avaliações", detalhe.avaliacoes > 0 ? String(detalhe.avaliacoes) : "—"],
-                ["E-mail", detalhe.email || "—"],
-                ["WhatsApp", detalhe.whatsapp || detalhe.contato || "—"],
+                ["Segmento", detalhe.segmento || "-"],
+                ["Cidade", detalhe.cidade || "-"],
+                ["Nota Google", detalhe.nota > 0 ? `★ ${detalhe.nota.toLocaleString("pt-BR")}` : "-"],
+                ["Avaliações", detalhe.avaliacoes > 0 ? String(detalhe.avaliacoes) : "-"],
+                ["E-mail", detalhe.email || "-"],
+                ["WhatsApp", detalhe.whatsapp || detalhe.contato || "-"],
               ].map(([k, v]) => (
                 <div key={k} className="bg-white/3 border border-[var(--line)] rounded-xl px-4 py-3">
                   <div className="mono mb-1" style={{ fontSize: "0.68rem" }}>{k}</div>
@@ -833,14 +861,22 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
                 disabled={relatorioBusy}
                 className="flex items-center justify-center gap-2 h-[44px] px-4 rounded-xl bg-[#FF4000] hover:bg-[#ff5c22] text-white text-[.82rem] font-medium transition-colors disabled:opacity-60"
               >
-                {relatorioBusy ? "gerando…" : "gerar relatório"}
+                {relatorioBusy ? "gerando e publicando…" : "gerar relatório"}
               </button>
-              <p className="mono mt-2" style={{ fontSize: "0.68rem" }}>o link só funciona depois que o Orion publicar o site</p>
+              {relatorioStatus === "entrando" && (
+                <p className="mono mt-2" style={{ fontSize: "0.68rem" }}>⏳ entrando no ar (~2 min)</p>
+              )}
+              {relatorioStatus === "noAr" && (
+                <p className="mono mt-2" style={{ fontSize: "0.68rem" }}>✅ no ar</p>
+              )}
+              {relatorioStatus === "demorado" && (
+                <p className="mono mt-2" style={{ fontSize: "0.68rem" }}>ainda publicando, tente o link em instantes</p>
+              )}
             </div>
 
             <div className="mb-5">
               <div className="mono mb-2" style={{ fontSize: "0.68rem" }}>por que é bom lead</div>
-              <p className="text-[.86rem] text-[#cacac4] leading-relaxed">{detalhe.porque || "—"}</p>
+              <p className="text-[.86rem] text-[#cacac4] leading-relaxed">{detalhe.porque || "-"}</p>
             </div>
 
             {detalhe.solucao && (
@@ -873,7 +909,7 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
               )}
               <button onClick={() => { setDetalhe(null); mover(detalhe, 1); }} disabled={detalhe.estagio >= 5}
                 className="flex-1 h-[50px] rounded-[14px] border border-white/12 text-[#cacac4] hover:border-white/28 transition-colors disabled:opacity-40">
-                avançar → {detalhe.estagio + 1 < 6 ? ESTAGIOS[detalhe.estagio + 1].nome : "—"}
+                avançar → {detalhe.estagio + 1 < 6 ? ESTAGIOS[detalhe.estagio + 1].nome : "-"}
               </button>
             </div>
           </div>

@@ -7,6 +7,21 @@ import { useLang } from "@/context/LanguageContext";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
+function colarUltimaPalavra(
+  linha: ReadonlyArray<{ t: string; accent: boolean }>,
+): { t: string; accent: boolean }[] {
+  const copia = linha.map((seg) => ({ ...seg }));
+  for (let j = copia.length - 1; j >= 0; j--) {
+    const seg = copia[j];
+    const idx = seg.t.lastIndexOf(" ");
+    if (idx !== -1) {
+      seg.t = seg.t.slice(0, idx) + "\u00A0" + seg.t.slice(idx + 1);
+      break;
+    }
+  }
+  return copia;
+}
+
 const lineReveal = {
   hidden: { y: "110%", opacity: 0 },
   visible: (i: number) => ({
@@ -59,7 +74,9 @@ export function Hero() {
             maxWidth: "1080px",
           }}
         >
-          {t.hero.lines.map((line, i) => (
+          {t.hero.lines.map((rawLine, i) => {
+            const line = colarUltimaPalavra(rawLine);
+            return (
             <span key={i} className="block overflow-hidden">
               <motion.span
                 custom={i}
@@ -79,7 +96,8 @@ export function Hero() {
                 )}
               </motion.span>
             </span>
-          ))}
+            );
+          })}
         </h1>
 
         <motion.p

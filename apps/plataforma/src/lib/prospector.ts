@@ -148,7 +148,7 @@ function extrairJsonArray(texto: string): { nome?: string; site?: string }[] {
 async function fonteKimi(nicho: string, cidade: string, limite: number): Promise<Candidato[]> {
   if (!ROOT || !require("node:fs").existsSync(IA_MJS)) return [];
   const prompt =
-    `Liste ${Math.min(12, limite * 2)} empresas reais do segmento "${nicho}" em ${cidade} (BA), que hoje (2026) tenham SITE PRÓPRIO funcionando — NÃO página de rede social, NÃO agregador, NÃO ifood/agenda. ` +
+    `Liste ${Math.min(12, limite * 2)} empresas reais do segmento "${nicho}" em ${cidade} (BA), que hoje (2026) tenham SITE PRÓPRIO funcionando: NÃO página de rede social, NÃO agregador, NÃO ifood/agenda. ` +
     `Responda APENAS com um JSON array válido e nada mais, no formato: [{"nome":"Nome da Empresa","site":"https://dominio.br"}]`;
   const saida = await runIa("leitura", prompt, 60000);
   const arr = extrairJsonArray(saida);
@@ -289,7 +289,7 @@ export async function prospectar(op: { nicho?: string; cidade?: string; limite?:
 
   if (!candidatos.length) {
     res.aviso = `Nenhuma fonte retornou candidatos de "${nicho}" em ${cidade}. ` +
-      (temChave ? "As fontes falharam — confira a chave Google Places e a rede." : "Sem GOOGLE_PLACES_KEY, usei Kimi + OSM — verifique se o IA Router está no ar (node _scripts/ia.mjs --check).");
+      (temChave ? "As fontes falharam: confira a chave Google Places e a rede." : "Sem GOOGLE_PLACES_KEY, usei Kimi + OSM: verifique se o IA Router está no ar (node _scripts/ia.mjs --check).");
     res.tempo = Math.round((Date.now() - t0) / 1000);
     return res;
   }
@@ -371,6 +371,6 @@ export async function prospectorStatus() {
     google_places: !!PLACES_KEY,
     fonte_ativa: PLACES_KEY ? "google-places" : "kimi-discovery",
     ia_router: await iaDisponivel(),
-    obs: PLACES_KEY ? "" : "sem GOOGLE_PLACES_KEY — descoberta via Kimi (IA Router) + OSM fallback",
+    obs: PLACES_KEY ? "" : "sem GOOGLE_PLACES_KEY: descoberta via Kimi (IA Router) + OSM fallback",
   };
 }

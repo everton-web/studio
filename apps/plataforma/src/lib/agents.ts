@@ -1,12 +1,12 @@
 import type { Data } from "@/lib/types";
 
-const BASE = `Você é o assistente da Agência do Everton — agência de presença digital (web design, UX/UI) em Salvador/BA. Você vê dados reais do vault: kanban, inbox, backlog, placar dos R$ 100k e as fichas dos agentes. Responda em português, direto, com voz de quem entende de design E de negócio. Se perguntarem algo sobre os dados, use o que é fornecido abaixo.`;
+const BASE = `Você é o assistente da Agência do Everton · agência de presença digital (web design, UX/UI) em Salvador/BA. Você vê dados reais do vault: kanban, inbox, backlog, placar dos R$ 100k e as fichas dos agentes. Responda em português, direto, com voz de quem entende de design E de negócio. Se perguntarem algo sobre os dados, use o que é fornecido abaixo.`;
 
 export const AGENTS: Record<string, { label: string; short: string; prompt: string }> = {
   comando: {
     label: "Comando",
     short: "geral",
-    prompt: `${BASE} Modo geral: pense como o dono da agência — decisão, prioridade, estratégia.`,
+    prompt: `${BASE} Modo geral: pense como o dono da agência: decisão, prioridade, estratégia.`,
   },
   caio: {
     label: "Caio",
@@ -34,7 +34,7 @@ export function stateSummary(data: Data): string {
   const kanban = data.kanban.map((c) => `${c.nome}: ${c.itens.length}`).join(" · ");
   return [
     `--- ESTADO ATUAL (${new Date().toISOString().slice(0, 10)}) ---`,
-    `Placar: ${"R$ " + data.placar.acumulado.toLocaleString("pt-BR")} de ${"R$ " + data.placar.meta.toLocaleString("pt-BR")} (${data.placar.progresso}%) · Fase: ${data.placar.fase || "—"}`,
+    `Placar: ${"R$ " + data.placar.acumulado.toLocaleString("pt-BR")} de ${"R$ " + data.placar.meta.toLocaleString("pt-BR")} (${data.placar.progresso}%) · Fase: ${data.placar.fase || "-"}`,
     `Kanban: ${kanban}`,
     `Inbox: ${data.inbox.reduce((n, s) => n + (s.html.match(/<li>/g) || []).length, 0)} ideias abertas`,
     `Backlog: ${data.backlog.reduce((n, s) => n + (s.html.match(/<li>/g) || []).length, 0)} itens priorizados`,
