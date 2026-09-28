@@ -3,7 +3,7 @@
 // Regra de ouro: conversa primeiro, oferta depois — nunca citar preço no 1º contato.
 // O Caio edita os textos aqui sem mexer em componente.
 
-export type MsgTipo = "contato" | "oferta" | "followup1" | "followup2";
+export type MsgTipo = "contato" | "detalhe" | "oferta" | "followup1" | "followup2";
 
 // Promoção "Mês do Zeca" (20%): vale até 30/09 23:59:59 (horário de Brasília).
 // Depois dessa data, as versões (b) entram sozinhas.
@@ -13,64 +13,61 @@ export function promoAtiva(agora: Date): boolean {
   return agora.getTime() <= new Date(PROMO_ATE).getTime();
 }
 
-// ---------- ETAPA 1 — Primeiro contato (sem preço) ----------
+// ---------- ETAPA 1 — Primeiro contato (conexão, sem apontar erro) ----------
+// CONTATO_A == CONTATO_B: a promoção saiu da 1ª mensagem — o objetivo aqui é
+// identificar com quem falar e gerar curiosidade, citando o {site} pra pessoa validar.
 const CONTATO_A = `Olá! Tudo bem? Me chamo Everton, crio experiências digitais estratégicas que conectam sua essência ao público certo.
 
-Vi a {empresa} ({segmento}) e reparei uma coisa: {ponto}.
-
-Quando alguém procura {segmento} no Google, um site próprio passa mais confiança, explica melhor o que vocês fazem e vira contato novo — sem depender só de rede social.
-
-Estou com uma condição de **20% de desconto em novos projetos neste mês** (até 30/09).
-
-Dá uma olhada nos meus trabalhos em evertonbrito.com.
-
-Se quiser entender como ficaria pra {empresa}, me responde só: **TENHO INTERESSE**.`;
+Vi a {empresa} e fiquei curioso sobre um ponto na presença digital de vocês ({site}). Com quem posso falar sobre isso? Se preferir, posso te explicar por aqui.`;
 
 const CONTATO_B = `Olá! Tudo bem? Me chamo Everton, crio experiências digitais estratégicas que conectam sua essência ao público certo.
 
-Vi a {empresa} ({segmento}) e reparei uma coisa: {ponto}.
+Vi a {empresa} e fiquei curioso sobre um ponto na presença digital de vocês ({site}). Com quem posso falar sobre isso? Se preferir, posso te explicar por aqui.`;
 
-Quando alguém procura {segmento} no Google, um site próprio passa mais confiança, explica melhor o que vocês fazem e vira contato novo — sem depender só de rede social.
+// ---------- ETAPA 2 — Detalhe (após a pessoa responder) ----------
+const DETALHE_A = `Que bom te encontrar! Vi que dá pra fortalecer a presença digital de vocês — {ponto}. Isso passa mais confiança e traz cliente novo.
 
-Dá uma olhada nos meus trabalhos em evertonbrito.com.
+Estou com 20% OFF no Mês do Zeca, até 30/09. Dá uma olhada nos meus trabalhos em evertonbrito.com e me diz o que acha.`;
 
-Se quiser entender como ficaria pra {empresa}, me responde só: **TENHO INTERESSE**.`;
+const DETALHE_B = `Que bom te encontrar! Vi que dá pra fortalecer a presença digital de vocês — {ponto}. Isso passa mais confiança e traz cliente novo.
 
-// ---------- ETAPA 2 — Oferta (só depois do "TENHO INTERESSE") ----------
+Dá uma olhada nos meus trabalhos em evertonbrito.com e me diz o que acha.`;
+
+// ---------- ETAPA 3 — Oferta (só depois do interesse) ----------
 const OFERTA_A = `Perfeito! Deixa eu te mostrar os formatos e o investimento. Estou com 20% de desconto neste mês:
 
-🔹 **Landing Page** — ~~R$ 1.997~~ por **R$ 1.597**: uma página focada em captar contato e converter quem já te procura.
-🔹 **One Page** — ~~R$ 1.897~~ por **R$ 1.517**: seu negócio inteiro numa página só, direto ao ponto.
-🔹 **Página de Vendas** — ~~R$ 2.297~~ por **R$ 1.837**: página longa pra apresentar a oferta, responder às dúvidas e vender no automático.
-🔹 **Site Institucional** — ~~R$ 3.097~~ por **R$ 2.477**: várias páginas, mais autoridade e melhor posição no Google.
+🔹 *Landing Page* — ~R$ 1.997~ por *R$ 1.597*: uma página focada em captar contato e converter quem já te procura.
+🔹 *One Page* — ~R$ 1.897~ por *R$ 1.517*: seu negócio inteiro numa página só, direto ao ponto.
+🔹 *Página de Vendas* — ~R$ 2.297~ por *R$ 1.837*: página longa pra apresentar a oferta, responder às dúvidas e vender no automático.
+🔹 *Site Institucional* — ~R$ 3.097~ por *R$ 2.477*: várias páginas, mais autoridade e melhor posição no Google.
 
 Todos feitos com a identidade da {empresa}, funcionando bem no celular e no computador, com botão de contato direto no seu WhatsApp. Posso parcelar.
 
-Quer que eu monte a estrutura que imagino pra {empresa}? Se sim, me responde: **QUERO MEU SITE**.`;
+Quer que eu monte a estrutura que imagino pra {empresa}? Se sim, me responde: *QUERO MEU SITE*.`;
 
 const OFERTA_B = `Perfeito! Deixa eu te mostrar os formatos e o investimento:
 
-🔹 **Landing Page** — **R$ 1.997**: uma página focada em captar contato e converter quem já te procura.
-🔹 **One Page** — **R$ 1.897**: seu negócio inteiro numa página só, direto ao ponto.
-🔹 **Página de Vendas** — **R$ 2.297**: página longa pra apresentar a oferta, responder às dúvidas e vender no automático.
-🔹 **Site Institucional** — **R$ 3.097**: várias páginas, mais autoridade e melhor posição no Google.
+🔹 *Landing Page* — *R$ 1.997*: uma página focada em captar contato e converter quem já te procura.
+🔹 *One Page* — *R$ 1.897*: seu negócio inteiro numa página só, direto ao ponto.
+🔹 *Página de Vendas* — *R$ 2.297*: página longa pra apresentar a oferta, responder às dúvidas e vender no automático.
+🔹 *Site Institucional* — *R$ 3.097*: várias páginas, mais autoridade e melhor posição no Google.
 
 Todos feitos com a identidade da {empresa}, funcionando bem no celular e no computador, com botão de contato direto no seu WhatsApp. Posso parcelar.
 
-Quer que eu monte a estrutura que imagino pra {empresa}? Se sim, me responde: **QUERO MEU SITE**.`;
+Quer que eu monte a estrutura que imagino pra {empresa}? Se sim, me responde: *QUERO MEU SITE*.`;
 
 // ---------- ETAPA 4 — Follow-ups (sem pressionar) ----------
 const FOLLOW1_A = `Olá, {nome}! Passando só pra confirmar se você viu minha mensagem sobre a {empresa}.
 
-A ideia é um site que apresenta os serviços, fortalece a presença no Google e facilita o contato de cliente novo — e a **condição de 20% segue disponível até 30/09**.
+A ideia é um site que apresenta os serviços, fortalece a presença no Google e facilita o contato de cliente novo — e a *condição de 20% segue disponível até 30/09*.
 
-Se tiver interesse, me responde **SIM** que te envio os detalhes. Se preferir, também tiro dúvidas por aqui.`;
+Se tiver interesse, me responde *SIM* que te envio os detalhes. Se preferir, também tiro dúvidas por aqui.`;
 
 const FOLLOW1_B = `Olá, {nome}! Passando só pra confirmar se você viu minha mensagem sobre a {empresa}.
 
 A ideia é um site que apresenta os serviços, fortalece a presença no Google e facilita o contato de cliente novo.
 
-Se tiver interesse, me responde **SIM** que te envio os detalhes. Se preferir, também tiro dúvidas por aqui.`;
+Se tiver interesse, me responde *SIM* que te envio os detalhes. Se preferir, também tiro dúvidas por aqui.`;
 
 const FOLLOW2_A = `Olá, {nome}! Vou encerrar meu contato por aqui pra não te incomodar.
 
@@ -84,14 +81,15 @@ Se um dia a {empresa} quiser um site que fortaleça a presença dela na internet
 
 Sucesso por aí!`;
 
-type Ctx = { empresa: string; segmento: string; ponto: string; nome: string };
+type Ctx = { empresa: string; segmento: string; ponto: string; nome: string; site: string };
 
 function preencher(texto: string, c: Ctx): string {
   return texto
     .replace(/\{empresa\}/g, c.empresa)
     .replace(/\{segmento\}/g, c.segmento)
     .replace(/\{ponto\}/g, c.ponto)
-    .replace(/\{nome\}/g, c.nome);
+    .replace(/\{nome\}/g, c.nome)
+    .replace(/\{site\}/g, c.site);
 }
 
 // 1ª falta de prioridade alta → frase natural, em minúscula, pronta pra encaixar
@@ -128,7 +126,7 @@ export function pontoNatural(item: string): string {
   return suave || "a presença de vocês na internet tem um ponto a melhorar";
 }
 
-type LeadMsg = { nome: string; segmento: string };
+type LeadMsg = { nome: string; segmento: string; site?: string };
 type AnaliseMsg = { faltas?: { prioridade: string; item: string }[] } | null;
 
 export function montarMensagem(tipo: MsgTipo, lead: LeadMsg, analise: AnaliseMsg, agora: Date): string {
@@ -144,11 +142,14 @@ export function montarMensagem(tipo: MsgTipo, lead: LeadMsg, analise: AnaliseMsg
   const ponto = falta ? pontoNatural(falta.item) : "a presença de vocês na internet pode trazer mais clientes do que traz hoje";
   // `{nome}` (follow-ups) usa o nome do lead — a ficha não tem nome de contato separado.
   const nome = empresa;
-  const c: Ctx = { empresa, segmento, ponto, nome };
+  // `{site}`: link do lead sem https:// e sem barra final; sem site → perfil no Google.
+  const site = ((lead.site || "").trim().replace(/^https?:\/\//i, "").replace(/\/+$/, "")) || "o perfil de vocês no Google";
+  const c: Ctx = { empresa, segmento, ponto, nome, site };
   const promo = promoAtiva(agora);
 
   switch (tipo) {
     case "contato": return preencher(promo ? CONTATO_A : CONTATO_B, c);
+    case "detalhe": return preencher(promo ? DETALHE_A : DETALHE_B, c);
     case "oferta": return preencher(promo ? OFERTA_A : OFERTA_B, c);
     case "followup1": return preencher(promo ? FOLLOW1_A : FOLLOW1_B, c);
     case "followup2": return preencher(promo ? FOLLOW2_A : FOLLOW2_B, c);

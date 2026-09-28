@@ -1,51 +1,49 @@
 # Mensagens de WhatsApp — Everton (Marca Digital / Studio)
 
 Base: estrutura do script do Junior Lima (funil **conversa primeiro, oferta depois**), preços e tom da casa.
-Regras: nunca citar preço no primeiro contato · primeiro contato com no máximo ~700 caracteres · por projeto, parcelável.
+Regras: nunca citar preço no primeiro contato · primeiro contato com no máximo ~350 caracteres · por projeto, parcelável.
 
-> **Como usar os placeholders:** `{empresa}` = nome do negócio · `{segmento}` = ramo (ex.: "barbearia", "clínica odontológica", "restaurante") · `{ponto}` = **1 fato concreto** visto na análise de presença do lead · `{nome}` = primeiro nome do contato.
+> **Como usar os placeholders:** `{empresa}` = nome do negócio · `{segmento}` = ramo (ex.: "barbearia", "clínica odontológica", "restaurante") · `{ponto}` = **1 fato concreto** visto na análise de presença do lead · `{nome}` = primeiro nome do contato · `{site}` = link do site do lead sem `https://` (ex.: `www.exemplo.com.br`), ou **"o perfil de vocês no Google"** se o lead não tiver site.
 >
 > Exemplos de `{ponto}`: "o site de vocês não abre bem no celular" · "não encontrei site de vocês no Google" · "o Instagram de vocês está ótimo, mas não tem link pra um site".
 
 ---
 
-## ETAPA 1 — Primeiro contato (sem preço)
+## ETAPA 1 — Primeiro contato (conexão, sem apontar erro)
 
-Objetivo: **conseguir uma resposta**. Não explicar tudo, não negociar, não falar de preço.
-
-### Versão (a) — com a promoção "Mês do Zeca"
+Objetivo: **identificar com quem falar** e gerar curiosidade. Não explicar tudo, não apontar o problema, não falar de preço.
 
 > Olá! Tudo bem? Me chamo Everton, crio experiências digitais estratégicas que conectam sua essência ao público certo.
 >
-> Vi a {empresa} ({segmento}) e reparei uma coisa: {ponto}.
->
-> Quando alguém procura {segmento} no Google, um site próprio passa mais confiança, explica melhor o que vocês fazem e vira contato novo — sem depender só de rede social.
->
-> Estou com uma condição de **20% de desconto em novos projetos neste mês** (até 30/09).
->
-> Dá uma olhada nos meus trabalhos em evertonbrito.com.
->
-> Se quiser entender como ficaria pra {empresa}, me responde só: **TENHO INTERESSE**.
+> Vi a {empresa} e fiquei curioso sobre um ponto na presença digital de vocês ({site}). Com quem posso falar sobre isso? Se preferir, posso te explicar por aqui.
 
-**Quando usar:** apenas enquanto a promoção estiver valendo (até 30/09).
-
-### Versão (b) — sem promoção (evergreen)
-
-> Olá! Tudo bem? Me chamo Everton, crio experiências digitais estratégicas que conectam sua essência ao público certo.
->
-> Vi a {empresa} ({segmento}) e reparei uma coisa: {ponto}.
->
-> Quando alguém procura {segmento} no Google, um site próprio passa mais confiança, explica melhor o que vocês fazem e vira contato novo — sem depender só de rede social.
->
-> Dá uma olhada nos meus trabalhos em evertonbrito.com.
->
-> Se quiser entender como ficaria pra {empresa}, me responde só: **TENHO INTERESSE**.
-
-**Quando usar:** padrão! Fora da promoção, ou quando o lead for sensível a desconto/urgência artificial. É a versão para sempre.
+**Nota v2:** a promoção SAIU da 1ª mensagem — as versões (a) e (b) ficaram **idênticas**. A promoção ("Mês do Zeca", 20% OFF) agora entra só na mensagem de **Detalhe** (quando a pessoa responder) e na **Oferta**. O detalhe (o que falta / o que a empresa está deixando de ganhar) também fica para a etapa de Detalhe.
 
 ---
 
-## ETAPA 2 — Oferta (só depois do "TENHO INTERESSE")
+## ETAPA 2 — Detalhe (após a pessoa responder)
+
+Agradece, apresenta o ponto {ponto} como **oportunidade** (nunca como erro deles) e convida para ver os trabalhos em evertonbrito.com.
+
+### Versão (a) — com a promoção "Mês do Zeca"
+
+> Que bom te encontrar! Vi que dá pra fortalecer a presença digital de vocês — {ponto}. Isso passa mais confiança e traz cliente novo.
+>
+> Estou com 20% OFF no Mês do Zeca, até 30/09. Dá uma olhada nos meus trabalhos em evertonbrito.com e me diz o que acha.
+
+**Quando usar:** enquanto a promoção estiver valendo (até 30/09).
+
+### Versão (b) — sem promoção (evergreen)
+
+> Que bom te encontrar! Vi que dá pra fortalecer a presença digital de vocês — {ponto}. Isso passa mais confiança e traz cliente novo.
+>
+> Dá uma olhada nos meus trabalhos em evertonbrito.com e me diz o que acha.
+
+**Quando usar:** padrão! Fora da promoção, ou quando o lead for sensível a desconto/urgência artificial.
+
+---
+
+## ETAPA 3 — Oferta (só depois do interesse)
 
 Apresente o pacote certo pro momento do negócio, não a lista toda. Sempre com: identidade da empresa, responsivo (celular e computador), contato direto pelo WhatsApp.
 
@@ -77,7 +75,7 @@ Apresente o pacote certo pro momento do negócio, não a lista toda. Sempre com:
 
 ---
 
-## ETAPA 3 — Respostas curtas às objeções
+## ETAPA 4 — Respostas curtas às objeções
 
 Sempre responder em 1–2 linhas e apontar o próximo passo.
 
@@ -98,7 +96,7 @@ Sempre responder em 1–2 linhas e apontar o próximo passo.
 
 ---
 
-## ETAPA 4 — Follow-up (sem pressionar)
+## ETAPA 5 — Follow-up (sem pressionar)
 
 ### Follow-up 1 — após 1 a 2 dias
 

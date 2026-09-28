@@ -715,6 +715,7 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
           className="w-full h-[44px] px-3 rounded-xl bg-[var(--bg-2)] border border-[var(--line)] text-[.84rem] text-[#e8e8e6] outline-none focus:border-[#3ddc84]/70 transition-colors"
         >
           <option value="contato">Primeiro contato</option>
+          <option value="detalhe">Detalhe</option>
           <option value="oferta">Oferta</option>
           <option value="followup1">Follow-up 1</option>
           <option value="followup2">Follow-up 2</option>
