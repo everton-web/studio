@@ -48,9 +48,9 @@ export function Footer() {
     <footer style={{ background: "var(--color-bg)" }}>
       <section
         className="relative z-[2]"
-        style={{ padding: "clamp(6rem, 14vh, 11rem) 0" }}
+        style={{ padding: "var(--section-pad) 0" }}
       >
-        <div className="max-w-[1280px] mx-auto px-8 max-md:px-6 flex flex-col items-center text-center">
+        <div className="container-site flex flex-col items-center text-center">
           <LineReveal
             as="h2"
             lines={[
@@ -62,10 +62,10 @@ export function Footer() {
             className="mb-10"
             style={{
               fontFamily: "var(--font-sans)",
-              fontSize: "clamp(2.6rem, 8vw, 7rem)",
+              fontSize: "clamp(2.6rem, 9vw, 8.5rem)",
               fontWeight: 500,
-              lineHeight: 1.05,
-              letterSpacing: "-0.03em",
+              lineHeight: 1,
+              letterSpacing: "-0.075em",
               textAlign: "center",
             }}
           />
@@ -106,8 +106,8 @@ export function Footer() {
       <div className="divider" />
 
       <div
-        className="max-w-[1280px] mx-auto px-8 max-md:px-6 relative z-[2]"
-        style={{ padding: "clamp(3rem, 6vh, 5rem) 2rem clamp(2rem, 4vh, 3rem)" }}
+        className="relative z-[2]"
+        style={{ maxWidth: "var(--container-max)", marginInline: "auto", padding: "clamp(3rem, 6vh, 5rem) var(--gutter) clamp(2rem, 4vh, 3rem)" }}
       >
         <div className="flex items-start justify-between gap-16 max-md:flex-col max-md:gap-10 mb-12 max-md:mb-8">
           <div>

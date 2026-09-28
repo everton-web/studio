@@ -114,7 +114,7 @@
 
 .metaLine {
   font-size: 1rem;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -291,7 +291,7 @@
 }
 
 .sectionHead p {
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   font-size: 0.98rem;
   margin-top: 8px;
   max-width: 46ch;
@@ -464,7 +464,7 @@
 
 .formula {
   font-size: 0.8rem;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   background: var(--color-bg-elevated);
   border-radius: 10px;
   padding: 10px 14px;
@@ -498,13 +498,13 @@
 
 .resultUnit {
   font-size: 1rem;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   padding-bottom: 6px;
 }
 
 .resultPlaceholder {
   font-size: 1.05rem;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   padding: 8px 0 14px;
   text-wrap: pretty;
 }
@@ -584,7 +584,7 @@
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   font-weight: 500;
   font-size: 1rem;
   pointer-events: none;

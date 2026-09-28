@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import type { CSSProperties, ReactNode } from "react";
 
-const ease = [0.22, 1, 0.36, 1] as const;
+const ease = [0.16, 1, 0.3, 1] as const;
 
 type Tag = "h1" | "h2" | "h3" | "p";
 
@@ -69,8 +69,14 @@ export function LineReveal({
   );
 }
 
+interface WordToken {
+  t: string;
+  accent?: boolean;
+}
+
 interface WordRevealProps {
-  text: string;
+  text?: string;
+  segments?: WordToken[];
   className?: string;
   delay?: number;
   stagger?: number;
@@ -79,18 +85,31 @@ interface WordRevealProps {
 
 export function WordReveal({
   text,
+  segments,
   className,
   delay = 0,
   stagger = 0.03,
   style,
 }: WordRevealProps) {
   const reduced = useReducedMotion();
-  const words = text.split(" ");
+
+  const tokens: WordToken[] = segments ?? [{ t: text ?? "" }];
+  const words: { t: string; accent: boolean }[] = [];
+  for (const seg of tokens) {
+    for (const part of seg.t.split(" ")) {
+      if (part === "") continue;
+      words.push({ t: part, accent: !!seg.accent });
+    }
+  }
 
   if (reduced) {
     return (
       <span className={className} style={style}>
-        {text}
+        {tokens.map((seg, i) => (
+          <span key={i} className={seg.accent ? "serif" : undefined}>
+            {seg.t}{" "}
+          </span>
+        ))}
       </span>
     );
   }
@@ -108,17 +127,12 @@ export function WordReveal({
               hidden: { y: "110%" },
               visible: (idx: number) => ({
                 y: "0%",
-                transition: {
-                  duration: 0.9,
-                  ease,
-                  delay: delay + idx * stagger,
-                },
+                transition: { duration: 0.9, ease, delay: delay + idx * stagger },
               }),
             }}
-            className="inline-block"
+            className={`inline-block ${word.accent ? "serif" : ""}`}
           >
-            {word}
-            {i < words.length - 1 ? "\u00A0" : ""}
+            {word.t + (i < words.length - 1 ? "\u00A0" : "")}
           </motion.span>
         </span>
       ))}

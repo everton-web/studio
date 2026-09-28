@@ -113,6 +113,7 @@ export const translations = {
       titleBefore: "Projetos",
       titleAccent: "selecionados",
       cta: "Iniciar um projeto",
+      seeAll: "Ver todos",
     },
     contact: {
       label: "Contato",
@@ -268,6 +269,7 @@ export const translations = {
       titleBefore: "Selected",
       titleAccent: "projects",
       cta: "Start a project",
+      seeAll: "See all",
     },
     contact: {
       label: "Contact",

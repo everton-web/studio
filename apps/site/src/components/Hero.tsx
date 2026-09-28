@@ -6,7 +6,7 @@ import { TriangleIcon } from "./TriangleIcon";
 import { MagneticButton } from "./MagneticButton";
 import { useLang } from "@/context/LanguageContext";
 
-const ease = [0.22, 1, 0.36, 1] as const;
+const ease = [0.16, 1, 0.3, 1] as const;
 
 function colarUltimaPalavra(
   linha: ReadonlyArray<{ t: string; accent: boolean }>,
@@ -47,12 +47,12 @@ export function Hero() {
       ref={ref}
       id="hero"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
-      style={{ background: "#040404", paddingTop: "var(--header-h)" }}
+      style={{ background: "var(--color-bg)", paddingTop: "var(--header-h)" }}
     >
       {/* SLOT IMAGEM DE FUNDO: <div className="absolute inset-0 z-[1]"><Image ... /></div> · a foto do Everton entra aqui quando enviada */}
       <motion.div
         style={{ y: contentY }}
-        className="relative z-[2] w-full max-w-[1280px] mx-auto px-8 max-md:px-6 text-center flex flex-col items-center"
+        className="relative z-[2] container-site text-center flex flex-col items-center"
       >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -69,11 +69,10 @@ export function Hero() {
           className="mb-6 max-md:mb-5"
           style={{
             fontFamily: "var(--font-sans)",
-            fontSize: "clamp(1.5rem, 3.1vw, 2.55rem)",
-            fontWeight: 400,
-            lineHeight: 1.18,
-            letterSpacing: "-0.025em",
-            maxWidth: "1080px",
+            fontSize: "clamp(2.9rem, 11vw, 11rem)",
+            fontWeight: 500,
+            lineHeight: 1,
+            letterSpacing: "-0.075em",
           }}
         >
           {t.hero.lines.map((rawLine, i) => {

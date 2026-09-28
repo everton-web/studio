@@ -10,7 +10,7 @@ import { precoComDesconto, formatBRL } from "@/lib/promo";
 import { PromoBanner } from "./PromoBanner";
 import { semViuva } from "@/lib/texto";
 
-const cardTransition = { duration: 0.4, ease: [0.22, 1, 0.36, 1] as const };
+const cardTransition = { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const };
 
 export function Services() {
   const { t } = useLang();
@@ -19,12 +19,12 @@ export function Services() {
   return (
     <section
       id="services"
-      style={{ background: "var(--color-bg-soft)", padding: "clamp(6rem, 12vh, 10rem) 0" }}
+      style={{ background: "var(--color-bg-soft)", padding: "var(--section-pad) 0" }}
     >
-      <div className="relative z-[2] max-w-[1280px] mx-auto px-8 max-md:px-6">
+      <div className="relative z-[2] container-site">
         <AnimatedSection>
           <div className="flex items-center gap-6 mb-16 max-md:mb-10">
-            <span className="section-number">02</span>
+            <span className="section-number">01</span>
             <div className="divider-accent" />
             <span className="section-label">
               <TriangleIcon className="w-3 h-3" />
@@ -40,13 +40,13 @@ export function Services() {
               ]}
               style={{
                 fontFamily: "var(--font-sans)",
-                fontSize: "clamp(1.9rem, 4vw, 3.2rem)",
+                fontSize: "clamp(2.6rem, 9vw, 8.5rem)",
                 fontWeight: 500,
-                lineHeight: 1.1,
-                letterSpacing: "-0.02em",
+                lineHeight: 1,
+                letterSpacing: "-0.075em",
               }}
             />
-            <p className="text-sm text-[var(--color-text-muted)] max-w-[340px]" style={{ lineHeight: 1.7 }}>
+            <p className="text-[var(--color-text-secondary)] max-w-[340px]" style={{ lineHeight: 1.7 }}>
               {t.services.intro}
             </p>
           </div>
@@ -60,7 +60,7 @@ export function Services() {
               <motion.div
                 whileHover={{ y: -4 }}
                 transition={cardTransition}
-                className="group relative overflow-hidden rounded-[20px] p-10 max-md:p-7 h-full flex flex-col"
+                className="group relative overflow-hidden rounded-[14px] p-10 max-md:p-7 h-full flex flex-col"
                 style={{
                   background: "var(--color-bg-card)",
                   border: "1px solid var(--color-border)",
@@ -84,16 +84,16 @@ export function Services() {
                 <h3
                   className="text-[var(--color-text)] mb-4"
                   style={{
-                    fontSize: "clamp(1.2rem, 1.9vw, 1.45rem)",
+                    fontSize: "clamp(1.5rem, 3vw, 2.4rem)",
                     fontWeight: 500,
-                    lineHeight: 1.3,
-                    letterSpacing: "-0.01em",
+                    lineHeight: 1.1,
+                    letterSpacing: "-0.04em",
                   }}
                 >
                   {semViuva(service.title)}
                 </h3>
 
-                <p className="text-sm text-[var(--color-text-muted)] mb-8" style={{ lineHeight: 1.7 }}>
+                <p className="text-[var(--color-text-secondary)] mb-8" style={{ lineHeight: 1.7 }}>
                   {service.result}
                 </p>
 
@@ -150,7 +150,7 @@ export function Services() {
 
         {/* Seção especial: Consultoria & Mentoria (acompanhamento, não entregável) */}
         <div
-          className="mt-6 rounded-[20px] p-10 max-md:p-7"
+          className="mt-6 rounded-[22px] p-10 max-md:p-7"
           style={{
             background:
               "linear-gradient(180deg, var(--color-accent-subtle), transparent 60%)",
@@ -177,7 +177,7 @@ export function Services() {
                 </h3>
               </div>
               <p
-                className="text-sm text-[var(--color-text-muted)] max-w-[360px] max-md:max-w-none"
+                className="text-[var(--color-text-secondary)] max-w-[360px] max-md:max-w-none"
                 style={{ lineHeight: 1.7 }}
               >
                 {t.services.special.intro}
@@ -191,7 +191,7 @@ export function Services() {
                 <motion.div
                   whileHover={{ y: -4 }}
                   transition={cardTransition}
-                  className="group relative overflow-hidden rounded-[16px] p-7 h-full flex flex-col"
+                  className="group relative overflow-hidden rounded-[14px] p-7 h-full flex flex-col"
                   style={{
                     background: "var(--color-bg-card)",
                     border: "1px solid var(--color-border)",
@@ -203,7 +203,7 @@ export function Services() {
                     {semViuva(item.title)}
                   </h4>
                   <p
-                    className="text-sm text-[var(--color-text-muted)] mb-8"
+                    className="text-[var(--color-text-secondary)] mb-8"
                     style={{ lineHeight: 1.7 }}
                   >
                     {item.description}

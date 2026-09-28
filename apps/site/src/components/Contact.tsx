@@ -65,16 +65,16 @@ export function Contact() {
     border: "1px solid var(--color-border)",
   };
   const inputClass =
-    "w-full py-3.5 px-4 text-[0.9rem] text-[var(--color-text)] rounded-xl outline-none transition-all duration-300 focus:border-[var(--color-accent)] focus:bg-[rgba(255,64,0,0.04)]";
+    "w-full py-3.5 px-4 text-[0.9rem] text-[var(--color-text)] rounded-[8px] outline-none transition-all duration-300 focus:border-[var(--color-accent)] focus:bg-[rgba(255,64,0,0.04)]";
   const labelClass =
     "block text-[0.75rem] font-medium tracking-[0.06em] uppercase text-[var(--color-text-muted)] mb-2";
 
   return (
     <section
       id="contact"
-      style={{ background: "var(--color-bg-soft)", padding: "clamp(6rem, 12vh, 10rem) 0" }}
+      style={{ background: "var(--color-bg-soft)", padding: "var(--section-pad) 0" }}
     >
-      <div className="relative z-[2] max-w-[1280px] mx-auto px-8 max-md:px-6">
+      <div className="relative z-[2] container-site">
         <div className="flex items-start gap-20 max-lg:flex-col max-lg:gap-16">
           <div className="flex-1 max-w-[520px]">
             <AnimatedSection>
@@ -91,10 +91,10 @@ export function Contact() {
                 className="mb-6"
                 style={{
                   fontFamily: "var(--font-sans)",
-                  fontSize: "clamp(1.9rem, 4vw, 3.2rem)",
+                  fontSize: "clamp(2rem, 5.2vw, 4.25rem)",
                   fontWeight: 500,
-                  lineHeight: 1.1,
-                  letterSpacing: "-0.02em",
+                  lineHeight: 1.05,
+                  letterSpacing: "-0.06em",
                 }}
               >
                 {t.contact.titleBefore}
@@ -104,7 +104,7 @@ export function Contact() {
               </h2>
 
               <p
-                className="mb-10 text-[var(--color-text-muted)]"
+                className="mb-10 text-[var(--color-text-secondary)]"
                 style={{ fontSize: "0.95rem", lineHeight: 1.75, maxWidth: "400px" }}
               >
                 {t.contact.intro}

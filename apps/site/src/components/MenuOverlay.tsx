@@ -6,7 +6,7 @@ import { PromoBanner } from "./PromoBanner";
 import { LanguageToggle } from "./LanguageToggle";
 import { useLang } from "@/context/LanguageContext";
 
-const ease = [0.22, 1, 0.36, 1] as const;
+const ease = [0.16, 1, 0.3, 1] as const;
 
 const listVariants = {
   hidden: {},
@@ -61,7 +61,7 @@ export function MenuOverlay({ open, onClose }: Props) {
       {open && (
         <motion.div
           className="fixed inset-0 z-[2000] flex flex-col overflow-y-auto"
-          style={{ background: "#040404" }}
+          style={{ background: "var(--color-bg)" }}
           initial={reduced ? { opacity: 1 } : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

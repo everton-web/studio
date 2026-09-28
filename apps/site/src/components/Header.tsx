@@ -23,7 +23,7 @@ export function Header() {
   const blur = useTransform(progress, [0, 1], [0, 22]);
   const border = useTransform(progress, [0, 1], [0, 0.08]);
 
-  const background = useMotionTemplate`rgba(4,4,4,${alpha})`;
+  const background = useMotionTemplate`rgba(10,10,11,${alpha})`;
   const backdropFilter = useMotionTemplate`blur(${blur}px)`;
   const WebkitBackdropFilter = useMotionTemplate`blur(${blur}px)`;
   const borderBottom = useMotionTemplate`1px solid rgba(255,255,255,${border})`;
@@ -49,14 +49,14 @@ export function Header() {
         ref={headerRef}
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
         className="fixed top-0 left-0 w-full z-[1000]"
       >
         <PromoBanner variant="top" />
         <motion.div
-          className="max-w-[1280px] mx-auto px-8 max-md:px-6 flex items-center justify-between"
+          className="container-site flex items-center justify-between"
           style={{
-            height: "72px",
+            height: "96px",
             background,
             backdropFilter,
             WebkitBackdropFilter,

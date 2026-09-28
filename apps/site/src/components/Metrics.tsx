@@ -47,8 +47,8 @@ export function Metrics() {
     <section className="relative" style={{ background: "var(--color-bg-soft)" }}>
       <div className="divider" />
       <div
-        className="relative z-[2] max-w-[1280px] mx-auto px-8 max-md:px-6 grid grid-cols-3 max-md:grid-cols-1 max-md:gap-8"
-        style={{ padding: "clamp(3rem, 5vh, 4rem) 2rem" }}
+        className="relative z-[2] grid grid-cols-3 max-md:grid-cols-1 max-md:gap-8"
+        style={{ maxWidth: "var(--container-max)", marginInline: "auto", padding: "clamp(3rem, 5vh, 4rem) var(--gutter)" }}
       >
         {metrics.map((m, i) => (
           <motion.div
@@ -56,7 +56,7 @@ export function Metrics() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: i * 0.1 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: i * 0.1 }}
             className="text-center max-md:flex max-md:items-center max-md:gap-4 max-md:text-left"
           >
             <p

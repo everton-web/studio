@@ -105,7 +105,7 @@ export function CustomCursor() {
           height: hovered ? 56 : 34,
           border: "1px solid rgba(255,64,0,0.7)",
           transition:
-            "width 0.3s cubic-bezier(0.22, 1, 0.36, 1), height 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
+            "width 0.3s cubic-bezier(0.16, 1, 0.3, 1), height 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       >
         {label ? (

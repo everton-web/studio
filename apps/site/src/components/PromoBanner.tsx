@@ -33,14 +33,14 @@ export function PromoBanner({ variant }: { variant: "top" | "inline" }) {
       className={
         isTop
           ? "w-full flex items-center justify-center px-4 py-2"
-          : "w-full flex items-center justify-center px-4 py-3 rounded-[16px] mb-6"
+          : "w-full flex items-center justify-center px-4 py-3 rounded-[8px] mb-6"
       }
       style={
         isTop
           ? {
               background:
                 "linear-gradient(90deg, #FF4000, #ff7a4d 50%, #FF4000)",
-              color: "#040404",
+              color: "#0a0a0b",
             }
           : {
               background: "var(--color-accent-subtle)",

@@ -19,12 +19,19 @@ import { semViuva } from "@/lib/texto";
 
 const springConfig = { damping: 20, stiffness: 200, mass: 0.5 };
 
+const GRAIN =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
+
+const restRatios = ["16 / 10", "4 / 3", "16 / 10", "4 / 3", "16 / 10", "4 / 3"];
+
 function ProjectCard({
   project,
   featured = false,
+  ratio = "16 / 10",
 }: {
   project: (typeof projects)[0];
   featured?: boolean;
+  ratio?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
@@ -69,10 +76,10 @@ function ProjectCard({
         onMouseMove={handleMove}
         onMouseLeave={handleLeave}
         whileHover={{ y: -4 }}
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] as const }}
-        className="relative rounded-[20px] overflow-hidden"
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] as const }}
+        className="relative rounded-[14px] overflow-hidden"
         style={{
-          aspectRatio: featured ? "21 / 10" : "16 / 10",
+          aspectRatio: featured ? "21 / 10" : ratio,
           background: "var(--color-bg-card)",
           border: "1px solid var(--color-border)",
         }}
@@ -84,7 +91,7 @@ function ProjectCard({
           <motion.div
             className="absolute inset-0"
             style={{ x: springX, y: springY, scale: hovered ? 1.06 : 1 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as const }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] as const }}
           >
             <Image
               src={project.cover}
@@ -97,10 +104,16 @@ function ProjectCard({
           </motion.div>
         </motion.div>
 
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-[1]"
+          style={{ backgroundImage: GRAIN, opacity: 0.05, mixBlendMode: "overlay" }}
+        />
+
         <div
-          className="absolute inset-0 flex items-end p-8 max-md:p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-400 z-[1]"
+          className="absolute inset-0 flex items-end p-8 max-md:p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-400 z-[2]"
           style={{
-            background: "linear-gradient(to top, rgba(4,4,4,0.95) 0%, rgba(4,4,4,0.5) 40%, transparent 100%)",
+            background: "linear-gradient(to top, rgba(10,10,11,0.95) 0%, rgba(10,10,11,0.5) 40%, transparent 100%)",
           }}
         >
           <div className="flex items-end justify-between w-full max-md:flex-col max-md:items-start max-md:gap-2">
@@ -125,6 +138,48 @@ function ProjectCard({
   );
 }
 
+function SeeAllCard() {
+  const { t } = useLang();
+  return (
+    <a
+      href="https://www.behance.net/evertonbrito1"
+      target="_blank"
+      rel="noopener noreferrer"
+      data-cursor={t.cursor.open}
+      className="group flex flex-col justify-between rounded-[14px] p-8 max-md:p-6 transition-colors duration-300 hover:border-[var(--color-border-active)]"
+      style={{
+        aspectRatio: "16 / 10",
+        background: "var(--color-bg-card)",
+        border: "1px solid var(--color-border)",
+      }}
+    >
+      <span className="section-label">{t.portfolio.label}</span>
+      <div className="flex items-end justify-between gap-4">
+        <span
+          className="text-[var(--color-text)]"
+          style={{ fontSize: "clamp(1.5rem, 3vw, 2.4rem)", fontWeight: 500, letterSpacing: "-0.04em", lineHeight: 1.1 }}
+        >
+          {t.portfolio.seeAll}
+        </span>
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-[var(--color-accent)] group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-500"
+          aria-hidden
+        >
+          <path d="m7 17 9.2-9.2M17 17V8H8" />
+        </svg>
+      </div>
+    </a>
+  );
+}
+
 export function Portfolio() {
   const [featured, ...rest] = projects;
   const { t } = useLang();
@@ -132,12 +187,12 @@ export function Portfolio() {
   return (
     <section
       id="portfolio"
-      style={{ background: "var(--color-bg)", padding: "clamp(6rem, 12vh, 10rem) 0" }}
+      style={{ background: "var(--color-bg)", padding: "var(--section-pad) 0" }}
     >
-      <div className="relative z-[2] max-w-[1280px] mx-auto px-8 max-md:px-6">
+      <div className="relative z-[2] container-site">
         <AnimatedSection>
           <div className="flex items-center gap-6 mb-16 max-md:mb-10">
-            <span className="section-number">03</span>
+            <span className="section-number">02</span>
             <div className="divider-accent" />
             <span className="section-label">
               <TriangleIcon className="w-3 h-3" />
@@ -153,10 +208,10 @@ export function Portfolio() {
               ]}
               style={{
                 fontFamily: "var(--font-sans)",
-                fontSize: "clamp(1.9rem, 4vw, 3.2rem)",
+                fontSize: "clamp(2.6rem, 9vw, 8.5rem)",
                 fontWeight: 500,
-                lineHeight: 1.1,
-                letterSpacing: "-0.02em",
+                lineHeight: 1,
+                letterSpacing: "-0.075em",
               }}
             />
             <a
@@ -178,9 +233,12 @@ export function Portfolio() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {rest.map((project, i) => (
             <AnimatedSection key={project.slug} delay={0.05 * (i + 1)}>
-              <ProjectCard project={project} />
+              <ProjectCard project={project} ratio={restRatios[i] ?? "16 / 10"} />
             </AnimatedSection>
           ))}
+          <AnimatedSection delay={0.05 * (rest.length + 1)}>
+            <SeeAllCard />
+          </AnimatedSection>
         </div>
       </div>
     </section>
