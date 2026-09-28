@@ -36,8 +36,8 @@ export const translations = {
       statementBefore: "Sou parceiro estratégico de quem busca",
       statementStrong: "resultado real",
       statementMiddle: "no digital. De marcas locais a operações internacionais, entrego projetos que",
-      statementAccent: "funcionam",
-      statementAfter: ", convertem e escalam.",
+      statementAccent: "funcionam,",
+      statementAfter: "convertem e escalam.",
       body: "Cada projeto começa com uma pergunta: qual problema de negócio estamos resolvendo? A partir daí, o design é consequência da estratégia, não o contrário. O resultado é um site que não apenas existe, mas trabalha pelo seu negócio 24h por dia.",
       yearsLabel: "anos em\nweb design",
       skills: [
@@ -192,8 +192,8 @@ export const translations = {
       statementBefore: "I'm a strategic partner for those seeking",
       statementStrong: "real results",
       statementMiddle: "in the digital space. From local brands to international operations, I deliver projects that",
-      statementAccent: "work",
-      statementAfter: ", convert and scale.",
+      statementAccent: "work,",
+      statementAfter: "convert and scale.",
       body: "Every project starts with one question: what business problem are we solving? From there, design is a consequence of strategy, not the other way around. The result is a website that doesn't just exist, but works for your business 24/7.",
       yearsLabel: "years in\nweb design",
       skills: [

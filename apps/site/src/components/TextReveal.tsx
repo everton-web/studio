@@ -140,6 +140,13 @@ export function WordReveal({
     }
   }
 
+  for (let i = words.length - 1; i > 0; i--) {
+    if (/^[.,;:!?…]+$/.test(words[i].t)) {
+      words[i - 1] = { ...words[i - 1], t: words[i - 1].t + words[i].t };
+      words.splice(i, 1);
+    }
+  }
+
   if (reduced) {
     return (
       <span className={className} style={style}>
