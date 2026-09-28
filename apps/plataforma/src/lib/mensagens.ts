@@ -14,7 +14,7 @@ export function promoAtiva(agora: Date): boolean {
 }
 
 // ---------- ETAPA 1 — Primeiro contato (sem preço) ----------
-const CONTATO_A = `Olá! Tudo bem? Me chamo Everton, da Marca Digital — crio sites para empresas.
+const CONTATO_A = `Olá! Tudo bem? Me chamo Everton, crio experiências digitais estratégicas que conectam sua essência ao público certo.
 
 Vi a {empresa} ({segmento}) e reparei uma coisa: {ponto}.
 
@@ -26,7 +26,7 @@ Dá uma olhada nos meus trabalhos em evertonbrito.com.
 
 Se quiser entender como ficaria pra {empresa}, me responde só: **TENHO INTERESSE**.`;
 
-const CONTATO_B = `Olá! Tudo bem? Me chamo Everton, da Marca Digital — crio sites para empresas.
+const CONTATO_B = `Olá! Tudo bem? Me chamo Everton, crio experiências digitais estratégicas que conectam sua essência ao público certo.
 
 Vi a {empresa} ({segmento}) e reparei uma coisa: {ponto}.
 

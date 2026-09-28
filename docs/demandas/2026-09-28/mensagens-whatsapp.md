@@ -15,7 +15,7 @@ Objetivo: **conseguir uma resposta**. Não explicar tudo, não negociar, não fa
 
 ### Versão (a) — com a promoção "Mês do Zeca"
 
-> Olá! Tudo bem? Me chamo Everton, da Marca Digital — crio sites para empresas.
+> Olá! Tudo bem? Me chamo Everton, crio experiências digitais estratégicas que conectam sua essência ao público certo.
 >
 > Vi a {empresa} ({segmento}) e reparei uma coisa: {ponto}.
 >
@@ -31,7 +31,7 @@ Objetivo: **conseguir uma resposta**. Não explicar tudo, não negociar, não fa
 
 ### Versão (b) — sem promoção (evergreen)
 
-> Olá! Tudo bem? Me chamo Everton, da Marca Digital — crio sites para empresas.
+> Olá! Tudo bem? Me chamo Everton, crio experiências digitais estratégicas que conectam sua essência ao público certo.
 >
 > Vi a {empresa} ({segmento}) e reparei uma coisa: {ponto}.
 >
