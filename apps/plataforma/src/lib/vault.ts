@@ -367,13 +367,48 @@ export async function leadBase(id: string) {
   };
 }
 
-export async function gravarAnaliseNaFicha(id: string, resumoMd: string, pontuacao: number) {
+function formatarWhatsapp(digitos: string): string {
+  let n = digitos;
+  if ((n.length === 12 || n.length === 13) && n.startsWith("55")) n = n.slice(2);
+  if (n.length < 10 || n.length > 11) return digitos;
+  const dd = n.slice(0, 2);
+  const num = n.slice(2);
+  const tel = num.length === 9 ? `${num.slice(0, 5)}-${num.slice(5)}` : num.length === 8 ? `${num.slice(0, 4)}-${num.slice(4)}` : num;
+  return `+55 ${dd} ${tel}`;
+}
+
+function celularDeTelefones(telefones?: string[]): string {
+  if (!telefones?.length) return "";
+  for (const t of telefones) {
+    const d = (t || "").replace(/\D/g, "");
+    if (!d) continue;
+    const sem55 = d.startsWith("55") ? d.slice(2) : d;
+    if (sem55.length === 11 && sem55.slice(2).length === 9) return d;
+  }
+  return "";
+}
+
+function analiseParaTelefone(analise?: { links?: { whatsapp?: string }; contatos?: { telefones?: string[] } }): string {
+  if (!analise) return "";
+  const deLink = (analise.links?.whatsapp || "").replace(/\D/g, "");
+  const deContatos = celularDeTelefones(analise.contatos?.telefones);
+  if (deLink) return formatarWhatsapp(deLink);
+  if (deContatos) return formatarWhatsapp(deContatos);
+  return "";
+}
+
+export async function gravarAnaliseNaFicha(id: string, resumoMd: string, pontuacao: number, analise?: { links?: { whatsapp?: string }; contatos?: { telefones?: string[]; emails?: string[] } }) {
   const p = join(VAULT, "40 Comercial", "Leads", `${id}.md`);
   const raw = await read(`40 Comercial/Leads/${id}.md`);
   if (!raw) throw new Error("lead não encontrado");
   const fm = frontmatter(raw);
   fm.presenca = String(pontuacao);
   fm["analise-em"] = new Date().toISOString().slice(0, 10);
+  if (analise) {
+    if (!fm.whatsapp) { const w = analiseParaTelefone(analise); if (w) fm.whatsapp = w; }
+    if (!fm.contato) { const w = analiseParaTelefone(analise); if (w) fm.contato = w; }
+    if (!fm.email && analise.contatos?.emails?.[0]) fm.email = analise.contatos.emails[0];
+  }
   let body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
   // tira a análise anterior: da seção até o próximo título "## " (subtítulos "###" ficam dentro dela)
   body = body.replace(/^## Análise de presença[\s\S]*?(?=^## (?!#)|(?![\s\S]))/m, "");

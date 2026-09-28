@@ -31,7 +31,7 @@ export function Hero() {
       ref={ref}
       id="hero"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
-      style={{ background: "#040404" }}
+      style={{ background: "#040404", paddingTop: "var(--header-h)" }}
     >
       <motion.div
         style={{ y: contentY }}

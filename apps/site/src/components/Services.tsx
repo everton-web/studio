@@ -4,11 +4,15 @@ import { motion } from "framer-motion";
 import { AnimatedSection } from "./AnimatedSection";
 import { TriangleIcon } from "./TriangleIcon";
 import { useLang } from "@/context/LanguageContext";
+import { usePromo } from "@/hooks/usePromo";
+import { precoComDesconto, formatBRL } from "@/lib/promo";
+import { PromoBanner } from "./PromoBanner";
 
 const cardTransition = { duration: 0.4, ease: [0.22, 1, 0.36, 1] as const };
 
 export function Services() {
   const { t } = useLang();
+  const { ativa } = usePromo();
 
   return (
     <section
@@ -44,6 +48,8 @@ export function Services() {
             </p>
           </div>
         </AnimatedSection>
+
+        <PromoBanner variant="inline" />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {t.services.core.map((service, i) => (
@@ -97,12 +103,29 @@ export function Services() {
                   <span className="text-[0.65rem] font-medium uppercase tracking-[0.08em] text-[var(--color-text-dim)]">
                     {t.services.priceFrom}
                   </span>
-                  <span
-                    className="font-semibold text-[var(--color-text)]"
-                    style={{ fontSize: "1.25rem", letterSpacing: "-0.01em" }}
-                  >
-                    {service.price}
-                  </span>
+                  {ativa ? (
+                    <>
+                      <s
+                        className="text-[var(--color-text-dim)]"
+                        style={{ fontSize: "0.9rem" }}
+                      >
+                        {service.price}
+                      </s>
+                      <span
+                        className="font-semibold text-[var(--color-accent)]"
+                        style={{ fontSize: "1.4rem", letterSpacing: "-0.01em" }}
+                      >
+                        {formatBRL(precoComDesconto(service.priceValue))}
+                      </span>
+                    </>
+                  ) : (
+                    <span
+                      className="font-semibold text-[var(--color-text)]"
+                      style={{ fontSize: "1.25rem", letterSpacing: "-0.01em" }}
+                    >
+                      {service.price}
+                    </span>
+                  )}
                 </div>
               </motion.div>
             </AnimatedSection>
@@ -171,12 +194,29 @@ export function Services() {
                   </p>
 
                   <div className="mt-auto flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                    <span
-                      className="font-semibold text-[var(--color-text)]"
-                      style={{ fontSize: "1.25rem", letterSpacing: "-0.01em" }}
-                    >
-                      {item.price}
-                    </span>
+                    {ativa ? (
+                      <>
+                        <s
+                          className="text-[var(--color-text-dim)]"
+                          style={{ fontSize: "0.9rem" }}
+                        >
+                          {item.price}
+                        </s>
+                        <span
+                          className="font-semibold text-[var(--color-accent)]"
+                          style={{ fontSize: "1.25rem", letterSpacing: "-0.01em" }}
+                        >
+                          {formatBRL(precoComDesconto(item.priceValue))}
+                        </span>
+                      </>
+                    ) : (
+                      <span
+                        className="font-semibold text-[var(--color-text)]"
+                        style={{ fontSize: "1.25rem", letterSpacing: "-0.01em" }}
+                      >
+                        {item.price}
+                      </span>
+                    )}
                     <span className="text-[0.7rem] text-[var(--color-text-dim)]">
                       {item.priceNote}
                     </span>

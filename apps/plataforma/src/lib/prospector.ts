@@ -331,7 +331,7 @@ export async function prospectar(op: { nicho?: string; cidade?: string; limite?:
             if (base) {
               const a = await analisarLead(base);
               await salvarAnalise(a);
-              await gravarAnaliseNaFicha(base.id, resumoMd(a), a.pontuacao);
+              await gravarAnaliseNaFicha(base.id, resumoMd(a), a.pontuacao, a);
             }
           } catch { /* a análise pode ser refeita pela ficha */ }
         }

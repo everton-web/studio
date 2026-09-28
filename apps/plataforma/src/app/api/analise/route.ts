@@ -20,7 +20,7 @@ export async function POST(req: Request) {
   try {
     const analise = await analisarLead(lead);
     await salvarAnalise(analise);
-    await gravarAnaliseNaFicha(lead.id, resumoMd(analise), analise.pontuacao);
+    await gravarAnaliseNaFicha(lead.id, resumoMd(analise), analise.pontuacao, analise);
     return NextResponse.json({ ok: true, analise });
   } catch (e: any) {
     return NextResponse.json({ ok: false, error: e?.message || "erro na análise" }, { status: 500 });

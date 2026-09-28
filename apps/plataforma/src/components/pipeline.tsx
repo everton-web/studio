@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import { Check, Trash2 } from "lucide-react";
 import { AnalisePresenca } from "./analise-presenca";
+import { montarMensagem, type MsgTipo } from "@/lib/mensagens";
 
 // ---------- tipos ----------
 export type Lead = {
@@ -45,22 +46,6 @@ const ease = [0.22, 1, 0.36, 1] as const;
 const notaLbl = (n: number) => (n > 0 ? n.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "—");
 const avalLbl = (a: number) => (a > 0 ? `${a}` : "");
 
-// mensagem de abordagem (Estágio 2 — Contato), base: script de vendas (Junior Lima)
-// conversa primeiro, oferta depois — nunca citar preço na primeira mensagem
-function msgAbordagem(l: Lead) {
-  const alvo = l.nome.trim();
-  const sector = l.segmento ? ` no segmento de ${l.segmento}` : "";
-  const gancho = l.porque
-    ? `Notei que uma presença digital mais forte pode trazer clientes novos para vocês.`
-    : `Acredito que um site profissional pode trazer clientes novos para vocês.`;
-  return `Olá! Tudo bem? Me chamo Everton, da Marca Digital — trabalho com criação de sites profissionais para empresas${sector}.
-
-Conheci a ${alvo} e percebi uma oportunidade de fortalecer a presença de vocês na internet. ${gancho}
-
-Hoje, quando alguém procura um serviço no Google, um site profissional transmite credibilidade, apresenta melhor a empresa e transforma buscas em novos contatos.
-
-Teria interesse em saber como funcionaria para a ${alvo}? Se sim, pode me responder apenas: TENHO INTERESSE.`;
-}
 function waLink(numero: string, msg: string) {
   const num = (numero || "").replace(/\D/g, "");
   if (!num) return null;
@@ -184,13 +169,13 @@ function LeadCard({ lead, onEdit, onMove, onAbordar, onValidar, onApagar, onOpen
       {lead.email && (
         <div className="mono mb-1 truncate text-[#54b8f0]/85 hover:text-[#54b8f0]" style={{ fontSize: "0.7rem" }}>{lead.email}</div>
       )}
-      {lead.whatsapp && lead.estagio === 2 && (
+      {(lead.whatsapp || lead.contato) && lead.estagio >= 0 && lead.estagio <= 2 && (
         <button
           onClick={sp(() => onAbordar(lead))}
-          className="flex items-center justify-center gap-2 mt-2 mb-3 w-full h-[40px] rounded-xl bg-[#3ddc84]/12 border border-[#3ddc84]/25 text-[#3ddc84] text-[.78rem] font-medium transition-colors hover:bg-[#3ddc84]/20"
+          className="flex items-center justify-center gap-2 mt-2 mb-3 w-full h-[44px] rounded-xl bg-[#3ddc84]/12 border border-[#3ddc84]/25 text-[#3ddc84] text-[.82rem] font-medium transition-colors hover:bg-[#3ddc84]/20"
         >
-          abordar no WhatsApp
-          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" /><path d="m21.854 2.147-10.94 10.939" /></svg>
+          WhatsApp
+          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" /><path d="m21.854 2.147-10.94 10.939" /></svg>
         </button>
       )}
 
@@ -269,7 +254,7 @@ function Modal({ open, title, onClose, children }: {
 
 export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Promise<void> }) {
   const [modal, setModal] = useState<{ kind: "novo" } | { kind: "editar"; lead: Lead } | null>(null);
-  const [abordar, setAbordar] = useState<{ lead: Lead; msg: string } | null>(null);
+  const [abordar, setAbordar] = useState<{ lead: Lead; msg: string; tipo: MsgTipo; analise: { faltas?: { prioridade: string; item: string }[] } | null } | null>(null);
   const [detalhe, setDetalhe] = useState<Lead | null>(null);
   const [f, setF] = useState<Flds>(EMPTY);
   const [motivo, setMotivo] = useState("");
@@ -366,7 +351,20 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
     if (await post({ action: "delete", id: modal.lead.id })) setModal(null);
   };
 
-  const openAbordar = (lead: Lead) => setAbordar({ lead, msg: lead.mensagem || msgAbordagem(lead) });
+  const openAbordar = async (lead: Lead) => {
+    let analise: { faltas?: { prioridade: string; item: string }[] } | null = null;
+    try {
+      const r = await fetch(`/api/analise?id=${encodeURIComponent(lead.id)}`);
+      const j = await r.json();
+      analise = j.analise || null;
+    } catch { /* sem análise — usa a frase genérica de ponto */ }
+    setAbordar({
+      lead,
+      msg: lead.mensagem || montarMensagem("contato", lead, analise, new Date()),
+      tipo: "contato",
+      analise,
+    });
+  };
   const openDetalhe = (lead: Lead) => setDetalhe(lead);
   const [mensagemSalva, setMensagemSalva] = useState(false);
   const salvarMensagem = async () => {
@@ -695,7 +693,7 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
       {/* ===== modal de abordagem (validação antes de enviar) ===== */}
       <Modal open={!!abordar} title={abordar ? `abordar — ${abordar.lead.nome}` : ""} onClose={() => setAbordar(null)}>
         <p className="text-[.8rem] text-[#b8b8b3] mb-4">
-          Rascunho da 1ª mensagem (base: <span className="text-[#f7f7f5]">40 Comercial/Pitch.md</span> — conversa primeiro, sem preço).
+          Mensagem de abordagem (base: <span className="text-[#f7f7f5]">mensagens-whatsapp.md</span> — conversa primeiro, sem preço; a promoção do Mês do Zeca entra sozinha até 30/09).
           <b className="text-[#f7f7f5]"> Edite até ficar do seu jeito antes de abrir o WhatsApp.</b>
         </p>
         <textarea
@@ -705,6 +703,22 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
           aria-label="Mensagem de abordagem"
           className="w-full bg-white/3 border border-[var(--line)] rounded-xl px-4 py-3 text-[.92rem] text-[#f7f7f5] outline-none focus:border-[#3ddc84]/70 transition-colors placeholder:text-[#5d5d58] resize-y"
         />
+        <div className="mono mt-3 mb-2" style={{ fontSize: "0.68rem" }}>trocar mensagem</div>
+        <select
+          value={abordar ? abordar.tipo : "contato"}
+          onChange={(e) => {
+            if (!abordar) return;
+            const tipo = e.target.value as MsgTipo;
+            setAbordar({ ...abordar, tipo, msg: montarMensagem(tipo, abordar.lead, abordar.analise, new Date()) });
+          }}
+          aria-label="Modelo de mensagem"
+          className="w-full h-[44px] px-3 rounded-xl bg-[var(--bg-2)] border border-[var(--line)] text-[.84rem] text-[#e8e8e6] outline-none focus:border-[#3ddc84]/70 transition-colors"
+        >
+          <option value="contato">Primeiro contato</option>
+          <option value="oferta">Oferta</option>
+          <option value="followup1">Follow-up 1</option>
+          <option value="followup2">Follow-up 2</option>
+        </select>
         <div className="flex flex-col sm:flex-row gap-3 pt-4">
           <button
             onClick={salvarMensagem}
@@ -802,11 +816,11 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
             )}
 
             <div className="flex flex-col sm:flex-row gap-3">
-              {detalhe.estagio === 2 && waLink(detalhe.whatsapp || detalhe.contato, msgAbordagem(detalhe)) && (
-                <a href={waLink(detalhe.whatsapp || detalhe.contato, msgAbordagem(detalhe))!} target="_blank" rel="noreferrer" onClick={() => setDetalhe(null)}
+              {detalhe.estagio <= 2 && (detalhe.whatsapp || detalhe.contato) && (
+                <button onClick={() => { setDetalhe(null); openAbordar(detalhe); }}
                   className="flex-1 flex items-center justify-center gap-2 h-[50px] rounded-[14px] bg-[#25d366] hover:bg-[#2ee06f] text-[#04210f] text-[.88rem] font-semibold transition-colors">
                   abordar no WhatsApp
-                </a>
+                </button>
               )}
               <button onClick={() => { setDetalhe(null); mover(detalhe, 1); }} disabled={detalhe.estagio >= 5}
                 className="flex-1 h-[50px] rounded-[14px] border border-white/12 text-[#cacac4] hover:border-white/28 transition-colors disabled:opacity-40">
