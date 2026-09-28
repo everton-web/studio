@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>White Odonto — Diagnóstico de presença digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     Design System — evertonbrito.com (escuro / premium)
+     ============================================================ */
+  :root {
+    --accent: #FF4000;
+    --accent-hover: #E63800;
+    --accent-subtle: rgba(255,64,0,0.08);
+    --accent-glow: rgba(255,64,0,0.15);
+    --bg: #040404;
+    --bg-soft: #0C0C0C;
+    --bg-card: #111111;
+    --bg-elevated: #1A1A1A;
+    --text: #FBFBFB;
+    --text-secondary: #AAAAAA;
+    --text-muted: #888888;
+    --text-dim: #555555;
+    --border: rgba(255,255,255,0.08);
+    --border-hover: rgba(255,255,255,0.14);
+    --border-active: rgba(255,255,255,0.24);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; }
+  input { font-family: inherit; }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* Micro-label em caixa alta com accent */
+  .micro-label {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  h1, h2, h3 {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+
+  /* ============================================================
+     1. Topo (header) — conversão isolada, sem nav
+     ============================================================ */
+  header.site-header {
+    padding: 64px 0 40px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 48px;
+  }
+
+  .brand .mark {
+    width: 24px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+  }
+
+  .brand .mark svg { width: 24px; height: 20px; display: block; }
+
+  .brand .wordmark {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+
+  .brand .wordmark .dot { color: var(--accent); }
+
+  .brand .domain {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--text-dim);
+    margin-left: 2px;
+  }
+
+  .hero .micro-label { margin-bottom: 18px; }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  .hero .meta-line {
+    font-size: 1rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hero .meta-line .sep {
+    color: var(--text-dim);
+    margin: 0 4px;
+  }
+
+  /* ============================================================
+     2. Nota de presença (0–100)
+     ============================================================ */
+  section.score {
+    padding: 16px 0 48px;
+  }
+
+  .score-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .score-card::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
+  }
+
+  .score-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .ring {
+    position: relative;
+    width: 150px;
+    height: 150px;
+  }
+
+  .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+
+  .ring .track {
+    fill: none;
+    stroke: var(--bg-elevated);
+    stroke-width: 11;
+  }
+
+  .ring .progress {
+    fill: none;
+    stroke: url(#scoreGradient);
+    stroke-width: 11;
+    stroke-linecap: round;
+    stroke-dasharray: 339.3;
+    stroke-dashoffset: 339.3;
+    transition: stroke-dashoffset 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .ring .value {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ring .value .num {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .ring .value .total {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  .score-label {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+  }
+
+  .score-label strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* Bloco "O que já está forte" — leitura positiva primeiro */
+  .strengths {
+    margin-top: 28px;
+    border-top: 1px solid var(--border);
+    padding-top: 22px;
+  }
+
+  .strengths h2 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+
+  .strengths ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .strengths li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+  }
+
+  .strengths li .check {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+  }
+
+  .strengths li .check svg { width: 12px; height: 12px; }
+  .strengths li .check svg path { stroke: var(--accent); }
+
+  /* ============================================================
+     3. Oportunidades — agrupadas por tema
+     ============================================================ */
+  section.opportunities {
+    padding: 24px 0 56px;
+  }
+
+  .section-head { margin-bottom: 28px; }
+
+  .section-head h2 {
+    font-size: clamp(1.6rem, 5vw, 2.1rem);
+    letter-spacing: -0.02em;
+    margin-top: 10px;
+  }
+
+  .section-head p {
+    color: var(--text-muted);
+    font-size: 0.98rem;
+    margin-top: 8px;
+    max-width: 46ch;
+  }
+
+  .opp-group { margin-bottom: 28px; }
+
+  .opp-group > h3 {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+
+  .opp-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 20px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .opp-card + .opp-card { margin-top: 10px; }
+
+  .opp-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-1px);
+  }
+
+  .opp-card .tag {
+    display: inline-block;
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-subtle);
+    border: 1px solid var(--accent-glow);
+    border-radius: 999px;
+    padding: 4px 10px;
+    margin-bottom: 10px;
+  }
+
+  .opp-card p {
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* ============================================================
+     4. Checklist interativo — "Marque o que dói"
+     ============================================================ */
+  section.pains {
+    padding: 24px 0 56px;
+  }
+
+  .pains .section-head h2 { color: var(--text); }
+
+  .pain-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .pain-item {
+    position: relative;
+    display: block;
+  }
+
+  .pain-item input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .pain-item .pain-box {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 64px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    user-select: none;
+  }
+
+  .pain-item .pain-box:hover { border-color: var(--border-hover); }
+
+  .pain-item .box {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    border: 2px solid var(--border-active);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+
+  .pain-item .box svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .pain-item .box svg path {
+    stroke: #fff;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    stroke-dasharray: 24;
+    stroke-dashoffset: 24;
+    transition: stroke-dashoffset 0.25s ease 0.05s;
+  }
+
+  .pain-item .label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: color 0.2s ease;
+    line-height: 1.4;
+  }
+
+  .pain-item input:checked + .pain-box {
+    border-color: var(--accent);
+    background: var(--accent-subtle);
+    box-shadow: 0 0 0 1px var(--accent-glow);
+  }
+
+  .pain-item input:checked + .pain-box .box {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .pain-item input:checked + .pain-box .box svg path {
+    stroke-dashoffset: 0;
+  }
+
+  .pain-item input:checked + .pain-box .label {
+    color: var(--text);
+  }
+
+  /* ============================================================
+     5. Bloco de cálculo — "Quanto você pode estar deixando de ganhar"
+     ============================================================ */
+  section.calc {
+    padding: 24px 0 56px;
+  }
+
+  .calc-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px 24px;
+  }
+
+  .calc-card .formula {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    background: var(--bg-elevated);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin: 16px 0 22px;
+    letter-spacing: 0.02em;
+    line-height: 1.6;
+  }
+
+  .calc-card .formula code {
+    font-family: inherit;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .result-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
+  .result-value {
+    font-size: clamp(2.6rem, 9vw, 3.6rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .result-unit {
+    font-size: 1rem;
+    color: var(--text-muted);
+    padding-bottom: 6px;
+  }
+
+  .result-placeholder {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    padding: 8px 0 14px;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-subtle);
+    border: 1px solid var(--accent-glow);
+    border-radius: 999px;
+    padding: 6px 14px;
+    margin-bottom: 24px;
+  }
+
+  .chip .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* Inputs editáveis */
+  .inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .input-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .input-row label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .input-row .field {
+    position: relative;
+  }
+
+  .input-row input {
+    width: 100%;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 13px 16px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text);
+    transition: border-color 0.2s ease;
+    -moz-appearance: textfield;
+  }
+
+  .input-row input::-webkit-outer-spin-button,
+  .input-row input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  .input-row input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-subtle);
+  }
+
+  .input-row .prefix {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 1rem;
+    pointer-events: none;
+  }
+
+  .input-row .prefix + input { padding-left: 38px; }
+
+  .fixed-note {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+    margin-top: 4px;
+  }
+
+  .disclaimer {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-top: 20px;
+  }
+
+  /* ============================================================
+     6. CTA final — WhatsApp
+     ============================================================ */
+  section.cta {
+    padding: 24px 0 80px;
+  }
+
+  .btn-whatsapp {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    background: var(--accent);
+    color: #FBFBFB;
+    border: none;
+    border-radius: 999px;
+    padding: 14px 32px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .btn-whatsapp:hover {
+    background: var(--accent-hover);
+    box-shadow: 0 8px 40px rgba(255,64,0,0.25);
+    transform: translateY(-1px);
+  }
+
+  .btn-whatsapp svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+  .cta-note {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-top: 16px;
+  }
+
+  footer.site-footer {
+    padding: 24px 0 48px;
+    text-align: center;
+    border-top: 1px solid var(--border);
+  }
+
+  footer.site-footer .brand {
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+
+  footer.site-footer p {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+
+  /* ============================================================
+     Responsivo — desktop
+     ============================================================ */
+  @media (min-width: 640px) {
+    .score-top {
+      flex-direction: row;
+      text-align: left;
+      gap: 28px;
+      justify-content: flex-start;
+    }
+    .score-label { max-width: 30ch; }
+    .inputs { flex-direction: row; gap: 16px; }
+    .input-row { flex: 1; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ 1. TOPO ============ -->
+<header class="site-header">
+  <div class="wrap">
+    <div class="brand">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 10 Q58.6 45 84.6 70 Q50 60 15.4 70 Q41.4 45 50 10Z" fill="#FF4000"/>
+        </svg>
+      </span>
+      <span class="wordmark">everton<span class="dot">.</span></span>
+      <span class="domain">evertonbrito.com</span>
+    </div>
+
+    <div class="hero">
+      <span class="micro-label">Diagnóstico de presença digital</span>
+      <h1>White Odonto</h1>
+      <p class="meta-line">
+        <span>Salvador</span>
+        <span class="sep">·</span>
+        <span>28 de setembro de 2026</span>
+      </p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ============ 2. NOTA DE PRESENÇA ============ -->
+  <section class="score">
+    <div class="wrap">
+      <div class="score-card">
+        <div class="score-top">
+          <div class="ring" aria-label="Nota de presença digital: 58 de 100">
+            <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#FF4000"/>
+                  <stop offset="100%" stop-color="#FF8A5C"/>
+                </linearGradient>
+              </defs>
+              <circle class="track" cx="60" cy="60" r="54"/>
+              <circle class="progress" id="scoreRing" cx="60" cy="60" r="54"/>
+            </svg>
+            <div class="value">
+              <span class="num" id="scoreNum">58</span>
+              <span class="total">/ 100</span>
+            </div>
+          </div>
+          <div class="score-label">
+            <strong>Base sólida, com espaço para crescer.</strong><br>
+            Sua presença digital já tem uma fundação saudável — agora o foco é transformar essa base em mais pacientes encontrando você.
+          </div>
+        </div>
+
+        <!-- Leitura positiva ANTES das faltas -->
+        <div class="strengths">
+          <h2>O que já está forte</h2>
+          <ul>
+            <li>
+              <span class="check" aria-hidden="true">
+                <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5" stroke="#FF4000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span>Site no ar, com HTTPS e versão para celular</span>
+            </li>
+            <li>
+              <span class="check" aria-hidden="true">
+                <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5" stroke="#FF4000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span>WhatsApp linkado no site</span>
+            </li>
+            <li>
+              <span class="check" aria-hidden="true">
+                <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5" stroke="#FF4000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span>Instagram linkado no site</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. OPORTUNIDADES ============ -->
+  <section class="opportunities">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="micro-label">Oportunidades</span>
+        <h2>O que o seu negócio pode ganhar</h2>
+        <p>Veja, em linguagem simples, o que a White Odonto pode destravar para ser vista — e escolhida — por quem procura dentista em Salvador.</p>
+      </div>
+
+      <!-- Ser encontrado no Google -->
+      <div class="opp-group">
+        <h3>Ser encontrado no Google</h3>
+        <div class="opp-card">
+          <span class="tag">Busca local</span>
+          <p>Ser encontrado por quem procura dentista na sua região, com um título que chama atenção nos resultados.</p>
+        </div>
+        <div class="opp-card">
+          <span class="tag">Descrição no Google</span>
+          <p>Aparecer com uma descrição clara e convidativa quando alguém busca pelo seu nome.</p>
+        </div>
+        <div class="opp-card">
+          <span class="tag">Avaliações</span>
+          <p>Ter sua nota e suas avaliações confirmadas no Google, gerando confiança antes do primeiro contato.</p>
+        </div>
+      </div>
+
+      <!-- Perfil do Google -->
+      <div class="opp-group">
+        <h3>Perfil do Google</h3>
+        <div class="opp-card">
+          <span class="tag">Horário · Fotos · Avaliações</span>
+          <p>Um perfil completo — com horários, fotos e avaliações — que passa profissionalismo de cara.</p>
+        </div>
+        <div class="opp-card">
+          <span class="tag">Negócio local</span>
+          <p>Aparecer no Google como o negócio local da sua região, do jeito que os buscadores entendem melhor.</p>
+        </div>
+      </div>
+
+      <!-- Entender seus visitantes -->
+      <div class="opp-group">
+        <h3>Entender seus visitantes</h3>
+        <div class="opp-card">
+          <span class="tag">Google Analytics</span>
+          <p>Saber de onde vêm os pacientes para investir no que realmente funciona.</p>
+        </div>
+        <div class="opp-card">
+          <span class="tag">Meta Pixel</span>
+          <p>Reimpactar quem já visitou seu site, transformando interesse em agendamento.</p>
+        </div>
+      </div>
+
+      <!-- Compartilhamento -->
+      <div class="opp-group">
+        <h3>Compartilhamento</h3>
+        <div class="opp-card">
+          <span class="tag">WhatsApp · Instagram</span>
+          <p>Link com imagem bonita ao compartilhar no WhatsApp e no Instagram.</p>
+        </div>
+        <div class="opp-card">
+          <span class="tag">Atualização</span>
+          <p>Parecer um negócio atual e ativo, sem cara de site abandonado.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 4. CHECKLIST — MARQUE O QUE DÓI ============ -->
+  <section class="pains">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="micro-label">Diagnóstico rápido</span>
+        <h2>Marque o que dói no seu dia a dia</h2>
+        <p>Toque nos itens que você reconhece. Isso ajuda a enxergar o tamanho da oportunidade.</p>
+      </div>
+
+      <div class="pain-list">
+        <label class="pain-item">
+          <input type="checkbox" class="pain-check" data-id="1">
+          <span class="pain-box">
+            <span class="box" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5"/></svg>
+            </span>
+            <span class="label">Poucos pacientes me encontram no Google</span>
+          </span>
+        </label>
+
+        <label class="pain-item">
+          <input type="checkbox" class="pain-check" data-id="2">
+          <span class="pain-box">
+            <span class="box" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5"/></svg>
+            </span>
+            <span class="label">Não sei de onde vêm as visitas do meu site</span>
+          </span>
+        </label>
+
+        <label class="pain-item">
+          <input type="checkbox" class="pain-check" data-id="3">
+          <span class="pain-box">
+            <span class="box" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5"/></svg>
+            </span>
+            <span class="label">Meu perfil no Google está incompleto</span>
+          </span>
+        </label>
+
+        <label class="pain-item">
+          <input type="checkbox" class="pain-check" data-id="4">
+          <span class="pain-box">
+            <span class="box" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5"/></svg>
+            </span>
+            <span class="label">Meu link aparece sem imagem quando compartilho</span>
+          </span>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 5. CÁLCULO — QUANTO PODE ESTAR DEIXANDO DE GANHAR ============ -->
+  <section class="calc">
+    <div class="wrap">
+      <div class="calc-card">
+        <div class="section-head">
+          <span class="micro-label">Potencial de receita</span>
+          <h2>Quanto você pode estar deixando de ganhar por mês</h2>
+        </div>
+
+        <div class="formula">
+          <code>buscas/mês</code> × <code>taxa de clique</code> × <code>conversão</code> × <code>ticket médio</code>
+        </div>
+
+        <div class="result-row" id="resultRow">
+          <span class="result-value" id="resultValue">R$ 0</span>
+          <span class="result-unit">/ mês</span>
+        </div>
+        <div class="result-placeholder" id="resultPlaceholder">Marque ao lado o que você reconhece</div>
+
+        <div class="chip">
+          <span class="dot" aria-hidden="true"></span>
+          <span id="chipText">0 de 4 sinais reconhecidos</span>
+        </div>
+
+        <div class="inputs">
+          <div class="input-row">
+            <label for="buscas">Buscas locais / mês</label>
+            <div class="field">
+              <input type="number" id="buscas" value="600" min="0" step="10" inputmode="numeric">
+            </div>
+          </div>
+          <div class="input-row">
+            <label for="ticket">Ticket médio</label>
+            <div class="field">
+              <span class="prefix">R$</span>
+              <input type="number" id="ticket" value="800" min="0" step="10" inputmode="numeric">
+            </div>
+          </div>
+        </div>
+
+        <p class="fixed-note">
+          Premissas do segmento de odontologia: <strong>taxa de clique 15%</strong> e <strong>conversão conservadora 5%</strong> (fixas).
+        </p>
+
+        <p class="disclaimer">
+          Estimativa de marketing para fins ilustrativos — não é promessa de receita nem garantia de resultado. Reflete o que o negócio potencialmente deixa de capturar sem uma presença digital completa.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6. CTA FINAL ============ -->
+  <section class="cta">
+    <div class="wrap">
+      <a class="btn-whatsapp" id="whatsappBtn" href="#" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Zm0 18.15h-.01c-1.52 0-3.01-.41-4.3-1.18l-.31-.18-3.12.82.83-3.04-.2-.31a7.93 7.93 0 0 1-1.22-4.28c0-4.43 3.61-8.04 8.04-8.04 2.15 0 4.17.84 5.69 2.36a8 8 0 0 1 2.36 5.68c0 4.44-3.61 8.05-8.06 8.05Zm4.41-6.03c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.43-1.34-1.67-.14-.24-.02-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.19-.47-.39-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2 0 1.18.86 2.32.98 2.48.12.16 1.69 2.58 4.1 3.62.57.25 1.02.4 1.37.51.58.18 1.1.16 1.51.1.46-.07 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28Z"/>
+        </svg>
+        Conversar com Everton no WhatsApp
+      </a>
+      <p class="cta-note">Resposta rápida, sem compromisso.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="brand">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 10 Q58.6 45 84.6 70 Q50 60 15.4 70 Q41.4 45 50 10Z" fill="#FF4000"/>
+        </svg>
+      </span>
+      <span class="wordmark">everton<span class="dot">.</span></span>
+      <span class="domain">evertonbrito.com</span>
+    </div>
+    <p>Diagnóstico de presença digital — documento ilustrativo.</p>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    'use strict';
+
+    var COMPANY = 'White Odonto';
+    var WHATSAPP_NUMBER = '5571999261967';
+
+    /* -------- Elementos -------- */
+    var scoreRing = document.getElementById('scoreRing');
+    var scoreNum = document.getElementById('scoreNum');
+    var painChecks = document.querySelectorAll('.pain-check');
+    var chipText = document.getElementById('chipText');
+    var resultValue = document.getElementById('resultValue');
+    var resultPlaceholder = document.getElementById('resultPlaceholder');
+    var buscasInput = document.getElementById('buscas');
+    var ticketInput = document.getElementById('ticket');
+    var whatsappBtn = document.getElementById('whatsappBtn');
+
+    var TAXA_CLIQUE = 0.15;
+    var CONVERSAO = 0.05;
+
+    /* -------- Animação da nota (anel circular) -------- */
+    var SCORE = 58;
+    var CIRCUMFERENCE = 339.3; // 2 * PI * 54
+
+    function animateScore() {
+      var target = SCORE / 100;
+      var start = null;
+      var DURATION = 1400;
+
+      function step(ts) {
+        if (!start) start = ts;
+        var p = Math.min((ts - start) / DURATION, 1);
+        var eased = 1 - Math.pow(1 - p, 3); // ease-out cubic
+        var current = target * eased;
+
+        scoreRing.style.strokeDashoffset = String(CIRCUMFERENCE * (1 - current));
+
+        var num = Math.round(SCORE * eased);
+        scoreNum.textContent = String(num);
+
+        if (p < 1) {
+          requestAnimationFrame(step);
+        } else {
+          scoreRing.style.strokeDashoffset = String(CIRCUMFERENCE * (1 - target));
+          scoreNum.textContent = String(SCORE);
+        }
+      }
+      requestAnimationFrame(step);
+    }
+
+    /* -------- Formatação de moeda -------- */
+    var currency = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      maximumFractionDigits: 0
+    });
+
+    /* -------- Contador animado -------- */
+    var currentDisplay = 0;
+    var animId = null;
+
+    function animateValue(target) {
+      if (animId) cancelAnimationFrame(animId);
+      var from = currentDisplay;
+      var start = null;
+      var DURATION = 900;
+
+      function step(ts) {
+        if (!start) start = ts;
+        var p = Math.min((ts - start) / DURATION, 1);
+        var eased = 1 - Math.pow(1 - p, 3);
+        var val = Math.round(from + (target - from) * eased);
+
+        currentDisplay = val;
+        resultValue.textContent = currency.format(val);
+
+        if (p < 1) {
+          animId = requestAnimationFrame(step);
+        } else {
+          currentDisplay = target;
+          resultValue.textContent = currency.format(target);
+          animId = null;
+        }
+      }
+      animId = requestAnimationFrame(step);
+    }
+
+    /* -------- Recálculo -------- */
+    function checkedCount() {
+      var n = 0;
+      painChecks.forEach(function (c) { if (c.checked) n++; });
+      return n;
+    }
+
+    function readNumber(input) {
+      var v = parseFloat(input.value);
+      return isNaN(v) || v < 0 ? 0 : v;
+    }
+
+    function recalc() {
+      var n = checkedCount();
+      var buscas = readNumber(buscasInput);
+      var ticket = readNumber(ticketInput);
+
+      chipText.textContent = n + ' de 4 sinais reconhecidos';
+
+      if (n === 0) {
+        resultPlaceholder.style.display = 'block';
+        currentDisplay = 0;
+        resultValue.textContent = 'R$ 0';
+      } else {
+        resultPlaceholder.style.display = 'none';
+        var valor = buscas * TAXA_CLIQUE * CONVERSAO * ticket;
+        animateValue(Math.round(valor));
+      }
+    }
+
+    /* -------- CTA WhatsApp -------- */
+    function buildWhatsAppLink() {
+      var msg = 'Olá, Everton! Vi o diagnóstico da ' + COMPANY + ' e quero conversar.';
+      return 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg);
+    }
+
+    whatsappBtn.setAttribute('href', buildWhatsAppLink());
+
+    /* -------- Eventos -------- */
+    painChecks.forEach(function (c) {
+      c.addEventListener('change', recalc);
+    });
+
+    buscasInput.addEventListener('input', recalc);
+    buscasInput.addEventListener('change', recalc);
+    ticketInput.addEventListener('input', recalc);
+    ticketInput.addEventListener('change', recalc);
+
+    /* -------- Init -------- */
+    animateScore();
+    recalc();
+  })();
+</script>
+</body>
+</html>

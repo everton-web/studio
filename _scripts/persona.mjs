@@ -81,9 +81,10 @@ async function prepararArquivos() {
   return { fRegra, fFicha, fTarefa, nome };
 }
 
-function rodarPi({ fRegra, fFicha, fTarefa }) {
+function rodarPi({ fRegra, fFicha, fTarefa }, piModelo) {
   return new Promise((res, rej) => {
-    const pArgs = [PI_CLI, "-p", "--no-session", "--append-system-prompt", fFicha, "--append-system-prompt", fRegra,
+    const pArgs = [PI_CLI, "-p", "--no-session", ...(piModelo ? ["--model", piModelo] : []),
+      "--append-system-prompt", fFicha, "--append-system-prompt", fRegra,
       `@${fTarefa}`, "Execute a tarefa anexada seguindo a regra de execução (delegue ao opencode, confira e responda com o relatório)."];
     const c = spawn(process.execPath, pArgs, { cwd: ROOT, shell: false, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
     let out = "", err = "";
@@ -112,12 +113,27 @@ function abrirJanela({ fRegra, fFicha, fTarefa, nome }) {
     console.log("Janela do pi aberta — acompanhe por lá.");
     return;
   }
-  try {
-    const out = await rodarPi(arq);
-    await appendFile(join(LOG_DIR, `${persona}.log`), `     → ${out.trim().slice(-160).replace(/\n/g, " ")}\n`, "utf8").catch(() => {});
-  } catch (e) {
-    console.error(`\n[${persona}] erro: ${e.message}`);
-    await appendFile(join(LOG_DIR, `${persona}.log`), `     → ERRO: ${e.message.slice(0, 160)}\n`, "utf8").catch(() => {});
+  // O gateway às vezes derruba o streaming em tarefas longas ("stream interrupted") ou o pi
+  // termina sem relatório. Tenta de novo sozinho; na última tentativa o pi usa o modelo flash (mais estável).
+  const TENTATIVAS = [null, null, "opencode-go/deepseek-v4.1-flash"];
+  let ultimoErro = null;
+  for (let n = 0; n < TENTATIVAS.length; n++) {
+    if (n > 0) {
+      console.log(`\n↻ [${persona}] tentativa ${n + 1}/${TENTATIVAS.length}${TENTATIVAS[n] ? ` (pi em ${TENTATIVAS[n]})` : ""} — motivo: ${ultimoErro?.message.slice(0, 120)}\n`);
+      await new Promise((r) => setTimeout(r, 5000));
+    }
+    try {
+      const out = await rodarPi(arq, TENTATIVAS[n]);
+      if (!/PERSONA:/i.test(out)) throw new Error("pi terminou sem relatório (PERSONA: ...)");
+      await appendFile(join(LOG_DIR, `${persona}.log`), `     → ${out.trim().slice(-160).replace(/\n/g, " ")}\n`, "utf8").catch(() => {});
+      return;
+    } catch (e) {
+      ultimoErro = e;
+      await appendFile(join(LOG_DIR, `${persona}.log`), `     → tentativa ${n + 1} falhou: ${e.message.slice(0, 140)}\n`, "utf8").catch(() => {});
+    }
+  }
+  {
+    console.error(`\n[${persona}] erro após ${TENTATIVAS.length} tentativas: ${ultimoErro?.message}`);
     process.exit(3);
   }
 })();

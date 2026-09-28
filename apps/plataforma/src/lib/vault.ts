@@ -146,6 +146,7 @@ async function listLeads() {
       criado: fm.criado || "",
       presenca: fm.presenca ? Number(fm.presenca) : null,
       analiseEm: fm["analise-em"] || "",
+      relatorio: fm.relatorio || "",
     });
   }
   leads.sort((a, b) => (a.estagio - b.estagio) || a.criado.localeCompare(b.criado));
@@ -362,6 +363,7 @@ export async function leadBase(id: string) {
   const num = (v: string) => { const n = Number(String(v || "").replace(/\.(?=\d{3})/g, "").replace(",", ".")); return Number.isFinite(n) ? n : 0; };
   return {
     id, nome: fm.lead || id, cidade: fm.cidade || "", site: fm["site-atual"] || "",
+    segmento: fm.segmento || "",
     nota: num(fm["nota-google"]), avaliacoes: num(fm.avaliacoes),
     whatsapp: fm.whatsapp || "", contato: fm.contato || "", email: fm.email || "",
   };
@@ -416,5 +418,16 @@ export async function gravarAnaliseNaFicha(id: string, resumoMd: string, pontuac
   body = body.includes("## Movimentações")
     ? body.replace("## Movimentações", bloco + "## Movimentações")
     : body.replace(/\s*$/, "") + "\n\n" + bloco;
+  await writeFile(p, fmBlock(fm) + "\n" + body, "utf8");
+}
+
+export async function gravarRelatorio(id: string, url: string) {
+  if (!/^[a-z0-9-]+$/.test(id)) throw new Error("lead inválido");
+  const p = join(VAULT, "40 Comercial", "Leads", `${id}.md`);
+  const raw = await read(`40 Comercial/Leads/${id}.md`);
+  if (!raw) throw new Error("lead não encontrado");
+  const fm = frontmatter(raw);
+  fm.relatorio = url;
+  const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
   await writeFile(p, fmBlock(fm) + "\n" + body, "utf8");
 }

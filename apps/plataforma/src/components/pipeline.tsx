@@ -29,6 +29,7 @@ export type Lead = {
   criado: string;
   presenca?: number | null;
   analiseEm?: string;
+  relatorio?: string;
 };
 
 const ESTAGIOS = [
@@ -265,6 +266,9 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
   const [dragging, setDragging] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState<number | null>(null);
   const [fonteInfo, setFonteInfo] = useState<{ google_places: boolean; fonte_ativa: string; ia_router: boolean; obs: string } | null>(null);
+  const [relatorioRes, setRelatorioRes] = useState<{ slug: string; url: string } | null>(null);
+  const [relatorioBusy, setRelatorioBusy] = useState(false);
+  const [relatorioCopiado, setRelatorioCopiado] = useState(false);
 
   // status da fonte de prospecção (chave Google? IA Router no ar?)
   useEffect(() => {
@@ -366,6 +370,20 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
     });
   };
   const openDetalhe = (lead: Lead) => setDetalhe(lead);
+  const copiarRelatorio = async (url: string) => {
+    try { await navigator.clipboard.writeText(url); setRelatorioCopiado(true); setTimeout(() => setRelatorioCopiado(false), 1800); } catch {}
+  };
+  const gerarRelatorio = async (lead: Lead) => {
+    setRelatorioBusy(true); setRelatorioRes(null);
+    try {
+      const r = await fetch("/api/relatorio", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: lead.id }) });
+      const j = await r.json();
+      if (!j.ok) { alert(j.error || "erro ao gerar relatório"); return; }
+      setRelatorioRes({ slug: j.slug, url: j.url });
+      await refresh();
+    } catch { alert("falha de rede"); }
+    finally { setRelatorioBusy(false); }
+  };
   const [mensagemSalva, setMensagemSalva] = useState(false);
   const salvarMensagem = async () => {
     if (!abordar) return;
@@ -789,6 +807,36 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
             )}
 
             <AnalisePresenca leadId={detalhe.id} onAtualizada={refresh} />
+
+            <div className="mb-5">
+              <div className="mono mb-2" style={{ fontSize: "0.68rem" }}>relatório público</div>
+              {(relatorioRes || detalhe.relatorio) && (
+                <div className="flex items-center gap-2 mb-3">
+                  <a
+                    href={relatorioRes ? relatorioRes.url : detalhe.relatorio!}
+                    target="_blank" rel="noreferrer"
+                    className="text-[.8rem] text-[#54b8f0] hover:text-[#8ad0ff] break-all min-w-0"
+                  >
+                    {relatorioRes ? relatorioRes.url : detalhe.relatorio}
+                  </a>
+                  <button
+                    onClick={() => copiarRelatorio(relatorioRes ? relatorioRes.url : detalhe.relatorio!)}
+                    className="mono shrink-0 px-2.5 py-1.5 rounded-lg border border-white/10 hover:border-white/25 transition-colors"
+                    style={{ fontSize: "0.7rem" }}
+                  >
+                    {relatorioCopiado ? "copiado ✓" : "copiar"}
+                  </button>
+                </div>
+              )}
+              <button
+                onClick={() => gerarRelatorio(detalhe)}
+                disabled={relatorioBusy}
+                className="flex items-center justify-center gap-2 h-[44px] px-4 rounded-xl bg-[#FF4000] hover:bg-[#ff5c22] text-white text-[.82rem] font-medium transition-colors disabled:opacity-60"
+              >
+                {relatorioBusy ? "gerando…" : "gerar relatório"}
+              </button>
+              <p className="mono mt-2" style={{ fontSize: "0.68rem" }}>o link só funciona depois que o Orion publicar o site</p>
+            </div>
 
             <div className="mb-5">
               <div className="mono mb-2" style={{ fontSize: "0.68rem" }}>por que é bom lead</div>

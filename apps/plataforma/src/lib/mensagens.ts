@@ -81,7 +81,7 @@ Se um dia a {empresa} quiser um site que fortaleça a presença dela na internet
 
 Sucesso por aí!`;
 
-type Ctx = { empresa: string; segmento: string; ponto: string; nome: string; site: string };
+type Ctx = { empresa: string; segmento: string; ponto: string; nome: string; site: string; relatorio: string };
 
 function preencher(texto: string, c: Ctx): string {
   return texto
@@ -89,7 +89,8 @@ function preencher(texto: string, c: Ctx): string {
     .replace(/\{segmento\}/g, c.segmento)
     .replace(/\{ponto\}/g, c.ponto)
     .replace(/\{nome\}/g, c.nome)
-    .replace(/\{site\}/g, c.site);
+    .replace(/\{site\}/g, c.site)
+    .replace(/\{relatorio\}/g, c.relatorio);
 }
 
 // 1ª falta de prioridade alta → frase natural, em minúscula, pronta pra encaixar
@@ -126,7 +127,7 @@ export function pontoNatural(item: string): string {
   return suave || "a presença de vocês na internet tem um ponto a melhorar";
 }
 
-type LeadMsg = { nome: string; segmento: string; site?: string };
+type LeadMsg = { nome: string; segmento: string; site?: string; relatorio?: string };
 type AnaliseMsg = { faltas?: { prioridade: string; item: string }[] } | null;
 
 export function montarMensagem(tipo: MsgTipo, lead: LeadMsg, analise: AnaliseMsg, agora: Date): string {
@@ -144,12 +145,16 @@ export function montarMensagem(tipo: MsgTipo, lead: LeadMsg, analise: AnaliseMsg
   const nome = empresa;
   // `{site}`: link do lead sem https:// e sem barra final; sem site → perfil no Google.
   const site = ((lead.site || "").trim().replace(/^https?:\/\//i, "").replace(/\/+$/, "")) || "o perfil de vocês no Google";
-  const c: Ctx = { empresa, segmento, ponto, nome, site };
+  const c: Ctx = { empresa, segmento, ponto, nome, site, relatorio: lead.relatorio || "" };
   const promo = promoAtiva(agora);
 
   switch (tipo) {
     case "contato": return preencher(promo ? CONTATO_A : CONTATO_B, c);
-    case "detalhe": return preencher(promo ? DETALHE_A : DETALHE_B, c);
+    case "detalhe": {
+      let msg = preencher(promo ? DETALHE_A : DETALHE_B, c);
+      if (lead.relatorio) msg = msg + "\n\nPreparei um diagnóstico rápido da " + empresa + ": " + lead.relatorio;
+      return msg;
+    }
     case "oferta": return preencher(promo ? OFERTA_A : OFERTA_B, c);
     case "followup1": return preencher(promo ? FOLLOW1_A : FOLLOW1_B, c);
     case "followup2": return preencher(promo ? FOLLOW2_A : FOLLOW2_B, c);
