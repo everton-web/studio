@@ -97,7 +97,8 @@ function rodarPi({ fRegra, fFicha, fTarefa }) {
 
 function abrirJanela({ fRegra, fFicha, fTarefa, nome }) {
   const linha = `"${process.execPath}" "${PI_CLI}" --append-system-prompt "${fFicha}" --append-system-prompt "${fRegra}" "@${fTarefa}" "Execute a tarefa anexada seguindo a regra de execucao."`;
-  spawn("cmd.exe", ["/c", "start", `"${nome.toUpperCase()} - pi"`, "cmd", "/k", linha], { cwd: ROOT, detached: true, stdio: "ignore", windowsVerbatimArguments: true }).unref();
+  // cmd /k descarta o primeiro e o último " — por isso a linha inteira vai envolvida em aspas extras
+  spawn("cmd.exe", ["/c", "start", `"${nome.toUpperCase()} - pi"`, "cmd", "/k", `"${linha}"`], { cwd: ROOT, detached: true, stdio: "ignore", windowsVerbatimArguments: true }).unref();
 }
 
 (async () => {
