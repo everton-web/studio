@@ -492,7 +492,7 @@ export function Dashboard() {
                       <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
                       nova demanda
                     </button>
-                    <button onClick={() => go("pipeline")}
+                    <button onClick={() => { localStorage.setItem("prospeccao.auto-start", "1"); go("pipeline"); }}
                       className="flex items-center gap-2 h-[42px] px-4 rounded-xl bg-[#FF4000] hover:bg-[#ff5c22] text-[var(--accent-ink)] text-[.8rem] font-semibold transition-colors">
                       prospecção
                     </button>

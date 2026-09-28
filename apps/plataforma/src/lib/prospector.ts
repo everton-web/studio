@@ -10,7 +10,7 @@
 import { readdir, mkdir, writeFile, readFile } from "node:fs/promises";
 import { join, dirname } from "node:path";
 import { spawn } from "node:child_process";
-import { pipelineOp, leadBase, gravarAnaliseNaFicha } from "./vault";
+import { pipelineOp, gravarAnaliseNaFicha } from "./vault";
 import { analisarLead, salvarAnalise, resumoMd } from "./analise";
 
 const VAULT = process.env.VAULT || "D:/Obsidian - Claude/🏢 Agência";
@@ -29,6 +29,23 @@ function localizarRaiz(): string {
 const ROOT = localizarRaiz();
 const IA_MJS = join(ROOT, "_scripts", "ia.mjs");
 const CACHE_FILE = join(VAULT, "SaaS", "Prospeccao", "ultima-leva.json");
+const ROTACAO_FILE = join(VAULT, "SaaS", "Prospeccao", "rotacao-brasil.json");
+
+const CIDADES_BRASIL = [
+  "São Paulo/SP", "Rio de Janeiro/RJ", "Belo Horizonte/MG", "Brasília/DF", "Curitiba/PR",
+  "Porto Alegre/RS", "Recife/PE", "Fortaleza/CE", "Salvador/BA", "Goiânia/GO",
+  "Campinas/SP", "Florianópolis/SC", "Manaus/AM", "Belém/PA", "Vitória/ES",
+  "Joinville/SC", "Ribeirão Preto/SP", "Uberlândia/MG", "Natal/RN", "João Pessoa/PB",
+];
+
+const UF_NOME: Record<string, string> = {
+  AC: "Acre", AL: "Alagoas", AP: "Amapá", AM: "Amazonas", BA: "Bahia",
+  CE: "Ceará", DF: "Distrito Federal", ES: "Espírito Santo", GO: "Goiás", MA: "Maranhão",
+  MT: "Mato Grosso", MS: "Mato Grosso do Sul", MG: "Minas Gerais", PA: "Pará", PB: "Paraíba",
+  PR: "Paraná", PE: "Pernambuco", PI: "Piauí", RJ: "Rio de Janeiro", RN: "Rio Grande do Norte",
+  RS: "Rio Grande do Sul", RO: "Rondônia", RR: "Roraima", SC: "Santa Catarina", SP: "São Paulo",
+  SE: "Sergipe", TO: "Tocantins",
+};
 
 export type Candidato = {
   nome: string;
@@ -50,7 +67,30 @@ export type Resultado = {
   candidatos: number;
   aviso: string;
   tempo: number;
+  regiao: string;
+  cidades: string[];
 };
+
+export const progressoAtual = {
+  ativo: false,
+  fase: "",
+  feito: 0,
+  total: 0,
+  nicho: "",
+  regiao: "",
+};
+
+type Alvo = { prompt: string; ficha: string };
+
+function slugNome(nome: string): string {
+  return nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+function hostnameDe(url: string): string {
+  try {
+    return new URL(url.startsWith("http") ? url : `https://${url}`).hostname.replace(/^www\./, "").toLowerCase();
+  } catch { return ""; }
+}
 
 function sleep(ms: number) { return new Promise((r) => setTimeout(r, ms)); }
 
@@ -76,11 +116,68 @@ async function siteExiste(url: string): Promise<boolean> {
 }
 
 async function jaExiste(nome: string): Promise<boolean> {
-  const slug = nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  const slug = slugNome(nome);
   try {
     const files = await readdir(LEADS_DIR);
     return files.some((f) => f.toLowerCase() === `${slug}.md`);
   } catch { return false; }
+}
+
+async function dominiosExistentes(): Promise<Set<string>> {
+  const set = new Set<string>();
+  try {
+    const files = await readdir(LEADS_DIR);
+    for (const f of files) {
+      if (!f.toLowerCase().endsWith(".md")) continue;
+      const raw = await readFile(join(LEADS_DIR, f), "utf8");
+      const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+      if (!m) continue;
+      const kv = m[1].match(/^site-atual:\s*(.*)$/m);
+      if (!kv) continue;
+      const host = hostnameDe(kv[1].trim());
+      if (host) set.add(host);
+    }
+  } catch { /* sem leads */ }
+  return set;
+}
+
+async function proximasDuasCidades(): Promise<string[]> {
+  let indice = 0;
+  try {
+    const raw = await readFile(ROTACAO_FILE, "utf8");
+    const j = JSON.parse(raw);
+    if (typeof j.indice === "number" && Number.isFinite(j.indice)) indice = j.indice % CIDADES_BRASIL.length;
+  } catch { /* começa do 0 */ }
+  const i = indice % CIDADES_BRASIL.length;
+  const a = CIDADES_BRASIL[i];
+  const b = CIDADES_BRASIL[(i + 1) % CIDADES_BRASIL.length];
+  try {
+    await mkdir(join(VAULT, "SaaS", "Prospeccao"), { recursive: true });
+    await writeFile(ROTACAO_FILE, JSON.stringify({ indice: (indice + 2) % CIDADES_BRASIL.length }), "utf8");
+  } catch { /* sem vault */ }
+  return [a, b];
+}
+
+function ehSalvador(ficha: string): boolean {
+  const s = ficha.trim().toLowerCase();
+  return s === "salvador" || s === "salvador/ba";
+}
+
+async function resolverRegiao(op: { cidade?: string; regiao?: string }): Promise<{ alvos: Alvo[]; label: string }> {
+  const cidade = (op.cidade || "").trim();
+  const regiao = (op.regiao || "").trim();
+  if (cidade && !regiao) {
+    return { alvos: [{ prompt: cidade, ficha: cidade }], label: cidade };
+  }
+  if (!regiao || regiao.toLowerCase() === "brasil") {
+    const cidades = await proximasDuasCidades();
+    return { alvos: cidades.map((c) => ({ prompt: c, ficha: c })), label: "Brasil (rodízio)" };
+  }
+  const uf = regiao.toUpperCase();
+  if (/^[A-Z]{2}$/.test(uf) && UF_NOME[uf]) {
+    return { alvos: [{ prompt: `estado da ${UF_NOME[uf]} (${uf})`, ficha: uf }], label: `${UF_NOME[uf]} (${uf})` };
+  }
+  return { alvos: [{ prompt: regiao, ficha: regiao }], label: regiao };
 }
 
 // ---------- fonte 1: Google Places (chave opcional) ----------
@@ -145,10 +242,13 @@ function extrairJsonArray(texto: string): { nome?: string; site?: string }[] {
   }
 }
 
-async function fonteKimi(nicho: string, cidade: string, limite: number): Promise<Candidato[]> {
+async function fonteKimi(nicho: string, lugar: string, ficha: string, limite: number): Promise<Candidato[]> {
   if (!ROOT || !require("node:fs").existsSync(IA_MJS)) return [];
+  const alvo = Math.min(24, limite * 3);
   const prompt =
-    `Liste ${Math.min(12, limite * 2)} empresas reais do segmento "${nicho}" em ${cidade} (BA), que hoje (2026) tenham SITE PRÓPRIO funcionando: NÃO página de rede social, NÃO agregador, NÃO ifood/agenda. ` +
+    `Liste ${alvo} negócios LOCAIS reais de pequeno e médio porte do segmento "${nicho}" em ${lugar}, que hoje (2026) tenham SITE PRÓPRIO funcionando. ` +
+    `Priorize consultórios, clínicas de bairro, escritórios, lojas, restaurantes, pousadas e similares independentes. ` +
+    `EXCLUA: redes, franquias, grandes marcas, portais, agregadores, marketplaces, páginas de rede social, ifood/agenda. ` +
     `Responda APENAS com um JSON array válido e nada mais, no formato: [{"nome":"Nome da Empresa","site":"https://dominio.br"}]`;
   const saida = await runIa("leitura", prompt, 60000);
   const arr = extrairJsonArray(saida);
@@ -160,7 +260,7 @@ async function fonteKimi(nicho: string, cidade: string, limite: number): Promise
     const chave = `${it.nome.trim()}|${site}`.toLowerCase();
     if (vistos.has(chave)) continue; vistos.add(chave);
     if (!(await siteExiste(site))) continue; // domínio fantasma → fora
-    out.push({ nome: it.nome.trim(), site, cidade, segmento: nicho });
+    out.push({ nome: it.nome.trim(), site, cidade: ficha, segmento: nicho });
     if (out.length >= limite) break;
   }
   return out;
@@ -246,37 +346,52 @@ export async function auditarSite(url: string): Promise<{ ok: boolean; problemas
 }
 
 // ---------- orquestrador ----------
-export async function prospectar(op: { nicho?: string; cidade?: string; limite?: number } = {}): Promise<Resultado> {
+export async function prospectar(op: { nicho?: string; cidade?: string; regiao?: string; limite?: number } = {}): Promise<Resultado> {
   const t0 = Date.now();
   const nicho = (op.nicho || "odontologia").toLowerCase();
-  const cidade = op.cidade || "Salvador/BA";
   const limite = Math.min(30, Math.max(1, op.limite || 8));
   const temChave = !!PLACES_KEY;
-  const res: Resultado = { fonte: "", auditados: 0, adicionados: [], descartados: [], erros: [], candidatos: 0, aviso: "", tempo: 0 };
+
+  const { alvos, label } = await resolverRegiao({ cidade: op.cidade, regiao: op.regiao });
+  const subLimite = Math.ceil(limite / alvos.length);
+  const osmValido = alvos.length === 1 && ehSalvador(alvos[0].ficha);
+
+  progressoAtual.ativo = true;
+  progressoAtual.fase = "buscando empresas";
+  progressoAtual.feito = 0;
+  progressoAtual.total = 0;
+  progressoAtual.nicho = nicho;
+  progressoAtual.regiao = label;
+
+  const res: Resultado = { fonte: "", auditados: 0, adicionados: [], descartados: [], erros: [], candidatos: 0, aviso: "", tempo: 0, regiao: label, cidades: alvos.map((a) => a.ficha) };
 
   let candidatos: Candidato[] = [];
   let usouCache = false;
 
   // 1. Google Places (se houver chave)
   if (temChave) {
-    try {
-      candidatos = await fontePlaces(nicho, cidade, limite);
-      res.fonte = "google-places";
-    } catch (e: any) { res.erros.push({ nome: "google-places", motivo: e?.message || "falha" }); }
+    const encontrados: Candidato[] = [];
+    for (const alvo of alvos) {
+      try { encontrados.push(...(await fontePlaces(nicho, alvo.prompt, subLimite))); }
+      catch (e: any) { res.erros.push({ nome: "google-places", motivo: e?.message || "falha" }); }
+    }
+    if (encontrados.length) { candidatos = encontrados; res.fonte = "google-places"; }
   }
 
-  // 2. Kimi-discovery (IA Router — sem precisar de chave)
+  // 2. Kimi-discovery (IA Router — sem precisar de chave), uma chamada por alvo
   if (!candidatos.length) {
-    try {
-      const k = await fonteKimi(nicho, cidade, limite);
-      if (k.length) { candidatos = k; res.fonte = "kimi-discovery"; }
-    } catch (e: any) { res.erros.push({ nome: "kimi", motivo: e?.message || "falha no IA Router" }); }
+    const encontrados: Candidato[] = [];
+    for (const alvo of alvos) {
+      try { encontrados.push(...(await fonteKimi(nicho, alvo.prompt, alvo.ficha, subLimite))); }
+      catch (e: any) { res.erros.push({ nome: "kimi", motivo: e?.message || "falha no IA Router" }); }
+    }
+    if (encontrados.length) { candidatos = encontrados; res.fonte = "kimi-discovery"; }
   }
 
-  // 3. Overpass/OSM (fallback global)
-  if (!candidatos.length) {
+  // 3. Overpass/OSM (só para Salvador, que tem células pré-mapeadas)
+  if (!candidatos.length && osmValido) {
     try {
-      const o = await fonteOsm(nicho, cidade, limite);
+      const o = await fonteOsm(nicho, alvos[0].ficha, limite);
       if (o.length) { candidatos = o; res.fonte = "overpass-osm"; }
     } catch (e: any) { res.erros.push({ nome: "overpass", motivo: e?.message || "falha nos mirrors" }); }
   }
@@ -288,33 +403,60 @@ export async function prospectar(op: { nicho?: string; cidade?: string; limite?:
   }
 
   if (!candidatos.length) {
-    res.aviso = `Nenhuma fonte retornou candidatos de "${nicho}" em ${cidade}. ` +
+    res.aviso = `Nenhuma fonte retornou candidatos de "${nicho}" em ${label}. ` +
       (temChave ? "As fontes falharam: confira a chave Google Places e a rede." : "Sem GOOGLE_PLACES_KEY, usei Kimi + OSM: verifique se o IA Router está no ar (node _scripts/ia.mjs --check).");
     res.tempo = Math.round((Date.now() - t0) / 1000);
+    progressoAtual.ativo = false;
+    progressoAtual.fase = "";
     return res;
   }
   if (!temChave && !usouCache) await salvarCache(candidatos.slice(0, limite));
   if (usouCache) res.fonte = `${res.fonte} (cache da última leva boa)`;
 
   res.candidatos = candidatos.length;
+  progressoAtual.fase = "auditando";
+  progressoAtual.total = candidatos.length;
+
+  const dominios = await dominiosExistentes();
   const lote = 4;
   for (let i = 0; i < candidatos.length; i += lote) {
     const fatia = candidatos.slice(i, i + lote);
     await Promise.allSettled(fatia.map(async (c) => {
       try {
         if (await jaExiste(c.nome)) { res.descartados.push({ nome: c.nome, motivo: "já está no pipeline" }); return; }
+        const host = hostnameDe(c.site);
+        if (host && dominios.has(host)) { res.descartados.push({ nome: c.nome, motivo: "domínio já está no pipeline" }); return; }
+
         const aud = await auditarSite(c.site);
         res.auditados++;
-        if (!aud.ok) { res.descartados.push({ nome: c.nome, motivo: aud.problemas.join(" · ") }); return; }
-        if (aud.problemas.length < 2) { res.descartados.push({ nome: c.nome, motivo: `site ok (${aud.problemas.length} problema(s))` }); return; }
+        if (!aud.ok) { res.descartados.push({ nome: c.nome, motivo: "site inacessível" }); return; }
+
+        const a = await analisarLead({
+          id: slugNome(c.nome),
+          nome: c.nome,
+          cidade: c.cidade || "",
+          site: c.site,
+          nota: c.nota,
+          avaliacoes: c.avaliacoes,
+          whatsapp: c.telefone || "",
+          contato: c.telefone || "",
+        });
+
+        const entra = a.pontuacao <= 75 || aud.problemas.length >= 2;
+        if (!entra) {
+          let motivo = `presença ${a.pontuacao}/100: site forte`;
+          if (aud.problemas.length === 1) motivo += ` · ${aud.problemas[0]}`;
+          res.descartados.push({ nome: c.nome, motivo });
+          return;
+        }
 
         const notaTxt = c.nota && c.nota > 0 ? String(c.nota).replace(".", ",") : "";
-        const porque = `Auditoria automática do agente: ${aud.problemas.join("; ")}. Fonte da ficha: ${res.fonte}${c.nota ? ` · nota Google ${c.nota}` : ""}${c.avaliacoes ? ` · ${c.avaliacoes} avaliações` : ""}.`;
+        const porque = `Presença ${a.pontuacao}/100. Auditoria: ${aud.problemas.join("; ") || "site ok"}. Fonte da ficha: ${res.fonte}${c.nota ? ` · nota Google ${c.nota}` : ""}${c.avaliacoes ? ` · ${c.avaliacoes} avaliações` : ""}.`;
         const novo = await pipelineOp({
           action: "add",
           nome: c.nome,
           segmento: c.segmento || nicho,
-          cidade: c.cidade || cidade,
+          cidade: c.cidade || "",
           nota: notaTxt,
           avaliacoes: c.avaliacoes ? String(c.avaliacoes) : "",
           site: c.site,
@@ -324,23 +466,23 @@ export async function prospectar(op: { nicho?: string; cidade?: string; limite?:
           porque,
         });
         res.adicionados.push(c.nome);
-        // o lead já chega no quadro com a análise de presença (Google, site, redes, o que falta)
+        // reusa a análise já calculada em vez de rodar de novo
         if (novo && "id" in novo && novo.id) {
           try {
-            const base = await leadBase(novo.id);
-            if (base) {
-              const a = await analisarLead(base);
-              await salvarAnalise(a);
-              await gravarAnaliseNaFicha(base.id, resumoMd(a), a.pontuacao, a);
-            }
+            a.id = novo.id;
+            await salvarAnalise(a);
+            await gravarAnaliseNaFicha(novo.id, resumoMd(a), a.pontuacao, a);
           } catch { /* a análise pode ser refeita pela ficha */ }
         }
       } catch (e: any) {
         res.erros.push({ nome: c.nome, motivo: e?.message || "erro" });
       }
     }));
+    progressoAtual.feito = res.auditados;
   }
   res.tempo = Math.round((Date.now() - t0) / 1000);
+  progressoAtual.ativo = false;
+  progressoAtual.fase = "";
   return res;
 }
 
