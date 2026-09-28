@@ -147,6 +147,10 @@ async function listLeads() {
       presenca: fm.presenca ? Number(fm.presenca) : null,
       analiseEm: fm["analise-em"] || "",
       relatorio: fm.relatorio || "",
+      contatadoEm: fm["contatado-em"] || "",
+      respondeuEm: fm["respondeu-em"] || "",
+      desfecho: fm.desfecho || "",
+      desfechoEm: fm["desfecho-em"] || "",
     });
   }
   leads.sort((a, b) => (a.estagio - b.estagio) || a.criado.localeCompare(b.criado));
@@ -163,7 +167,7 @@ export async function pipelineOp(op: {
   action: string; id?: string; nome?: string; segmento?: string; cidade?: string;
   nota?: string; avaliacoes?: string; site?: string; contato?: string; whatsapp?: string;
   email?: string; categoria?: string; porque?: string; solucao?: string; mensagem?: string;
-  estagio?: number; motivo?: string;
+  estagio?: number; motivo?: string; desfecho?: string;
 }) {
   const dir = join(VAULT, "40 Comercial", "Leads");
   if (op.action === "add") {
@@ -176,6 +180,7 @@ export async function pipelineOp(op: {
       email: op.email || "", categoria: op.categoria || "maps",
       estagio: "0", status: "ativo", solucao: "", "motivo-arquivo": "",
       porque: (op.porque || "").replace(/\r?\n/g, " "), criado: now,
+      "contatado-em": "", "respondeu-em": "", desfecho: "", "desfecho-em": "",
     };
     const body = `\n# ${op.nome}\n\n## Por que é um bom lead\n${op.porque || "_a preencher_"}\n`;
     await writeFile(join(dir, `${id}.md`), fmBlock(fm) + body, "utf8");
@@ -189,15 +194,14 @@ export async function pipelineOp(op: {
   const oggi = new Date().toISOString().slice(0, 10);
 
   if (op.action === "move") {
+    const from = Math.min(5, Math.max(0, Number(fm.estagio) || 0));
     const to = Math.min(5, Math.max(0, Number(op.estagio) || 0));
     fm.estagio = String(to);
-    if (to !== 5) {
-      const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
-      await writeFile(p, fmBlock(fm) + "\n" + appendMov(body, `${oggi} · avançou para ${ESTAGIOS[to]}`), "utf8");
-    } else {
-      const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
-      await writeFile(p, fmBlock(fm) + "\n" + appendMov(body, `${oggi} · entregue · pedir indicação`), "utf8");
-    }
+    if (to === 2 && !fm["contatado-em"]) fm["contatado-em"] = oggi;
+    if (from === 2 && to === 3 && !fm["respondeu-em"]) fm["respondeu-em"] = oggi;
+    const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
+    const mov = to === 5 ? `${oggi} · entregue · pedir indicação` : `${oggi} · avançou para ${ESTAGIOS[to]}`;
+    await writeFile(p, fmBlock(fm) + "\n" + appendMov(body, mov), "utf8");
     return { ok: true };
   }
   if (op.action === "update") {
@@ -228,6 +232,8 @@ export async function pipelineOp(op: {
   if (op.action === "reactivate") {
     fm.status = "ativo";
     fm["motivo-arquivo"] = "";
+    fm.desfecho = "";
+    fm["desfecho-em"] = "";
     const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
     await writeFile(p, fmBlock(fm) + "\n" + appendMov(body, `${oggi} · reativado`), "utf8");
     return { ok: true };
@@ -235,6 +241,30 @@ export async function pipelineOp(op: {
   if (op.action === "delete") {
     const { unlink } = await import("node:fs/promises");
     try { await unlink(p); } catch { /* já não existe */ }
+    return { ok: true };
+  }
+  if (op.action === "desfecho") {
+    const tipo = op.desfecho === "sem-interesse" ? "sem-interesse" : "sem-resposta";
+    fm.desfecho = tipo;
+    fm["desfecho-em"] = oggi;
+    fm.status = "arquivado";
+    fm["motivo-arquivo"] = tipo === "sem-interesse" ? "Sem interesse (recusou)" : "Sem continuidade (não respondeu)";
+    if (!fm["contatado-em"]) fm["contatado-em"] = oggi;
+    const mov = tipo === "sem-interesse" ? "sem interesse (recusou)" : "sem continuidade (não respondeu)";
+    const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
+    await writeFile(p, fmBlock(fm) + "\n" + appendMov(body, `${oggi} · ${mov}`), "utf8");
+    return { ok: true };
+  }
+  if (op.action === "contatar") {
+    if (!fm["contatado-em"]) fm["contatado-em"] = oggi;
+    const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
+    await writeFile(p, fmBlock(fm) + "\n" + body, "utf8");
+    return { ok: true };
+  }
+  if (op.action === "responder") {
+    if (!fm["respondeu-em"]) fm["respondeu-em"] = oggi;
+    const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
+    await writeFile(p, fmBlock(fm) + "\n" + appendMov(body, `${oggi} · respondeu`), "utf8");
     return { ok: true };
   }
   throw new Error("ação desconhecida");

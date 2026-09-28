@@ -43,3 +43,5 @@ out/
 .vercel/
 
 _scripts/.persona-tmp/
+
+_scripts/qa/node_modules/

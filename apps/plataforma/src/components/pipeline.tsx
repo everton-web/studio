@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, MotionConfig } from "framer-motion";
-import { Check, Trash2 } from "lucide-react";
+import { Check, Trash2, ThumbsDown, MessageCircleOff } from "lucide-react";
 import { AnalisePresenca } from "./analise-presenca";
 import { montarMensagem, type MsgTipo } from "@/lib/mensagens";
+import { calcularConversao, type JanelaConversao, type LeadConversao } from "@/lib/conversao";
 
 // ---------- tipos ----------
 export type Lead = {
@@ -30,6 +31,10 @@ export type Lead = {
   presenca?: number | null;
   analiseEm?: string;
   relatorio?: string;
+  contatadoEm: string;
+  respondeuEm: string;
+  desfecho: string;
+  desfechoEm: string;
 };
 
 const ESTAGIOS = [
@@ -113,9 +118,10 @@ function CardBtn({ children, title, onClick, disabled, color, danger }: {
   );
 }
 
-function LeadCard({ lead, onEdit, onMove, onAbordar, onValidar, onApagar, onOpen, dragging, onDragStart, onDragEnd }: {
+function LeadCard({ lead, onEdit, onMove, onAbordar, onValidar, onApagar, onOpen, onDesfecho, dragging, onDragStart, onDragEnd }: {
   lead: Lead; onEdit: (l: Lead) => void; onMove: (l: Lead, dir: number) => void; onAbordar: (l: Lead) => void;
   onValidar: (l: Lead) => void; onApagar: (l: Lead) => void; onOpen: (l: Lead) => void;
+  onDesfecho: (l: Lead, tipo: "sem-interesse" | "sem-resposta") => void;
   dragging?: boolean; onDragStart: (l: Lead) => void; onDragEnd: () => void;
 }) {
   const sp = (fn: () => void) => (e: React.MouseEvent) => { e.stopPropagation(); fn(); };
@@ -208,6 +214,26 @@ function LeadCard({ lead, onEdit, onMove, onAbordar, onValidar, onApagar, onOpen
           </button>
         </div>
       </div>
+
+      {lead.estagio >= 0 && lead.estagio <= 2 && lead.status !== "arquivado" && (
+        <div className="flex items-center gap-2 pt-2 mt-2 border-t border-[var(--line)]">
+          <span className="mono mr-auto" style={{ fontSize: "0.66rem", color: "#5d5d58" }}>desfecho</span>
+          <button
+            onClick={sp(() => onDesfecho(lead, "sem-interesse"))}
+            title="sem interesse · recusou" aria-label="sem interesse"
+            className="w-11 h-11 grid place-items-center rounded-lg border transition-all active:scale-95 border-[#fb7185]/25 text-[#fb7185]/70 hover:text-[#fb7185] hover:border-[#fb7185]/50 hover:bg-[#fb7185]/8"
+          >
+            <ThumbsDown className="w-4 h-4" strokeWidth={1.8} />
+          </button>
+          <button
+            onClick={sp(() => onDesfecho(lead, "sem-resposta"))}
+            title="sem continuidade · não respondeu" aria-label="sem resposta"
+            className="w-11 h-11 grid place-items-center rounded-lg border transition-all active:scale-95 border-white/12 text-[#8a8a85] hover:text-white hover:border-white/30 hover:bg-white/5"
+          >
+            <MessageCircleOff className="w-4 h-4" strokeWidth={1.8} />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -271,6 +297,7 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
   const [relatorioCopiado, setRelatorioCopiado] = useState(false);
   const [relatorioStatus, setRelatorioStatus] = useState<"" | "entrando" | "noAr" | "demorado">("");
   const relatorioPollRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [janela, setJanela] = useState<JanelaConversao>("tudo");
 
   // status da fonte de prospecção (chave Google? IA Router no ar?)
   useEffect(() => {
@@ -291,6 +318,11 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
 
   const ativos = leads.filter((l) => l.status !== "arquivado");
   const arq = leads.filter((l) => l.status === "arquivado");
+
+  const conv = calcularConversao(
+    leads.map((l) => ({ estagio: l.estagio, status: l.status, contatadoEm: l.contatadoEm, respondeuEm: l.respondeuEm, desfecho: l.desfecho, desfechoEm: l.desfechoEm })) as LeadConversao[],
+    janela,
+  );
 
   async function post(body: Record<string, unknown>) {
     setBusy(true);
@@ -360,6 +392,14 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
     if (await post({ action: "archive", id: modal.lead.id, motivo: motivo.trim() })) setModal(null);
   };
   const reativar = async (l: Lead) => { await post({ action: "reactivate", id: l.id }); };
+  const marcarDesfecho = async (l: Lead, tipo: "sem-interesse" | "sem-resposta") => {
+    if (!confirm(`Marcar "${l.nome}" como ${tipo === "sem-interesse" ? "sem interesse (recusou)?" : "sem continuidade (não respondeu)?"}`)) return false;
+    return await post({ action: "desfecho", id: l.id, desfecho: tipo });
+  };
+  const registrarResposta = async (l: Lead) => { await post({ action: "responder", id: l.id }); };
+  const contatar = (id: string) => {
+    fetch("/api/pipeline", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "contatar", id }) }).catch(() => {});
+  };
   const excluir = async () => {
     if (!modal || modal.kind !== "editar") return;
     if (!confirm(`Excluir "${modal.lead.nome}"? O arquivo sai do vault.`)) return;
@@ -441,6 +481,52 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
 
   return (
     <MotionConfig reducedMotion="user">
+      <div className="mb-6 card p-5 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div className="mono" style={{ fontSize: "0.66rem" }}>funil de prospecção</div>
+          <div className="flex items-center gap-1 rounded-xl border border-white/10 p-1">
+            {([7, 30, "tudo"] as const).map((j) => (
+              <button
+                key={String(j)}
+                onClick={() => setJanela(j)}
+                className={`px-3 py-1.5 rounded-lg text-[.72rem] transition-colors ${janela === j ? "bg-white/10 text-[#f7f7f5]" : "text-[#8a8a85] hover:text-white"}`}
+              >
+                {j === "tudo" ? "tudo" : `${j} dias`}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {conv.contatados === 0 ? (
+          <p className="text-[.8rem] text-[#8a8a85]">ainda sem contatos registrados</p>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {[
+                ["Contatados", conv.contatados, 100],
+                ["Responderam", conv.responderam, conv.pctResposta],
+                ["Interessados", conv.interessados, conv.pctInteresse],
+                ["Fechados", conv.fechados, conv.pctFechamento],
+              ].map(([lbl, n, p]) => (
+                <div key={String(lbl)} className="bg-white/3 border border-[var(--line)] rounded-xl px-4 py-3">
+                  <div className="mono mb-1" style={{ fontSize: "0.66rem" }}>{lbl}</div>
+                  <div className="nums tabular-nums text-[1.15rem] leading-none text-[#f7f7f5]">{n}</div>
+                  <div className="mono mt-1" style={{ fontSize: "0.66rem", color: "#8a8a85" }}>{p}%</div>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-2 mt-3">
+              <span className="mono inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-white/12 text-[#9a9a95] bg-white/4" style={{ fontSize: "0.7rem" }}>
+                sem resposta · {conv.semResposta} · {conv.pctSemResposta}%
+              </span>
+              <span className="mono inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-[#fb7185]/30 text-[#fb7185] bg-[#fb7185]/8" style={{ fontSize: "0.7rem" }}>
+                sem interesse · {conv.semInteresse} · {conv.pctSemInteresse}%
+              </span>
+            </div>
+          </>
+        )}
+      </div>
+
       {/* barra de comando do pipeline */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between mb-6">
         <div className="flex flex-wrap gap-2">
@@ -617,7 +703,7 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
                   {col.map((l) => (
                     <LeadCard
                       key={l.id} lead={l} onEdit={openEdit} onMove={mover} onAbordar={openAbordar}
-                      onValidar={aceitar} onApagar={apagar} onOpen={openDetalhe}
+                      onValidar={aceitar} onApagar={apagar} onOpen={openDetalhe} onDesfecho={marcarDesfecho}
                       dragging={dragging === l.id}
                       onDragStart={() => setDragging(l.id)}
                       onDragEnd={() => { setDragging(null); setDragOver(null); }}
@@ -646,6 +732,14 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
                 <motion.div key={l.id} layout className="bg-[var(--bg-2)] border border-[var(--line)] rounded-2xl p-5 mb-3 opacity-70">
                   <div className="text-[.88rem] font-medium tracking-[-.01em] truncate mb-1">{l.nome}</div>
                   {l.motivo && <p className="text-[.74rem] text-[#8a8a85] leading-relaxed mb-3 line-clamp-2">{l.motivo}</p>}
+                  {l.desfecho && (
+                    <div
+                      className={`inline-flex items-center gap-1 mono px-2 py-1 rounded-md mb-2 border ${l.desfecho === "sem-interesse" ? "border-[#fb7185]/30 text-[#fb7185] bg-[#fb7185]/8" : "border-white/12 text-[#9a9a95] bg-white/4"}`}
+                      style={{ fontSize: "0.66rem" }}
+                    >
+                      {l.desfecho === "sem-interesse" ? "sem interesse" : "sem resposta"}
+                    </div>
+                  )}
                   <button onClick={() => reativar(l)} disabled={busy}
                     className="mono px-3 py-2 rounded-lg border border-[#3ddc84]/25 text-[#3ddc84] hover:bg-[#3ddc84]/8 transition-colors"
                     style={{ fontSize: "0.7rem" }}>
@@ -781,7 +875,7 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
             <a
               href={waLink(abordar.lead.whatsapp || abordar.lead.contato, abordar.msg)!}
               target="_blank" rel="noreferrer"
-              onClick={salvarMensagem}
+              onClick={() => { salvarMensagem(); contatar(abordar.lead.id); }}
               className="flex-1 flex items-center justify-center gap-2 h-[52px] rounded-[14px] bg-[#25d366] hover:bg-[#2ee06f] text-[#04210f] text-[.9rem] font-semibold transition-colors"
             >
               abrir WhatsApp com a mensagem
@@ -912,6 +1006,32 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
                 avançar → {detalhe.estagio + 1 < 6 ? ESTAGIOS[detalhe.estagio + 1].nome : "-"}
               </button>
             </div>
+
+            {detalhe.estagio >= 0 && detalhe.estagio <= 2 && detalhe.status !== "arquivado" && (
+              <div className="flex gap-3 mt-3">
+                <button
+                  onClick={async () => { if (await marcarDesfecho(detalhe, "sem-interesse")) setDetalhe(null); }}
+                  className="flex-1 h-[44px] rounded-xl border border-[#fb7185]/30 text-[#fb7185] bg-[#fb7185]/8 hover:bg-[#fb7185]/15 text-[.8rem] font-medium transition-colors"
+                >
+                  sem interesse
+                </button>
+                <button
+                  onClick={async () => { if (await marcarDesfecho(detalhe, "sem-resposta")) setDetalhe(null); }}
+                  className="flex-1 h-[44px] rounded-xl border border-white/12 text-[#9a9a95] bg-white/4 hover:text-white hover:border-white/30 text-[.8rem] font-medium transition-colors"
+                >
+                  sem resposta
+                </button>
+              </div>
+            )}
+
+            {detalhe.estagio === 2 && detalhe.status !== "arquivado" && !detalhe.respondeuEm && (
+              <button
+                onClick={async () => { await registrarResposta(detalhe); }}
+                className="mt-3 w-full h-[44px] rounded-xl border border-white/12 text-[#b8b8b3] hover:text-white hover:border-white/28 text-[.8rem] font-medium transition-colors"
+              >
+                registrar resposta
+              </button>
+            )}
           </div>
         )}
       </Modal>

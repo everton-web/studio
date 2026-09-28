@@ -1,0 +1,4 @@
+# Theo — tarja do desconto em "O que eu entrego" (D:/studio-redesign, branch feat/redesign-motion)
+Feedback do Everton: a tarja do Mês do Zeca na seção de serviços "parece um botão gigante" (card largo com borda laranja e selo do contador).
+Troque por um detalhe discreto, no espírito do Raul: uma micro-linha de texto junto ao título/intro da seção, ex.: ponto laranja + "Mês do Zeca · 20% OFF até 30/09 · 2d 06h" em micro label (0.68–0.78rem, caixa alta, tracking +0.14em, cor secundária com o contador em laranja). Sem borda, sem fundo, sem aparência de botão. Os preços riscados + novos continuam nos cards. Depois de 30/09 23:59 some sozinha (mesma lógica de promo.ts).
+Mantenha a tarja do TOPO do site como está. Confira com `node D:/studio/_scripts/qa/secoes.mjs http://localhost:3010/ <pasta> ambos`. npm run build. Commit na branch, sem push.

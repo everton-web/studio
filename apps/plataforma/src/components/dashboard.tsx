@@ -35,6 +35,7 @@ type Data = {
     avaliacoes: number; site: string; contato: string; whatsapp: string; email: string;
     categoria: string; estagio: number; status: string;
     solucao: string; motivo: string; porque: string; mensagem: string; movs: string[]; criado: string;
+    contatadoEm: string; respondeuEm: string; desfecho: string; desfechoEm: string;
   }[];
   rastreamento: { sites: Record<string, { n: number; primeiro: string; ultimo: string }>; total: number };
 };
