@@ -17,17 +17,22 @@ export function DotGrid() {
     if (reduced || !fine) {
       el.style.setProperty("--mx", "50%");
       el.style.setProperty("--my", "50%");
-      el.style.opacity = "0.4";
+      el.style.opacity = "0";
       return;
     }
 
     let raf = 0;
+    let lit = false;
     let targetX = 50;
     let targetY = 50;
     let currentX = 50;
     let currentY = 50;
 
     const move = (e: PointerEvent) => {
+      if (!lit) {
+        lit = true;
+        el.style.opacity = "1";
+      }
       targetX = (e.clientX / window.innerWidth) * 100;
       targetY = (e.clientY / window.innerHeight) * 100;
     };
@@ -64,6 +69,8 @@ export function DotGrid() {
         ref={torchRef}
         className="absolute inset-0"
         style={{
+          opacity: 0,
+          transition: "opacity 0.3s ease",
           background:
             "radial-gradient(circle 220px at var(--mx, 50%) var(--my, 50%), rgba(255,64,0,0.28), transparent 70%)",
         }}

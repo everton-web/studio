@@ -146,36 +146,32 @@ function SeeAllCard() {
       target="_blank"
       rel="noopener noreferrer"
       data-cursor={t.cursor.open}
-      className="group flex flex-col justify-between rounded-[14px] p-8 max-md:p-6 transition-colors duration-300 hover:border-[var(--color-border-active)]"
+      className="group flex items-center justify-between gap-4 rounded-[14px] px-8 py-6 max-md:px-6 transition-colors duration-300 hover:border-[var(--color-border-active)]"
       style={{
-        aspectRatio: "16 / 10",
         background: "var(--color-bg-card)",
         border: "1px solid var(--color-border)",
       }}
     >
-      <span className="section-label">{t.portfolio.label}</span>
-      <div className="flex items-end justify-between gap-4">
-        <span
-          className="text-[var(--color-text)]"
-          style={{ fontSize: "clamp(1.5rem, 3vw, 2.4rem)", fontWeight: 500, letterSpacing: "-0.04em", lineHeight: 1.1 }}
-        >
-          {t.portfolio.seeAll}
-        </span>
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="text-[var(--color-accent)] group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-500"
-          aria-hidden
-        >
-          <path d="m7 17 9.2-9.2M17 17V8H8" />
-        </svg>
-      </div>
+      <span
+        className="text-[var(--color-text)]"
+        style={{ fontSize: "clamp(1.5rem, 3vw, 2.4rem)", fontWeight: 500, letterSpacing: "-0.04em", lineHeight: 1.1 }}
+      >
+        {t.portfolio.seeAll}
+      </span>
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="text-[var(--color-accent)] shrink-0 group-hover:translate-x-1 transition-transform duration-500"
+        aria-hidden
+      >
+        <path d="m7 17 9.2-9.2M17 17V8H8" />
+      </svg>
     </a>
   );
 }
@@ -236,7 +232,7 @@ export function Portfolio() {
               <ProjectCard project={project} ratio={restRatios[i] ?? "16 / 10"} />
             </AnimatedSection>
           ))}
-          <AnimatedSection delay={0.05 * (rest.length + 1)}>
+          <AnimatedSection delay={0.05 * (rest.length + 1)} className="md:col-span-2">
             <SeeAllCard />
           </AnimatedSection>
         </div>

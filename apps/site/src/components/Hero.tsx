@@ -69,7 +69,8 @@ export function Hero() {
           className="mb-6 max-md:mb-5"
           style={{
             fontFamily: "var(--font-sans)",
-            fontSize: "clamp(2.9rem, 11vw, 11rem)",
+            fontSize:
+              "min(clamp(2.9rem, 9vw, 11rem), calc((100svh - 240px) / 4), calc((100vw - 2 * var(--gutter)) / 11))",
             fontWeight: 500,
             lineHeight: 1,
             letterSpacing: "-0.075em",

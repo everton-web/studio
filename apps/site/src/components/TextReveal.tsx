@@ -1,7 +1,13 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
-import type { CSSProperties, ReactNode } from "react";
+import {
+  motion,
+  useInView,
+  useReducedMotion,
+  useTransform,
+  type MotionValue,
+} from "framer-motion";
+import { useRef, type CSSProperties, type ReactNode } from "react";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -25,6 +31,8 @@ export function LineReveal({
   style,
 }: LineRevealProps) {
   const reduced = useReducedMotion();
+  const ref = useRef<HTMLElement | null>(null);
+  const inView = useInView(ref, { once: true, margin: "-10% 0px -10% 0px" });
   const Tag = as;
 
   if (reduced) {
@@ -40,14 +48,13 @@ export function LineReveal({
   }
 
   return (
-    <Tag className={className} style={style}>
+    <Tag ref={ref as never} className={className} style={style}>
       {lines.map((line, i) => (
         <span key={i} className="block overflow-hidden">
           <motion.span
             custom={i}
             initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
+            animate={inView ? "visible" : "hidden"}
             variants={{
               hidden: { y: "110%" },
               visible: (idx: number) => ({
@@ -81,6 +88,36 @@ interface WordRevealProps {
   delay?: number;
   stagger?: number;
   style?: CSSProperties;
+  progress?: MotionValue<number>;
+}
+
+function RevealWord({
+  progress,
+  index,
+  total,
+  accent,
+  children,
+}: {
+  progress: MotionValue<number>;
+  index: number;
+  total: number;
+  accent: boolean;
+  children: ReactNode;
+}) {
+  const opacity = useTransform(progress, (p) => {
+    const raw = (p * (total + 4) - index) / 4;
+    const clamped = raw < 0 ? 0 : raw > 1 ? 1 : raw;
+    return 0.34 + 0.66 * clamped;
+  });
+
+  return (
+    <motion.span
+      style={{ opacity }}
+      className={`inline-block ${accent ? "serif" : ""}`}
+    >
+      {children}
+    </motion.span>
+  );
 }
 
 export function WordReveal({
@@ -90,6 +127,7 @@ export function WordReveal({
   delay = 0,
   stagger = 0.03,
   style,
+  progress,
 }: WordRevealProps) {
   const reduced = useReducedMotion();
 
@@ -109,6 +147,24 @@ export function WordReveal({
           <span key={i} className={seg.accent ? "serif" : undefined}>
             {seg.t}{" "}
           </span>
+        ))}
+      </span>
+    );
+  }
+
+  if (progress) {
+    return (
+      <span className={className} style={style}>
+        {words.map((word, i) => (
+          <RevealWord
+            key={i}
+            progress={progress}
+            index={i}
+            total={words.length}
+            accent={word.accent}
+          >
+            {word.t + (i < words.length - 1 ? "\u00A0" : "")}
+          </RevealWord>
         ))}
       </span>
     );

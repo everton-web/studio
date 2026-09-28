@@ -1,5 +1,7 @@
 "use client";
 
+import { useRef } from "react";
+import { useScroll } from "framer-motion";
 import { AnimatedSection } from "./AnimatedSection";
 import { WordReveal } from "./TextReveal";
 import { TriangleIcon } from "./TriangleIcon";
@@ -7,6 +9,11 @@ import { useLang } from "@/context/LanguageContext";
 
 export function About() {
   const { t } = useLang();
+  const statementRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: statementRef,
+    offset: ["start end", "center center"],
+  });
 
   const metrics = [
     { value: "200", suffix: "+", label: t.metrics.projects },
@@ -34,23 +41,26 @@ export function About() {
             </AnimatedSection>
 
             <AnimatedSection delay={0.1}>
-              <WordReveal
-                segments={[
-                  { t: t.about.statementBefore },
-                  { t: t.about.statementStrong, accent: true },
-                  { t: t.about.statementMiddle },
-                  { t: t.about.statementAccent, accent: true },
-                  { t: t.about.statementAfter },
-                ]}
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "clamp(2rem, 5.2vw, 4.25rem)",
-                  fontWeight: 400,
-                  lineHeight: 1.05,
-                  letterSpacing: "-0.06em",
-                  color: "var(--color-text-secondary)",
-                }}
-              />
+              <div ref={statementRef}>
+                <WordReveal
+                  segments={[
+                    { t: t.about.statementBefore },
+                    { t: t.about.statementStrong, accent: true },
+                    { t: t.about.statementMiddle },
+                    { t: t.about.statementAccent, accent: true },
+                    { t: t.about.statementAfter },
+                  ]}
+                  progress={scrollYProgress}
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "clamp(2rem, 5.2vw, 4.25rem)",
+                    fontWeight: 400,
+                    lineHeight: 1.05,
+                    letterSpacing: "-0.06em",
+                    color: "var(--color-text-secondary)",
+                  }}
+                />
+              </div>
             </AnimatedSection>
           </div>
 
