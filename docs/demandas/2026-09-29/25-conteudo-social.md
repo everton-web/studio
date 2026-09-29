@@ -10,6 +10,6 @@ Dono: Mia (conteúdo) com davi-copy (redator) e Davi (artes). Orion orquestra. N
 4. Publicação: caminho a decidir (agendador Metricool/Buffer recomendado · API oficial Meta/LinkedIn · manual).
 
 ## Decisões pendentes do Everton
-- [ ] Caminho de publicação (agendador, API ou manual)
-- [ ] Cadência (IG 3x, LinkedIn 2x por semana) cabe na rotina?
-- [ ] Liberar Mia + redator para começar a etapa 1
+- [x] Caminho de publicação: MANUAL por enquanto (Everton quer analisar)
+- [ ] Cadência: Everton ainda vai decidir (não fechar calendário fixo)
+- [x] Etapa 1 liberada em 29/09
