@@ -72,25 +72,8 @@ export function Contact() {
   return (
     <section
       id="contact"
-      className="relative overflow-hidden"
       style={{ background: "var(--color-bg-soft)", padding: "var(--section-pad) 0" }}
     >
-      {/* foto do Everton ao fundo, esmaecida e espelhada (olhando para o formulário); só no desktop */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/everton-contato.webp"
-        alt=""
-        aria-hidden
-        loading="lazy"
-        className="pointer-events-none select-none absolute bottom-0 right-[-3%] z-[1] h-[98%] w-auto max-w-none max-lg:hidden"
-        style={{
-          transform: "scaleX(-1)",
-          opacity: 0.22,
-          filter: "grayscale(0.6) contrast(1.05)",
-          maskImage: "linear-gradient(to right, #000 40%, transparent 90%)",
-          WebkitMaskImage: "linear-gradient(to right, #000 40%, transparent 90%)",
-        }}
-      />
       <div className="relative z-[2] container-site">
         <div className="flex items-start gap-20 max-lg:flex-col max-lg:gap-16">
           <div className="flex-1 max-w-[520px]">
