@@ -22,6 +22,8 @@ const browser = await puppeteer.launch({ executablePath: CHROME, headless: "new"
 try {
   for (const nome of modo === "ambos" ? ["desktop", "celular"] : [modo]) {
     const page = await browser.newPage();
+    // DATA=2026-10-01 simula outra data (ex.: prints sem a faixa de promoção)
+    if (process.env.DATA) await page.evaluateOnNewDocument((d) => { const R = Date, fixo = new R(d).getTime(), ini = R.now(); globalThis.Date = class extends R { constructor(...a) { super(...(a.length ? a : [fixo + (R.now() - ini)])); } static now() { return fixo + (R.now() - ini); } }; }, process.env.DATA);
     await page.setViewport(PERFIS[nome]);
     if (nome === "celular") await page.setUserAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1");
     const erros = [];

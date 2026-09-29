@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link rel="stylesheet" href="_modulo.css">
+<style>
+  body{height:1200px}
+  .mod-head{top:56px}
+  .mod-foot{bottom:40px}
+  .content{position:absolute;top:148px;left:72px;right:72px;display:flex;flex-direction:column;gap:32px}
+  .hero h2{font-size:clamp(2.2rem,4.5vw,3.4rem);margin-bottom:14px}
+  .hero p{font-size:1rem}
+  /* símbolo grande */
+  .sym-big{display:flex;align-items:center;gap:48px}
+  .sym-big svg{width:140px;height:140px;color:var(--tx);flex-shrink:0}
+  .sym-big .info{display:flex;flex-direction:column;gap:14px}
+  .sym-big .info h3{font-size:1.5rem;letter-spacing:-.04em}
+  .sym-big .info p{font-size:.95rem}
+  /* grid: construção, respiro, assinatura */
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
+  .card h4{font-size:.78rem;font-weight:500;letter-spacing:.04em;color:var(--muted);margin-bottom:12px}
+  .card .box-const{width:100%;aspect-ratio:1;border-radius:10px;background:var(--bg-soft);border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+  .card .box-const svg{width:64px;height:64px;color:var(--tx)}
+  .card .medidas{display:flex;gap:8px;align-items:center;margin-top:14px}
+  .card .medidas span{font-size:.75rem;color:var(--tx2)}
+  /* assinatura */
+  .assinatura{display:flex;align-items:center;gap:12px;font-weight:600;font-size:2.2rem;letter-spacing:-.04em;margin-bottom:10px}
+  .assinatura .dot{color:var(--ac)}
+  /* negativo */
+  .negativo{background:var(--tx);color:var(--bg);border-radius:18px;padding:24px 32px;display:flex;align-items:center;gap:28px}
+  .negativo svg{width:80px;height:80px;flex-shrink:0}
+  .negativo h4{font-size:1rem;font-weight:500;letter-spacing:-.02em;margin-bottom:8px;color:var(--bg)}
+  .negativo p{font-size:.85rem;color:#55554f}
+  /* símbolo rótulo */
+  .rotulo-demo{display:flex;align-items:center;gap:10px}
+  .rotulo-demo svg{width:18px;height:18px;color:var(--ac)}
+  /* área de respiro */
+  .respiro{display:flex;flex-direction:column;gap:16px}
+  .resp-box{position:relative;width:200px;height:200px}
+  .resp-box svg{position:absolute;inset:0;width:100%;height:100%;color:var(--tx)}
+  .resp-box .zone{position:absolute;left:20%;right:20%;top:20%;bottom:20%;border:1px dashed var(--ac);opacity:.55;pointer-events:none}
+  .resp-box .med{position:absolute;font-size:.62rem;font-weight:500;letter-spacing:.05em;color:var(--ac);background:var(--card);padding:1px 6px;border-radius:4px}
+  .resp-box .med-t{top:20%;left:50%;transform:translate(-50%,-50%)}
+  .resp-box .med-b{top:80%;left:50%;transform:translate(-50%,-50%)}
+  .resp-box .med-l{left:20%;top:50%;transform:translate(-50%,-50%)}
+  .resp-box .med-r{left:80%;top:50%;transform:translate(-50%,-50%)}
+  /* assinatura comparação */
+  .comp-demo{display:flex;align-items:center;gap:32px;margin-top:8px}
+  .comp-demo .d{display:flex;flex-direction:column;gap:4px}
+  .demo-nome{font-weight:600;font-size:1.15rem;letter-spacing:-.02em;color:var(--tx)}
+  .demo-nome .dot{color:var(--ac)}
+  .demo-nome.dim{color:var(--tx2)}
+</style></head>
+<body>
+  <div class="mod-head">
+    <span class="mod-num">03</span><span class="mod-bar"></span><span class="mod-label">MARCA</span>
+  </div>
+  <div class="mod-foot">evertonbrito.com</div>
+  <div class="content">
+    <div class="hero">
+      <h2>Um símbolo, uma <span class="acc">assinatura</span></h2>
+      <p>Triângulo de lados curvos, como a ponta de um lápis ou uma vela. A assinatura em minúsculas com ponto final: o ponto é parte do nome.</p>
+    </div>
+    <div class="sym-big">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 10 Q58.6 45 84.6 70 Q50 60 15.4 70 Q41.4 45 50 10Z" fill="currentColor"/></svg>
+      <div class="info">
+        <h3><span class="acc">Símbolo</span></h3>
+        <p>Path SVG puro, 100×100 de viewBox. Os lados curvos equilibram a geometria exata com o gesto orgânico, como um traço de lápis em movimento.</p>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <h4>Construção</h4>
+        <div class="box-const">
+          <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 10 Q58.6 45 84.6 70 Q50 60 15.4 70 Q41.4 45 50 10Z" fill="currentColor"/></svg>
+        </div>
+      </div>
+      <div class="card">
+        <h4>Área de respiro</h4>
+        <div class="respiro">
+          <div class="resp-box">
+            <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 10 Q58.6 45 84.6 70 Q50 60 15.4 70 Q41.4 45 50 10Z" fill="currentColor"/></svg>
+            <span class="zone"></span>
+            <span class="med med-t">20%</span>
+            <span class="med med-r">20%</span>
+            <span class="med med-b">20%</span>
+            <span class="med med-l">20%</span>
+          </div>
+          <p style="font-size:.82rem;color:var(--tx2)">Margem mínima de 20% do tamanho do símbolo em cada lado. Nada invade essa&nbsp;área.</p>
+        </div>
+      </div>
+      <div class="card">
+        <h4>Assinatura</h4>
+        <div class="assinatura"><span>everton</span><span class="dot">.</span></div>
+        <p style="font-size:.85rem">Minúscula, peso 600. O ponto final faz parte do nome.</p>
+        <div class="comp-demo">
+          <div class="d"><span class="demo-nome">everton<span class="dot">.</span></span><span class="micro">com o ponto</span></div>
+          <div class="d"><span class="demo-nome dim">everton</span><span class="micro">sem o ponto</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="negativo">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 10 Q58.6 45 84.6 70 Q50 60 15.4 70 Q41.4 45 50 10Z" fill="currentColor"/></svg>
+      <div>
+        <h4>Aplicação negativa</h4>
+        <p>Sobre fundo osso (#edede8), o símbolo e a assinatura ficam em carvão. Usado em botões, cartões claros e promoções.</p>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px">
+      <span class="micro" style="font-size:.8rem;color:var(--tx2)">Uso do símbolo como marcador de rótulo:</span>
+      <div class="rotulo-demo"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 10 Q58.6 45 84.6 70 Q50 60 15.4 70 Q41.4 45 50 10Z" fill="currentColor"/></svg><span class="micro" style="color:var(--tx2)">Disponível globalmente</span></div>
+    </div>
+  </div>
+</body></html>

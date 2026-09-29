@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link rel="stylesheet" href="_modulo.css">
+<style>
+  body{height:1330px}
+  .mod-head{top:56px}
+  .mod-foot{bottom:40px}
+  .content{position:absolute;top:150px;left:72px;right:72px;display:flex;flex-direction:column;gap:40px}
+  /* hero em largura total */
+  .hero h2{font-size:3.4rem;margin-bottom:16px}
+  .hero p{font-size:1.05rem;max-width:70ch}
+  /* duas colunas de texto */
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+  .col h3{font-size:1.25rem;color:var(--tx);margin-bottom:20px;letter-spacing:-.03em}
+  .col .item{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
+  .col .item .ico{flex-shrink:0;width:20px;height:20px;display:flex;align-items:center;margin-top:8px}
+  .col .item .ico::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--dim)}
+  .col .item .t{display:block;font-weight:500;font-size:.98rem;color:var(--tx);letter-spacing:-.01em;margin-bottom:3px}
+  .col .item p{font-size:.9rem}
+  /* faixa antes/depois em largura total */
+  .compare{display:grid;grid-template-columns:1fr;gap:32px}
+  .compare .card{display:flex;flex-direction:column;gap:14px}
+  .compare .cap{font-size:.72rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .compare .shot{width:100%;height:440px;border-radius:12px;border:1px solid var(--line);overflow:hidden;background:var(--bg-soft)}
+  .compare .shot img{width:100%;height:100%;object-fit:cover;object-position:center 42%;display:block}
+</style></head>
+<body>
+  <div class="mod-head">
+    <span class="mod-num">02</span><span class="mod-bar"></span><span class="mod-label">CONTEXTO</span>
+  </div>
+  <div class="mod-foot">evertonbrito.com</div>
+  <div class="content">
+    <div class="hero">
+      <h2>O <span class="acc">desafio</span></h2>
+      <p>O site de Everton Brito precisava comunicar maturidade criativa sem perder a simplicidade: um layout que funciona como portfólio e canal de conversão, com identidade própria e desempenho nativo.</p>
+    </div>
+    <div class="cols">
+      <div class="col">
+        <h3>O ponto de <span class="acc">partida</span></h3>
+        <div class="item">
+          <div class="ico"></div>
+          <div><span class="t">Hierarquia clara</span><p>O visitante entende em segundos o que o site oferece e onde deve clicar.</p></div>
+        </div>
+        <div class="item">
+          <div class="ico"></div>
+          <div><span class="t">Identidade documentada</span><p>Marca, cor e tipografia registradas em um design system, não no improviso.</p></div>
+        </div>
+        <div class="item">
+          <div class="ico"></div>
+          <div><span class="t">Movimento próprio</span><p>Animações que revelam o conteúdo, com o mesmo ritmo em toda a navegação.</p></div>
+        </div>
+        <div class="item">
+          <div class="ico"></div>
+          <div><span class="t">Caminho curto até o contato</span><p>Poucos passos entre a primeira tela e o pedido de orçamento.</p></div>
+        </div>
+      </div>
+      <div class="col">
+        <h3>A <span class="acc">direção</span></h3>
+        <div class="item">
+          <div class="ico"></div>
+          <div><span class="t">Uma família tipográfica</span><p>Inter em três pesos, sem misturar fontes. O caráter vem do espaçamento.</p></div>
+        </div>
+        <div class="item">
+          <div class="ico"></div>
+          <div><span class="t">Uma cor de ação</span><p>O laranja, raro de propósito, para cada destaque chamar atenção.</p></div>
+        </div>
+        <div class="item">
+          <div class="ico"></div>
+          <div><span class="t">Proporção cromática</span><p>Quase tudo preto, um toque de osso e pedra. O laranja ocupa só 2%.</p></div>
+        </div>
+        <div class="item">
+          <div class="ico"></div>
+          <div><span class="t">Movimento que revela</span><p>Line reveal e ease-out forte. O movimento mostra, nunca enfeita.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="compare">
+            <div class="card">
+        <span class="cap">Site novo</span>
+        <div class="shot"><img src="prints/desktop-01.png" alt="Site novo"></div>
+      </div>
+    </div>
+  </div>
+</body></html>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link rel="stylesheet" href="_modulo.css">
+<style>
+  body{height:1300px}
+  .mod-head{top:56px}
+  .mod-foot{bottom:40px}
+  .content{position:absolute;top:150px;left:72px;right:72px;bottom:70px;display:grid;grid-template-columns:minmax(0,400px) 1fr;gap:56px;align-items:center}
+  .intro{display:flex;flex-direction:column;gap:20px}
+  .intro h2{font-size:2.5rem}
+  .intro p{font-size:1rem}
+  .phones{display:flex;gap:20px;justify-content:space-between;align-items:flex-end}
+  .phone{display:flex;flex-direction:column;align-items:center;gap:14px;min-width:0}
+  .shell{width:252px;border:1px solid var(--line-h);border-radius:22px;background:#0e0e10;padding:10px}
+  .screen{width:100%;aspect-ratio:390/844;border-radius:14px;overflow:hidden;background:#0e0e10}
+  .screen img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+  .phone .cap{text-align:center}
+</style></head>
+<body>
+  <div class="mod-head">
+    <span class="mod-num">09</span><span class="mod-bar"></span><span class="mod-label">MOBILE</span>
+  </div>
+  <div class="mod-foot">evertonbrito.com</div>
+  <div class="content">
+    <div class="intro">
+      <h2>A mesma linguagem na <span class="acc">palma</span> da mão</h2>
+      <p>Nada se perde no celular: a tipografia e o laranja são os mesmos, o menu vira uma gaveta e a tarja de oferta e o contato ficam sempre alcançáveis.</p>
+    </div>
+    <div class="phones">
+      <div class="phone">
+        <div class="shell"><div class="screen"><img src="prints/celular-01.png" alt="Hero no celular"></div></div>
+        <span class="cap micro">Hero</span>
+      </div>
+      <div class="phone">
+        <div class="shell"><div class="screen"><img src="prints/celular-05.png" alt="Portfólio no celular"></div></div>
+        <span class="cap micro">Portfólio</span>
+      </div>
+      <div class="phone">
+        <div class="shell"><div class="screen"><img src="prints/celular-09.png" alt="Contato no celular"></div></div>
+        <span class="cap micro">Contato</span>
+      </div>
+    </div>
+  </div>
+</body></html>

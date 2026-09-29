@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link rel="stylesheet" href="_modulo.css">
+<style>
+  body{height:1200px}
+  .mod-head{top:56px}
+  .mod-foot{bottom:40px}
+  .content{position:absolute;top:155px;left:72px;right:72px;display:flex;flex-direction:column;gap:48px}
+  .hero h2{font-size:clamp(2.4rem,5vw,3.8rem);margin-bottom:18px}
+  .hero p{font-size:1.05rem}
+  /* grid de swatches: 4 colunas, 2 linhas */
+  .swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .sw{border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--card)}
+  .sw .chip{height:96px;display:flex;align-items:flex-end;padding:12px;font-size:.72rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase}
+  .sw .d{padding:14px 14px 16px;display:grid;gap:4px}
+  .sw .d b{font-weight:500;font-size:.92rem}
+  .sw .d span{font-size:.75rem;color:var(--tx2)}
+  /* faixas de proporção */
+  .ratio{display:flex;height:18px;border-radius:99px;overflow:hidden;margin-top:8px;border:1px solid var(--line)}
+  .ratio-label{margin-top:8px;font-size:.78rem;color:var(--tx2);text-align:center}
+  /* texto raridade */
+  .rareza{margin-top:8px;font-size:1.05rem;color:var(--tx2);max-width:56ch}
+  .rareza .acc{font-weight:500}
+</style></head>
+<body>
+  <div class="mod-head">
+    <span class="mod-num">04</span><span class="mod-bar"></span><span class="mod-label">COR</span>
+  </div>
+  <div class="mod-foot">evertonbrito.com</div>
+  <div class="content">
+    <div class="hero">
+      <h2>A paleta é <span class="acc">escura</span> por natureza</h2>
+      <p>Quatro camadas de preto para profundidade, um branco quente para o texto e um único laranja como cor de ação. A proporção importa mais do que a quantidade de cores.</p>
+    </div>
+    <div class="swatches">
+      <div class="sw">
+        <div class="chip" style="background:#0a0a0b;color:#98988f">bg</div>
+        <div class="d"><b>Carvão</b><span>#0a0a0b</span><span>Fundo da página</span></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#0e0e10;color:#98988f">bg-soft</div>
+        <div class="d"><b>Carvão suave</b><span>#0e0e10</span><span>Seções alternadas</span></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#151517;color:#98988f">bg-card</div>
+        <div class="d"><b>Cartão</b><span>#151517</span><span>Cartões e bento</span></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#1d1d20;color:#98988f">bg-elevated</div>
+        <div class="d"><b>Elevado</b><span>#1d1d20</span><span>Campos e menus</span></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#FF4000;color:#fff">accent</div>
+        <div class="d"><b>Laranja Everton</b><span>#FF4000 · hover #E63800</span><span>Palavra de destaque, CTA</span></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#edede8;color:#0a0a0b">text</div>
+        <div class="d"><b>Osso</b><span>#edede8</span><span>Texto, botão claro</span></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#98988f;color:#0a0a0b">text-secondary</div>
+        <div class="d"><b>Pedra</b><span>#98988f</span><span>Parágrafos, apoio</span></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:rgba(255,64,0,.15);color:#FF4000">glow · 15%</div>
+        <div class="d"><b>Brilho</b><span>rgba(255,64,0,.15) · sutil .08</span><span>Luz, fundo de tag</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="ratio" aria-label="Proporção de uso das cores">
+        <span style="flex:70;background:#0a0a0b"></span>
+        <span style="flex:14;background:#151517"></span>
+        <span style="flex:10;background:#edede8"></span>
+        <span style="flex:4;background:#98988f"></span>
+        <span style="flex:2;background:#FF4000"></span>
+      </div>
+      <div class="ratio-label">70 preto · 14 cartão · 10 osso · 4 pedra · 2 laranja</div>
+    </div>
+    <p class="rareza">O <span class="acc">laranja</span> ocupa só 2% da tela. Ele é raro de propósito, e é isso que faz cada aparição chamar a atenção sem competir com o conteúdo.</p>
+  </div>
+</body></html>

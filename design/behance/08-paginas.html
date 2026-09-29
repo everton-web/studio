@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link rel="stylesheet" href="_modulo.css">
+<style>
+  body{height:1500px}
+  .mod-head{top:56px}
+  .mod-foot{bottom:40px}
+  .content{position:absolute;top:140px;left:72px;right:72px;bottom:70px;display:flex;flex-direction:column;gap:20px}
+  .hero h2{font-size:2.9rem;margin-bottom:10px}
+  .hero p{font-size:1rem}
+  .mosaic{display:flex;flex-direction:column;gap:14px}
+  .row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  .shot{min-width:0}
+  .shot .img{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#0e0e10}
+  .shot .img img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+  .shot.big .img{height:660px}
+  .shot .img{height:360px}
+  .shot .cap{margin-top:12px}
+  .shot .cap .d{display:block;font-size:.78rem;color:var(--dim);text-transform:none;letter-spacing:0}
+</style></head>
+<body>
+  <div class="mod-head">
+    <span class="mod-num">08</span><span class="mod-bar"></span><span class="mod-label">PÁGINAS</span>
+  </div>
+  <div class="mod-foot">evertonbrito.com</div>
+  <div class="content">
+    <div class="hero">
+      <h2>Cada dobra, um <span class="acc">argumento</span></h2>
+      <p>Quatro telas reais do site em produção. Cada dobra tem uma função própria: apresentar, oferecer, provar e fechar.</p>
+    </div>
+    <div class="mosaic">
+      <div class="shot big">
+        <div class="img"><img src="prints/desktop-01.png" alt="Hero"></div>
+        <div class="cap"><span class="micro">Hero · primeira dobra</span><span class="d">A manchete e a faixa de oferta abrem o argumento.</span></div>
+      </div>
+      <div class="row">
+        <div class="shot">
+          <div class="img"><img src="prints/desktop-02.png" alt="Serviços"></div>
+          <div class="cap"><span class="micro">Serviços</span><span class="d">O bento apresenta o que eu entrego.</span></div>
+        </div>
+        <div class="shot">
+          <div class="img"><img src="prints/desktop-04.png" alt="Portfólio"></div>
+          <div class="cap"><span class="micro">Portfólio</span><span class="d">Os projetos selecionados comprovam o trabalho.</span></div>
+        </div>
+        <div class="shot">
+          <div class="img"><img src="prints/desktop-08.png" alt="Contato"></div>
+          <div class="cap"><span class="micro">Contato</span><span class="d">A chamada final leva ao orçamento.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body></html>

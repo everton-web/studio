@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link rel="stylesheet" href="_modulo.css">
+<style>
+  body{height:1400px}
+  .mod-head{top:56px}
+  .mod-foot{bottom:40px}
+  .content{position:absolute;top:140px;left:72px;right:72px;bottom:70px;display:flex;flex-direction:column;gap:24px}
+  .hero h2{font-size:2.9rem}
+  .micro-h{font-size:.72rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:14px}
+  .note{font-size:.78rem;color:var(--tx2);margin-top:12px}
+  /* componentes em grade */
+  .comps{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .comps .card{padding:20px;display:flex;flex-direction:column}
+  .row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:2px}
+  /* botões */
+  .btn{display:inline-flex;align-items:center;gap:10px;border:0;border-radius:999px;font:500 .9rem var(--sans);padding:13px 28px;cursor:pointer;white-space:nowrap}
+  .btn svg{width:13px;height:13px;flex-shrink:0}
+  .btn-light{background:var(--tx);color:var(--bg)}
+  .btn-ac{background:var(--ac);color:#fff}
+  /* campos */
+  .field{width:100%;background:var(--elev);border:1px solid var(--line-h);border-radius:8px;color:var(--tx);font:400 .95rem var(--sans);padding:14px 16px;margin-bottom:12px}
+  .field::placeholder{color:var(--muted)}
+  .field.focus{outline:2px solid var(--ac);outline-offset:3px;border-color:transparent}
+  label.f{font-size:.72rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:block;margin:4px 0 8px}
+  /* faixa promocional */
+  .promo{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;background:linear-gradient(90deg,#ff5a1f,#ff7a3d,#ff4000);color:#1a0a04;font-size:.85rem;font-weight:500;padding:12px 16px;border-radius:12px}
+  .promo .chip{background:#FF4000;color:#fff;border-radius:999px;padding:4px 12px;font-weight:600;font-size:.78rem;letter-spacing:.04em;box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)}
+  /* cabeçalho de seção */
+  .sechead{display:flex;align-items:center;gap:20px}
+  .sechead .n{font-size:.78rem;letter-spacing:.14em;color:var(--dim);font-variant-numeric:tabular-nums}
+  .sechead .bar{width:40px;height:2px;background:var(--ac)}
+  /* bento */
+  .bento{display:grid;grid-template-columns:repeat(4,1fr);grid-template-areas:"a b c c" "d d c c";gap:10px;margin-top:2px}
+  .bc{position:relative;border-radius:18px;padding:1px;background:var(--line)}
+  .bc>div{position:relative;height:100%;min-height:145px;border-radius:17px;background:var(--card);padding:20px;display:flex;flex-direction:column;justify-content:space-between;gap:18px}
+  .bc b{font-weight:500;font-size:1.05rem;letter-spacing:-.02em}
+  .bc small{color:var(--tx2);font-size:.82rem}
+</style></head>
+<body>
+  <div class="mod-head">
+    <span class="mod-num">06</span><span class="mod-bar"></span><span class="mod-label">COMPONENTES</span>
+  </div>
+  <div class="mod-foot">evertonbrito.com</div>
+  <div class="content">
+    <div class="hero">
+      <h2>Componentes que <span class="acc">funcionam</span></h2>
+    </div>
+    <div class="comps">
+      <div class="card">
+        <span class="micro-h">Botões · pílula</span>
+        <div class="row">
+          <button class="btn btn-light" type="button">Solicite um orçamento <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 17 9.2-9.2M17 17V8H8"/></svg></button>
+          <button class="btn btn-ac" type="button">Enviar via WhatsApp <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 17 9.2-9.2M17 17V8H8"/></svg></button>
+        </div>
+        <p class="note">Claro para a ação principal, laranja para o envio. A seta ↗ desliza 2px no hover.</p>
+      </div>
+      <div class="card">
+        <span class="micro-h">Campo de formulário</span>
+        <label class="f" for="f1">Nome</label>
+        <input class="field" id="f1" placeholder="Seu nome">
+        <input class="field focus" value="Everton Brito" aria-label="Campo em foco">
+        <p class="note">Fundo elevado, borda suave. Em foco, o contorno acende em laranja.</p>
+      </div>
+      <div class="card">
+        <span class="micro-h">Tags</span>
+        <div class="row">
+          <span class="tag">Conversão</span>
+          <span class="tag">SEO</span>
+          <span class="tag">Tráfego pago</span>
+        </div>
+        <p class="note">Caixa alta, com fundo laranja a 8% e texto laranja.</p>
+      </div>
+      <div class="card">
+        <span class="micro-h">Faixa promocional</span>
+        <div class="promo">Mês do Zeca · <span class="chip">20% OFF</span> em todos os projetos até 30/09</div>
+        <p class="note">Uso temporário. Some sozinha no fim da campanha.</p>
+      </div>
+    </div>
+    <div class="card" style="padding:24px">
+      <span class="micro-h">Cabeçalho de seção</span>
+      <div class="sechead">
+        <span class="n">01</span>
+        <span class="bar"></span>
+        <span class="micro"><span class="acc">▲</span>&nbsp; Serviços</span>
+      </div>
+      <p class="note">Número + barra laranja + rótulo em caixa alta. A marca que abre cada seção do site.</p>
+    </div>
+    <div class="card" style="padding:24px">
+      <span class="micro-h">Bento de serviços</span>
+      <div class="bento">
+        <div class="bc" style="grid-area:a"><div><span class="micro">Conversão</span><div><b>Landing Page</b><br><small>a partir de R$ 1.997</small></div></div></div>
+        <div class="bc" style="grid-area:b"><div><span class="micro">Apresentação</span><div><b>One Page</b><br><small>a partir de R$ 1.897</small></div></div></div>
+        <div class="bc" style="grid-area:c"><div><span class="micro">Credibilidade</span><div><b style="font-size:1.4rem">Site Institucional</b><br><small>a partir de R$ 3.097</small></div></div></div>
+        <div class="bc" style="grid-area:d"><div><span class="micro">Persuasão</span><div><b style="font-size:1.4rem">Página de Vendas</b><br><small>a partir de R$ 2.297</small></div></div></div>
+      </div>
+      <p class="note">Grade de áreas do design system: o cartão de credibilidade ocupa duas linhas e duas colunas.</p>
+    </div>
+  </div>
+</body></html>

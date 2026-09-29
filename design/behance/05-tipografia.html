@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link rel="stylesheet" href="_modulo.css">
+<style>
+  body{height:1200px}
+  .mod-head{top:56px}
+  .mod-foot{bottom:40px}
+  .content{position:absolute;top:148px;left:72px;right:72px;bottom:70px;display:flex;flex-direction:column;gap:28px}
+  .hero h2{font-size:2.9rem;margin-bottom:0}
+  /* Aa gigante + texto */
+  .ahero{display:flex;align-items:center;gap:72px}
+  .ahero .aa{font-size:220px;font-weight:500;letter-spacing:-.075em;line-height:1;color:var(--tx)}
+  .ahero .txt{max-width:46ch}
+  .ahero .txt p{font-size:1.05rem}
+  /* escala */
+  .scale{display:flex;flex-direction:column}
+  .row{display:flex;align-items:baseline;gap:32px;padding:13px 0;border-top:1px solid var(--line)}
+  .row:last-child{border-bottom:1px solid var(--line)}
+  .label{width:360px;flex-shrink:0;display:flex;flex-direction:column;gap:4px}
+  .label .name{font-size:.72rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .label .spec{font-size:.72rem;color:var(--tx2);letter-spacing:.01em}
+  .sample{flex:1;min-width:0;white-space:nowrap}
+  /* fechamento */
+  .close .cap{font-weight:500;font-size:1.6rem;letter-spacing:-.03em;color:var(--tx)}
+  .close .note{margin-top:8px;font-size:.78rem;color:var(--tx2)}
+</style></head>
+<body>
+  <div class="mod-head">
+    <span class="mod-num">05</span><span class="mod-bar"></span><span class="mod-label">TIPOGRAFIA</span>
+  </div>
+  <div class="mod-foot">evertonbrito.com</div>
+  <div class="content">
+    <div class="hero">
+      <h2>Inter em todos os <span class="acc">tamanhos</span></h2>
+    </div>
+    <div class="ahero">
+      <span class="aa">Aa</span>
+      <div class="txt">
+        <p>O caráter vem do espaçamento negativo, não da variedade. Uma única família em todo o site, sem itálico, sem serifa e sem mistura de fontes.</p>
+      </div>
+    </div>
+    <div class="scale">
+      <div class="row">
+        <div class="label"><span class="name">Hero · H1</span><span class="spec">clamp(2.2rem, 4.8vw, 5.75rem) · 500 · −0.075em · lh 1</span></div>
+        <div class="sample" style="font-size:60px;font-weight:500;letter-spacing:-.075em;line-height:1;color:var(--tx)">Crio experiências <span class="acc">digitais</span></div>
+      </div>
+      <div class="row">
+        <div class="label"><span class="name">Display · H2</span><span class="spec">clamp(2.4rem, 6vw, 5.25rem) · 500 · −0.075em · lh 1</span></div>
+        <div class="sample" style="font-size:48px;font-weight:500;letter-spacing:-.075em;line-height:1;color:var(--tx)">O que eu <span class="acc">entrego</span></div>
+      </div>
+      <div class="row">
+        <div class="label"><span class="name">XL · H2 médio</span><span class="spec">clamp(1.9rem, 4.2vw, 3.5rem) · 500 · −0.06em · lh 1.05</span></div>
+        <div class="sample" style="font-size:38px;font-weight:500;letter-spacing:-.06em;line-height:1.05;color:var(--tx)">Vamos criar algo <span class="acc">incrível</span></div>
+      </div>
+      <div class="row">
+        <div class="label"><span class="name">LG · H3</span><span class="spec">clamp(1.5rem, 3vw, 2.4rem) · 500 · −0.04em · lh 1.1</span></div>
+        <div class="sample" style="font-size:26px;font-weight:500;letter-spacing:-.04em;line-height:1.1;color:var(--tx)">Site Institucional</div>
+      </div>
+      <div class="row">
+        <div class="label"><span class="name">Corpo</span><span class="spec">clamp(1rem, 1.05vw, 1.15rem) · 400 · lh 1.42 a 1.7</span></div>
+        <div class="sample" style="font-size:17px;font-weight:400;letter-spacing:0;line-height:1.6;color:var(--tx2);white-space:normal">Presença digital sólida, com páginas dedicadas, que transmite autoridade e ranqueia no Google.</div>
+      </div>
+      <div class="row">
+        <div class="label"><span class="name">Rótulo · Micro</span><span class="spec">0.7 a 0.75rem · 500 · +0.14em · caixa alta</span></div>
+        <div class="sample" style="font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)"><span class="acc">▲</span>&nbsp; Disponível globalmente</div>
+      </div>
+    </div>
+    <div class="close">
+      <div class="cap">Uma família. Espaçamento de −0,075em.</div>
+      <div class="note">Nenhuma outra família entra no projeto.</div>
+    </div>
+  </div>
+</body></html>
