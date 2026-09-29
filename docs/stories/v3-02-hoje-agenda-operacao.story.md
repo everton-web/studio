@@ -296,3 +296,24 @@ Passos:
 Regras do script: nunca imprime credenciais nem token; sai com código 1 em
 qualquer falha; sucesso termina com `process.exit(0)`. O app precisa estar na
 porta 3100.
+
+## 11. Aceite (status)
+
+- [x] AC-01 · menu com as 7 abas (Hoje, Agenda, Operação, Comercial, Clientes, Conteúdo, Resultados) + Time no rodapé; sem "em breve", sem "Time & Fila" nem "Projetos".
+- [x] AC-02 · ao logar cai no Hoje (view inicial "hoje") com saudação por horário; Hoje é a primeira aba.
+- [x] AC-03 · aprovações listam `bloqueada`; um toque aprova (status `concluida` no arquivo via `atualizarStatus`) e devolve para `fila`; vazio "Nada para aprovar agora."
+- [x] AC-04 · agenda do dia mostra reuniões de hoje e demandas com `prazo` de hoje; vazio com o texto da seção 4.2.
+- [x] AC-05 · alertas mostram valor medido + hora da verificação; sem verificação, "Nenhum site verificado ainda." (nenhum zero fabricado).
+- [x] AC-06 · placar usa `data.placar`; sem faturamento, "R$ 0, sem faturamento no mês".
+- [x] AC-07 · Hoje sem lista de clientes com botão de WhatsApp (fica para a v3-05).
+- [x] AC-08 · Agenda abre em Dia/Semana/Mês com seletor e botão "Hoje"; troca de visão não recarrega a página.
+- [x] AC-09 · reunião criada no app aparece na Agenda no dia e horário escolhidos; nada importado do Google Agenda.
+- [x] AC-10 · a mesma demanda aparece no quadro, lista e calendário da Operação (mesma fonte `listarDemandas()`); contagens batem.
+- [x] AC-11 · arrastar cartão no quadro grava o novo `status` no arquivo (`atualizarStatus`) e recarregar mantém.
+- [x] AC-12 · lista filtra por status, persona e cliente; vazio "Nenhuma demanda: a agência está quieta".
+- [x] AC-13 · calendário da Operação mostra demandas por `prazo`; sem demanda no período, "Nada com prazo neste período."
+- [x] AC-14 · Time sai do fluxo das abas e aparece no rodapé recolhível (avatares, trabalhando, logs); vazio "Ninguém trabalhando agora."
+- [x] AC-15 · 375px/1280px/1920px sem scroll horizontal de página; no celular a navegação vira barra inferior com o restante em "Mais", Hoje primeiro (prints 375 e 1280 conferidos).
+- [x] AC-16 · todo bloco sem dado mostra o estado vazio honesto da seção 4; nenhum número inventado.
+- [x] AC-17 · nenhum texto visível usa travessão ou meia-risca; títulos/parágrafos com `text-balance`.
+- [x] AC-18 · sem regressão: Comercial (pipeline), Resultados (analytics) e Conteúdo (arquivos) seguem funcionando; fonte única em `lib/demandas.ts`.

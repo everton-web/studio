@@ -11,11 +11,11 @@ type Demanda = {
 type Mensagem = { quando: string; de: string; para?: string; texto: string };
 type Data = { fila: Demanda[]; sala: Mensagem[]; agentes: Record<string, { ocupado: boolean; demanda?: string }> };
 
-const CORES: Record<string, string> = {
+export const CORES: Record<string, string> = {
   caio: "#FF4000", davi: "#a86ff0", theo: "#54b8f0", mia: "#3ddc84", orquestra: "#7aa2ff",
   orion: "#7aa2ff", lia: "#e879a8", fabio: "#e0b84a", olga: "#59c2a6", "davi-copy": "#a86ff0",
 };
-const ST_LBL: Record<string, string> = {
+export const ST_LBL: Record<string, string> = {
   fila: "na fila",
   em_andamento: "em andamento",
   bloqueada: "bloqueada",
@@ -23,7 +23,7 @@ const ST_LBL: Record<string, string> = {
   concluida: "concluída",
   cancelada: "cancelada",
 };
-const ST_COR: Record<string, string> = {
+export const ST_COR: Record<string, string> = {
   fila: "#d9a03a",
   em_andamento: "#7aa2ff",
   bloqueada: "#fb7185",
@@ -31,7 +31,7 @@ const ST_COR: Record<string, string> = {
   concluida: "#3ddc84",
   cancelada: "#8a8a85",
 };
-const AGENTES = [
+export const AGENTES = [
   { id: "orquestra", nome: "Orquestra", desc: "despacha e decide" },
   { id: "caio", nome: "Caio", desc: "comercial" },
   { id: "davi", nome: "Davi", desc: "design / UI" },

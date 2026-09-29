@@ -84,6 +84,27 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, mensagem: m });
   }
 
+  if (body.action === "aprovar") {
+    const d = await atualizarStatus(String(body.id), "concluida", { quem: "everton", nota: "aprovada" });
+    if (!d) return NextResponse.json({ ok: false, error: "demanda não encontrada" }, { status: 404 });
+    return NextResponse.json({ ok: true });
+  }
+
+  if (body.action === "devolver") {
+    const d = await atualizarStatus(String(body.id), "fila", { quem: "everton", nota: "devolvida" });
+    if (!d) return NextResponse.json({ ok: false, error: "demanda não encontrada" }, { status: 404 });
+    return NextResponse.json({ ok: true });
+  }
+
+  if (body.action === "status") {
+    const id = String(body.id || "");
+    const alvo = STATUS_MAP[String(body.status)];
+    if (!id || !alvo) return NextResponse.json({ ok: false, error: "id ou status inválido" }, { status: 400 });
+    const d = await atualizarStatus(id, alvo, { quem: "app" });
+    if (!d) return NextResponse.json({ ok: false, error: "demanda não encontrada" }, { status: 404 });
+    return NextResponse.json({ ok: true });
+  }
+
   // no-ops de compat (não tocam mais em fila.json)
   if (body.action === "health") {
     return NextResponse.json({ ok: true, motores: {} });
