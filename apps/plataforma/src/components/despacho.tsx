@@ -48,7 +48,7 @@ export function Despacho({ agentes }: { agentes: { nome: string; departamento: s
       if (!r.ok) return;
       const j = await r.json();
       setMotores(j.motores || {});
-      setFila(j.fila || []);
+      setFila((j.fila || []).filter((t: any) => t && typeof t.engine === "string" && typeof t.prompt === "string"));
       setPainelOk(true);
     } catch { setPainelOk(false); }
   }, []);

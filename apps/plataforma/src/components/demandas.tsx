@@ -4,22 +4,63 @@ import { useEffect, useRef, useState } from "react";
 import { AgentAvatar } from "./agent-avatar";
 
 type Demanda = {
-  id: string; engine: string; prompt: string; status: string;
-  criado?: string; atribuido?: string; ia?: string;
+  id: string; titulo: string; persona: string; status: string;
+  criada_em: string; iniciada_em: string; concluida_em: string;
+  prazo: string; briefing: string; origem: string; log: string[];
 };
 type Mensagem = { quando: string; de: string; para?: string; texto: string };
 type Data = { fila: Demanda[]; sala: Mensagem[]; agentes: Record<string, { ocupado: boolean; demanda?: string }> };
 
-const CORES: Record<string, string> = { caio: "#FF4000", davi: "#a86ff0", theo: "#54b8f0", mia: "#3ddc84", orquestra: "#7aa2ff" };
-const IA_LBL = { barata: "80% · barato", claude: "20% · claude" } as Record<string, string>;
-const ST_LBL = { pendente: "na fila", rodando: "rodando", ok: "feito", erro: "falhou" } as Record<string, string>;
+const CORES: Record<string, string> = {
+  caio: "#FF4000", davi: "#a86ff0", theo: "#54b8f0", mia: "#3ddc84", orquestra: "#7aa2ff",
+  orion: "#7aa2ff", lia: "#e879a8", fabio: "#e0b84a", olga: "#59c2a6", "davi-copy": "#a86ff0",
+};
+const ST_LBL: Record<string, string> = {
+  fila: "na fila",
+  em_andamento: "em andamento",
+  bloqueada: "bloqueada",
+  aguardando_cliente: "aguardando cliente",
+  concluida: "concluída",
+  cancelada: "cancelada",
+};
+const ST_COR: Record<string, string> = {
+  fila: "#d9a03a",
+  em_andamento: "#7aa2ff",
+  bloqueada: "#fb7185",
+  aguardando_cliente: "#f59e0b",
+  concluida: "#3ddc84",
+  cancelada: "#8a8a85",
+};
 const AGENTES = [
   { id: "orquestra", nome: "Orquestra", desc: "despacha e decide" },
   { id: "caio", nome: "Caio", desc: "comercial" },
   { id: "davi", nome: "Davi", desc: "design / UI" },
   { id: "theo", nome: "Theo", desc: "dev / deploy" },
   { id: "mia", nome: "Mia", desc: "conteúdo / portfólio" },
+  { id: "davi-copy", nome: "Redator", desc: "copy / revisão" },
+  { id: "lia", nome: "Lia", desc: "produto / stories" },
+  { id: "olga", nome: "Olga", desc: "operações" },
+  { id: "fabio", nome: "Fábio", desc: "financeiro" },
+  { id: "orion", nome: "Orion", desc: "orquestra e revisa" },
 ];
+
+function fmt(iso: string): string {
+  if (!iso) return "";
+  if (/T00:00:00\.000Z$/.test(iso)) {
+    const [y, m, d] = iso.slice(0, 10).split("-");
+    return `${d}/${m}`;
+  }
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "";
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${p(d.getDate())}/${p(d.getMonth() + 1)} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+function opcoes(persona: string) {
+  const found = AGENTES.find((a) => a.id === persona);
+  if (found || !persona) return AGENTES;
+  return [{ id: persona, nome: persona, desc: "" }, ...AGENTES];
+}
 
 import { Despacho } from "./despacho";
 
@@ -27,7 +68,6 @@ export function Demandas({ agentes }: { agentes?: { nome: string; departamento: 
   const [data, setData] = useState<Data | null>(null);
   const [texto, setTexto] = useState("");
   const [atr, setAtr] = useState("orquestra");
-  const [ia, setIa] = useState("barata");
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
   const salaRef = useRef<HTMLDivElement>(null);
@@ -59,7 +99,7 @@ export function Demandas({ agentes }: { agentes?: { nome: string; departamento: 
 
   const nova = () => {
     if (!texto.trim()) return;
-    post("nova", { texto: texto.trim(), atribuido: atr, ia }).then(() => setTexto(""));
+    post("nova", { texto: texto.trim(), atribuido: atr }).then(() => setTexto(""));
   };
   const enviarSala = () => {
     if (!msg.trim()) return;
@@ -68,11 +108,9 @@ export function Demandas({ agentes }: { agentes?: { nome: string; departamento: 
 
   if (!data) return <div className="text-[.85rem] text-[#8a8a85]">carregando a agência…</div>;
 
-  const statusCor = (s: string) => (s === "ok" ? "#3ddc84" : s === "rodando" ? "#7aa2ff" : s === "erro" ? "#fb7185" : "#d9a03a");
-
   return (
     <div className="space-y-6">
-      {/* espaços dos agentes — quem está trabalhando */}
+      {/* espaços dos agentes · quem está trabalhando */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         {AGENTES.map((a) => {
           const st = data.agentes[a.id] || { ocupado: false };
@@ -107,11 +145,6 @@ export function Demandas({ agentes }: { agentes?: { nome: string; departamento: 
             className="h-[50px] bg-[#141416] border border-[var(--line)] rounded-xl px-3 text-[.85rem] outline-none focus:border-[#7aa2ff]/60">
             {AGENTES.map((a) => <option key={a.id} value={a.id}>{a.nome}</option>)}
           </select>
-          <select value={ia} onChange={(e) => setIa(e.target.value)} aria-label="ia"
-            className="h-[50px] bg-[#141416] border border-[var(--line)] rounded-xl px-3 text-[.85rem] outline-none focus:border-[#7aa2ff]/60">
-            <option value="barata">80% · barato</option>
-            <option value="claude">20% · claude</option>
-          </select>
           <button onClick={nova} disabled={busy} className="h-[50px] px-6 rounded-[14px] bg-[#7aa2ff] hover:bg-[#8ab3ff] disabled:opacity-60 text-[var(--accent-ink)] text-[.88rem] font-semibold transition-colors">
             despachar
           </button>
@@ -126,27 +159,35 @@ export function Demandas({ agentes }: { agentes?: { nome: string; departamento: 
         </div>
         <div className="space-y-2">
           {data.fila.length === 0 && <div className="text-[.8rem] italic text-[#5d5d58]">nenhuma demanda: a agência está quieta</div>}
-          {data.fila.map((d) => (
-            <div key={d.id} className="flex items-center gap-3 py-2.5 px-3 rounded-xl bg-white/3 border border-[var(--line)]">
-              <span className="w-2 h-2 rounded-full shrink-0" style={{ background: statusCor(d.status) }} />
-              <div className="min-w-0 flex-1">
-                <div className="text-[.85rem] truncate">{d.prompt}</div>
-                <div className="mono mt-0.5" style={{ fontSize: "0.66rem" }}>
-                  para <b style={{ color: CORES[d.atribuido || "orquestra"] }}>{d.atribuido || "orquestra"}</b> · {d.ia ? (IA_LBL[d.ia] || d.ia) : d.engine} · {ST_LBL[d.status] || d.status}
+          {data.fila.map((d) => {
+            const emAndamento = d.status === "em_andamento";
+            const concluida = d.status === "concluida";
+            return (
+              <div key={d.id} className="flex items-center gap-3 py-2.5 px-3 rounded-xl bg-white/3 border border-[var(--line)]">
+                <span className="w-2 h-2 rounded-full shrink-0" style={{ background: ST_COR[d.status] || "#8a8a85" }} />
+                <div className="min-w-0 flex-1">
+                  <div className="text-[.85rem] truncate">{d.titulo}</div>
+                  <div className="mono mt-0.5" style={{ fontSize: "0.66rem" }}>
+                    para <b style={{ color: CORES[d.persona || "orquestra"] || "#cacac4" }}>{AGENTES.find((a) => a.id === (d.persona || "orquestra"))?.nome || d.persona}</b> · {ST_LBL[d.status] || d.status} · {fmt(d.criada_em)}
+                  </div>
+                  {d.briefing && (
+                    <div className="mono mt-0.5 truncate" title={d.briefing} style={{ fontSize: "0.66rem", color: "#5d5d58" }}>{d.briefing}</div>
+                  )}
                 </div>
+                <select value={d.persona || ""} disabled={emAndamento}
+                  onChange={(e) => e.target.value && post("atribuir", { id: d.id, agente: e.target.value })}
+                  aria-label="re-atribuir" className="shrink-0 h-[36px] bg-[#141416] border border-[var(--line)] rounded-lg px-2 text-[.78rem] outline-none disabled:opacity-50">
+                  {opcoes(d.persona).map((a) => <option key={a.id} value={a.id}>{a.nome}</option>)}
+                </select>
+                <button onClick={() => post("atribuir", { id: d.id, status: concluida ? "fila" : "concluida" })} title="concluir/reabrir" aria-label="concluir/reabrir"
+                  className="shrink-0 w-9 h-9 rounded-lg border border-white/10 hover:border-white/25 transition-colors" style={{ color: concluida ? "#3ddc84" : "#8a8a85" }}>
+                  {concluida ? "↺" : "✓"}
+                </button>
+                <button onClick={() => post("remover", { id: d.id })} title="cancelar" aria-label="cancelar"
+                  className="shrink-0 w-9 h-9 rounded-lg border border-white/10 text-[#8a8a85] hover:border-[#fb7185]/40 hover:text-[#fb7185] transition-colors">×</button>
               </div>
-              <select value={d.atribuido || ""} onChange={(e) => e.target.value && post("atribuir", { id: d.id, agente: e.target.value })}
-                aria-label="re-atribuir" className="shrink-0 h-[36px] bg-[#141416] border border-[var(--line)] rounded-lg px-2 text-[.78rem] outline-none">
-                {AGENTES.map((a) => <option key={a.id} value={a.id}>{a.nome}</option>)}
-              </select>
-              <button onClick={() => post("atribuir", { id: d.id, status: d.status === "ok" ? "pendente" : "ok" })} title="concluir/reabrir" aria-label="concluir"
-                className="shrink-0 w-9 h-9 rounded-lg border border-white/10 hover:border-white/25 transition-colors" style={{ color: d.status === "ok" ? "#3ddc84" : "#8a8a85" }}>
-                {d.status === "ok" ? "↺" : "✓"}
-              </button>
-              <button onClick={() => post("remover", { id: d.id })} title="remover" aria-label="remover"
-                className="shrink-0 w-9 h-9 rounded-lg border border-white/10 text-[#8a8a85] hover:border-[#fb7185]/40 hover:text-[#fb7185] transition-colors">×</button>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

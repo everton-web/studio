@@ -23,6 +23,7 @@ import { existsSync } from "node:fs";
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { homedir } from "node:os";
+import { criarDemanda, atualizarDemanda, acrescentarLog, extrairBriefing } from "./lib/demanda.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, "..");
@@ -45,10 +46,11 @@ if (!PERSONAS.includes(persona)) {
   console.log(`Uso: node _scripts/persona.mjs <${PERSONAS.join("|")}> "tarefa" [--modelo flash|pro|glm|kimi] [--janela]`);
   process.exit(1);
 }
-let modelo = MODELOS.flash, janela = false;
+let modelo = MODELOS.flash, janela = false, tituloOpc = "";
 const task = [];
 for (let i = 1; i < args.length; i++) {
   const a = args[i];
+  if (a === "--titulo") { tituloOpc = (args[++i] || "").trim(); continue; }
   if (a === "--modelo" || a === "--model") { const v = args[++i] || ""; modelo = MODELOS[v] || v || modelo; continue; }
   if (a === "--janela") { janela = true; continue; }
   if (a === "--ia") { i++; continue; } // legado: a cadeia agora é sempre pi → opencode
@@ -127,6 +129,24 @@ function resumoDoRelatorio(out) {
 (async () => {
   const arq = await prepararArquivos();
   await registrar();
+
+  // demanda · fonte única (vault/SaaS/Agentes/Demandas/<id>.md).
+  // Acessório: falha aqui NUNCA derruba a execução (só avisa).
+  let demandaId = "";
+  try {
+    // título legível para o Everton: --titulo, senão o H1 do briefing citado, senão a 1ª linha encurtada
+    const briefing = extrairBriefing(tarefa);
+    let h1 = "";
+    if (briefing) { try { h1 = ((await readFile(join(ROOT, briefing), "utf8")).match(/^#\s+(.+)$/m) || [])[1] || ""; } catch { /* sem briefing legível */ } }
+    const linha1 = tarefa.split(/\r?\n/)[0].trim().replace(/\s+/g, " ");
+    const titulo = (tituloOpc || h1.trim() || (linha1.length > 90 ? linha1.slice(0, 87).replace(/\s+\S*$/, "") + "…" : linha1)).slice(0, 140);
+    const d = await criarDemanda({ titulo, persona, briefing, origem: "orion", status: "em_andamento" });
+    demandaId = d?.id || "";
+    if (demandaId) await acrescentarLog(demandaId, `${persona} iniciada`);
+  } catch (e) {
+    console.warn(`[demanda] falha ao criar: ${e?.message || e}`);
+  }
+
   const cab = `[${new Date().toLocaleString("pt-BR")}] ${persona.toUpperCase()} · pi → opencode (${modelo}) · ${tarefa.slice(0, 90).replace(/\s+/g, " ")}`;
   await mkdir(LOG_DIR, { recursive: true });
   await appendFile(join(LOG_DIR, `${persona}.log`), cab + "\n", "utf8").catch(() => {});
@@ -154,6 +174,14 @@ function resumoDoRelatorio(out) {
       if (!/PERSONA:/i.test(out)) throw new Error("pi terminou sem relatório (PERSONA: ...)");
       await appendFile(join(LOG_DIR, `${persona}.log`), `     → ${out.trim().slice(-160).replace(/\n/g, " ")}\n`, "utf8").catch(() => {});
       await registrar({ estado: "pronto", fim: new Date().toISOString(), resumo: resumoDoRelatorio(out), erro: "" });
+      try {
+        if (demandaId) {
+          await atualizarDemanda(demandaId, { status: "concluida", concluida_em: new Date().toISOString() });
+          await acrescentarLog(demandaId, `concluida ${resumoDoRelatorio(out).slice(0, 200)}`);
+        }
+      } catch (e) {
+        console.warn(`[demanda] falha ao concluir ${demandaId}: ${e?.message || e}`);
+      }
       return;
     } catch (e) {
       ultimoErro = e;
@@ -163,6 +191,14 @@ function resumoDoRelatorio(out) {
   {
     console.error(`\n[${persona}] erro após ${TENTATIVAS.length} tentativas: ${ultimoErro?.message}`);
     await registrar({ estado: "falhou", fim: new Date().toISOString(), erro: ultimoErro?.message.slice(0, 300) || "" });
+    try {
+      if (demandaId) {
+        await atualizarDemanda(demandaId, { status: "bloqueada", concluida_em: new Date().toISOString() });
+        await acrescentarLog(demandaId, `bloqueada ${(ultimoErro?.message || "erro").slice(0, 160)}`);
+      }
+    } catch (e) {
+      console.warn(`[demanda] falha ao bloquear ${demandaId}: ${e?.message || e}`);
+    }
     process.exit(3);
   }
 })();

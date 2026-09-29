@@ -1,65 +1,23 @@
-// Orquestra — leitura/escrita da fila de demandas + sala de reunião dos agentes.
-// Fonte: _scripts/orquestra/fila.json e sala.json (raiz do projeto, compartilhado com os terminais).
+// Orquestra · sala de reunião dos agentes + estado ao vivo.
+// As demandas agora vivem em lib/demandas.ts (fonte única: vault/SaaS/Agentes/Demandas/<id>.md).
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { join, resolve } from "node:path";
+import { listarDemandas } from "./demandas";
+
+export { listarDemandas, criarDemanda, atualizarStatus, atualizarPersona, lerDemanda, acrescentarLog } from "./demandas";
+export type { Demanda, DemandaStatus } from "./demandas";
 
 const PROJECT_ROOT = resolve(process.cwd(), ".."); // PROJETO DIGITAL
-const DIR = join(PROJECT_ROOT, "_scripts", "orquestra");
-const FILA = join(DIR, "fila.json");
-const SALA = join(DIR, "sala.json");
+const SALA_DIR = join(PROJECT_ROOT, "_scripts", "orquestra");
+const SALA = join(SALA_DIR, "sala.json");
 
-export type Demanda = {
-  id: string;
-  engine: string;
-  prompt: string;
-  status: "pendente" | "rodando" | "ok" | "erro";
-  criado?: string;
-  saida?: string;
-  atribuido?: string; // agente (caio|davi|theo|mia|orquestra)
-  ia?: string; // barata | claude
-};
 export type MensagemSala = { quando: string; de: string; para?: string; texto: string };
 
 async function ler(path: string): Promise<any[]> {
   try { return JSON.parse(await readFile(path, "utf8")); } catch { return []; }
 }
 async function gravar(path: string, v: any[]) {
-  try { await mkdir(DIR, { recursive: true }); await writeFile(path, JSON.stringify(v, null, 2), "utf8"); } catch { /* sem escrita */ }
-}
-
-export async function listarFila(): Promise<Demanda[]> {
-  const fila = await ler(FILA);
-  return fila.filter((t) => t && t.id).sort((a, b) => (a.status === b.status ? 0 : a.status === "pendente" ? -1 : 1));
-}
-
-export async function novaDemanda(op: { texto: string; atribuido?: string; ia?: string }): Promise<Demanda> {
-  const fila = await ler(FILA);
-  const d: Demanda = {
-    id: `dem-${Date.now().toString(36)}`,
-    engine: op.atribuido === "theo" ? "shell" : "claude",
-    prompt: op.texto,
-    status: "pendente",
-    criado: new Date().toISOString(),
-    atribuido: op.atribuido || "orquestra",
-    ia: op.ia || "barata",
-  };
-  fila.push(d);
-  await gravar(FILA, fila);
-  return d;
-}
-
-export async function atribuir(op: { id: string; agente?: string; status?: string }): Promise<Demanda | null> {
-  const fila = await ler(FILA);
-  const d = fila.find((x) => x.id === op.id);
-  if (!d) return null;
-  if (op.agente) d.atribuido = op.agente;
-  if (op.status) d.status = op.status;
-  await gravar(FILA, fila);
-  return d;
-}
-
-export async function removerDemanda(id: string) {
-  await gravar(FILA, (await ler(FILA)).filter((x) => x.id !== id));
+  try { await mkdir(SALA_DIR, { recursive: true }); await writeFile(path, JSON.stringify(v, null, 2), "utf8"); } catch { /* sem escrita */ }
 }
 
 export async function mensagensSala(): Promise<MensagemSala[]> {
@@ -81,15 +39,26 @@ export async function postarSala(op: { de: string; texto: string; para?: string 
 }
 
 export async function estadoAgentes(): Promise<Record<string, { ocupado: boolean; demanda?: string }>> {
-  const fila = await listarFila();
+  const demandas = await listarDemandas();
   const out: Record<string, { ocupado: boolean; demanda?: string }> = {
-    caio: { ocupado: false }, davi: { ocupado: false }, theo: { ocupado: false }, mia: { ocupado: false }, orquestra: { ocupado: false },
+    caio: { ocupado: false },
+    davi: { ocupado: false },
+    theo: { ocupado: false },
+    mia: { ocupado: false },
+    orquestra: { ocupado: false },
+    lia: { ocupado: false },
+    fabio: { ocupado: false },
+    olga: { ocupado: false },
+    "davi-copy": { ocupado: false },
   };
-  for (const d of fila) {
-    if (d.status === "pendente" || d.status === "rodando") {
-      const alvo = out[d.atribuido || "orquestra"];
-      if (alvo) { alvo.ocupado = true; alvo.demanda = d.prompt.slice(0, 80); }
+  for (const d of demandas) {
+    if (d.status === "em_andamento") {
+      const alvo = out[d.persona];
+      if (alvo) { alvo.ocupado = true; alvo.demanda = d.titulo.slice(0, 80); }
     }
   }
   return out;
 }
+
+// Compat: nomes antigos apontando para a fonte única.
+export const listarFila = listarDemandas;
