@@ -3,6 +3,7 @@
 import { TriangleIcon } from "./TriangleIcon";
 import { LineReveal } from "./TextReveal";
 import { MagneticButton } from "./MagneticButton";
+import { HeroWaves } from "./HeroWaves";
 import { useLang } from "@/context/LanguageContext";
 import { semViuva } from "@/lib/texto";
 
@@ -33,7 +34,9 @@ export function Footer() {
   const { t } = useLang();
 
   return (
-    <footer style={{ background: "var(--color-bg)" }}>
+    <footer className="relative overflow-hidden" style={{ background: "var(--color-bg)" }}>
+      {/* mesmas ondas do hero, espelhadas: sobem do pé e atravessam o CTA até o rodapé */}
+      <HeroWaves base />
       <section
         className="relative z-[2]"
         style={{ padding: "var(--section-pad) 0" }}

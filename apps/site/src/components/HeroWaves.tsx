@@ -6,7 +6,8 @@ import { useEffect, useRef } from "react";
 // Canvas 2D: N fios empilhados formam uma superfície que ondula devagar; o fio da frente
 // é o mais quente (quase dourado) e os de trás somem no preto. Pausa fora da tela e
 // fica parado com prefers-reduced-motion.
-export function HeroWaves() {
+// base = espelhada, subindo do pé da seção (CTA final invadindo o rodapé)
+export function HeroWaves({ base = false }: { base?: boolean }) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -88,8 +89,9 @@ export function HeroWaves() {
     <canvas
       ref={ref}
       aria-hidden
-      className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[62%] w-full"
+      className={`pointer-events-none absolute inset-x-0 z-[1] w-full ${base ? "bottom-0 h-[105%]" : "top-0 h-[62%]"}`}
       style={{
+        transform: base ? "scaleY(-1)" : undefined,
         maskImage: "linear-gradient(to bottom, #000 55%, transparent 100%)",
         WebkitMaskImage: "linear-gradient(to bottom, #000 55%, transparent 100%)",
       }}
