@@ -32,7 +32,7 @@ export function HeroWaves({ base = false }: { base?: boolean }) {
 
     const desenhar = (seg: number) => {
       ctx.clearRect(0, 0, w, h);
-      ctx.globalCompositeOperation = "lighter";
+      ctx.globalCompositeOperation = "source-over"; // sem somar luz: somar clareava o laranja para o amarelo
       const tt = seg * 0.18;
       const yDe = (u: number, sx: number) => {
         const base = h * (-0.45 + 0.72 * u);
@@ -42,7 +42,7 @@ export function HeroWaves({ base = false }: { base?: boolean }) {
         const onda = Math.sin(sx * 4.6 + fase) * amp * 0.4 + Math.sin(sx * 2.1 - fase * 0.7) * amp * 0.3;
         return base + curva + onda;
       };
-      // luz dourada que passeia devagar pela borda da frente
+      // ponto mais aceso (mesmo laranja da marca) que passeia devagar pela borda da frente
       const foco = 0.28 + Math.sin(tt * 0.9) * 0.12;
       for (let i = 0; i < fios; i++) {
         const u = i / (fios - 1); // 0 = fundo (topo), 1 = frente (borda acesa)
@@ -55,14 +55,14 @@ export function HeroWaves({ base = false }: { base?: boolean }) {
         const frente = Math.pow(u, 10);
         const gr = ctx.createLinearGradient(0, 0, w, 0);
         const a = 0.06 + 0.26 * Math.pow(u, 1.6);
-        gr.addColorStop(0, `rgba(200,40,0,${a * 0.6})`);
+        gr.addColorStop(0, `rgba(255,64,0,${a * 0.45})`);
         gr.addColorStop(Math.max(0, foco - 0.22), `rgba(255,64,0,${a})`);
-        gr.addColorStop(foco, `rgba(255,${Math.round(64 + 150 * frente)},${Math.round(90 * frente)},${a + 0.55 * frente})`);
-        gr.addColorStop(Math.min(1, foco + 0.3), `rgba(255,72,0,${a + 0.15 * frente})`);
-        gr.addColorStop(1, `rgba(190,40,0,${a * 0.7})`);
+        gr.addColorStop(foco, `rgba(255,${Math.round(64 + 40 * frente)},${Math.round(20 * frente)},${a + 0.6 * frente})`);
+        gr.addColorStop(Math.min(1, foco + 0.3), `rgba(255,64,0,${a + 0.15 * frente})`);
+        gr.addColorStop(1, `rgba(255,64,0,${a * 0.5})`);
         ctx.strokeStyle = gr;
         ctx.lineWidth = 0.6 + frente * 1.1;
-        if (frente > 0.3) { ctx.shadowColor = "rgba(255,90,20,0.9)"; ctx.shadowBlur = 14; } else { ctx.shadowBlur = 0; }
+        if (frente > 0.3) { ctx.shadowColor = "rgba(255,64,0,0.9)"; ctx.shadowBlur = 14; } else { ctx.shadowBlur = 0; }
         ctx.stroke();
       }
       ctx.shadowBlur = 0;

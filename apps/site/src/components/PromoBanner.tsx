@@ -78,7 +78,7 @@ export function PromoBanner({ variant }: { variant: "top" | "inline" }) {
         isTop
           ? {
               background:
-                "linear-gradient(90deg, #FF4000, #ff7a4d 50%, #FF4000)",
+                "var(--color-accent)",
               color: "#0a0a0b",
             }
           : {
