@@ -53,7 +53,7 @@ export function Hero() {
       <HeroWaves />
       <motion.div
         style={{ y: contentY }}
-        className="relative z-[2] container-site text-center flex flex-col items-center"
+        className="relative z-[2] container-site text-center flex flex-col items-center mt-[14vh] max-md:mt-[10vh]"
       >
         <motion.div
           initial={{ opacity: 0, y: 20 }}

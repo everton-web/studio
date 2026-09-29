@@ -89,7 +89,7 @@ export function HeroWaves({ base = false }: { base?: boolean }) {
     <canvas
       ref={ref}
       aria-hidden
-      className={`pointer-events-none absolute inset-x-0 z-[1] w-full ${base ? "bottom-0 h-[105%]" : "top-0 h-[62%]"}`}
+      className={`pointer-events-none absolute inset-x-0 z-[1] w-full ${base ? "bottom-0 h-[105%]" : "top-0 h-[54%]"}`}
       style={{
         transform: base ? "scaleY(-1)" : undefined,
         maskImage: "linear-gradient(to bottom, #000 55%, transparent 100%)",
