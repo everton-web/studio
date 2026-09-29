@@ -36,9 +36,11 @@ function gravar(p, v) { try { mkdirSync(dirname(p), { recursive: true }); const 
 function abrirTerminal(t) {
   const live = join(RES, `${t.id}.live.txt`);
   const tailjs = join(HERE, "tail.mjs");
-  const titulo = `${t.atribuido || "orquestra"} · ${t.id} · ${(t.prompt || "").slice(0, 40)}`;
-  const inner = `title ${titulo} & echo ───────────────────────────── & echo DEMANDA ${t.id} — ${t.atribuido || "orquestra"} & echo Procurando... & node "${tailjs}" "${live}"`;
-  spawn("cmd.exe", ["/c", `start "${titulo}" cmd /k "${inner}"`], { cwd: ROOT, detached: true, stdio: "ignore" }).unref();
+  // título só ASCII, sem aspas nem &|<>: o "·" e o recorte do prompt quebravam o start ("Windows não pode encontrar")
+  const titulo = `${t.atribuido || "orquestra"} - ${t.id}`.replace(/[^\w .-]/g, "");
+  const inner = `title ${titulo} & echo DEMANDA ${t.id} & node "${tailjs}" "${live}"`;
+  // windowsVerbatimArguments: sem ele o Node escapa as aspas como \" e o cmd lê o título como programa
+  spawn("cmd.exe", ["/c", "start", `"${titulo}"`, "cmd", "/k", `"${inner}"`], { cwd: ROOT, detached: true, stdio: "ignore", windowsVerbatimArguments: true }).unref();
   log(`terminal aberto para ${t.id} (${titulo.slice(0, 60)})`);
 }
 
