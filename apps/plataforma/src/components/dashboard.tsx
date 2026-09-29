@@ -721,10 +721,13 @@ export function Dashboard() {
                                     className={`group rounded-xl border border-[var(--line)] bg-[var(--bg-2)] p-3.5 transition-colors hover:border-[var(--line-2)] cursor-grab active:cursor-grabbing ${it.done ? "opacity-55" : ""}`}
                                   >
                                     <p className={`text-[.84rem] leading-relaxed text-[var(--ink-2)] ${it.done ? "line-through" : ""}`}>{it.text}</p>
-                                    <div className="mt-3 flex gap-1.5 lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100 transition-opacity">
-                                      <Btn title={it.done ? "reabrir" : "concluir"} color={it.done ? "#3ddc84" : undefined} onClick={() => api("/api/kanban", { action: "toggle", column: c.nome, text: it.text })}>{it.done ? "↺" : "✓"}</Btn>
-                                      <Btn title="voltar" onClick={() => ci > 0 && api("/api/kanban", { action: "move", from: c.nome, to: COLS[ci - 1], text: it.text })}>←</Btn>
-                                      <Btn title="avançar" onClick={() => ci < COLS.length - 1 && api("/api/kanban", { action: "move", from: c.nome, to: COLS[ci + 1], text: it.text })}>→</Btn>
+                                    <div className="mt-3 flex gap-1.5">
+                                      <span className="flex gap-1.5 lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100 transition-opacity">
+                                        <Btn title={it.done ? "reabrir" : "concluir"} color={it.done ? "#3ddc84" : undefined} onClick={() => api("/api/kanban", { action: "toggle", column: c.nome, text: it.text })}>{it.done ? "↺" : "✓"}</Btn>
+                                        <Btn title="voltar" onClick={() => ci > 0 && api("/api/kanban", { action: "move", from: c.nome, to: COLS[ci - 1], text: it.text })}>←</Btn>
+                                        <Btn title="avançar" onClick={() => ci < COLS.length - 1 && api("/api/kanban", { action: "move", from: c.nome, to: COLS[ci + 1], text: it.text })}>→</Btn>
+                                      </span>
+                                      {/* excluir fica sempre visível (antes sumia até passar o mouse) */}
                                       <span className="ml-auto" />
                                       <Btn title="excluir cartão" color="#ff6b4a" onClick={() => { if (confirm(`Excluir o cartão "${it.text.slice(0, 80)}"?`)) api("/api/kanban", { action: "delete", column: c.nome, text: it.text }); }}>
                                         <Trash2 className="w-[13px] h-[13px]" strokeWidth={2} />
