@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { TriangleIcon } from "./TriangleIcon";
 import { MagneticButton } from "./MagneticButton";
+import { HeroWaves } from "./HeroWaves";
 import { useLang } from "@/context/LanguageContext";
 
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -49,7 +50,7 @@ export function Hero() {
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
       style={{ background: "var(--color-bg)", paddingTop: "var(--header-h)" }}
     >
-      {/* SLOT IMAGEM DE FUNDO: <div className="absolute inset-0 z-[1]"><Image ... /></div> · a foto do Everton entra aqui quando enviada */}
+      <HeroWaves />
       <motion.div
         style={{ y: contentY }}
         className="relative z-[2] container-site text-center flex flex-col items-center"
