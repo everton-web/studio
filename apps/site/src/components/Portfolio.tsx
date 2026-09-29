@@ -142,7 +142,7 @@ function SeeAllCard() {
   const { t } = useLang();
   return (
     <a
-      href="https://www.behance.net/evertonbrito1"
+      href="https://www.behance.net/evertonbritoweb"
       target="_blank"
       rel="noopener noreferrer"
       data-cursor={t.cursor.open}

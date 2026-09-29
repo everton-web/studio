@@ -6,13 +6,10 @@ import { MagneticButton } from "./MagneticButton";
 import { useLang } from "@/context/LanguageContext";
 import { semViuva } from "@/lib/texto";
 
-const EMAIL = "contato@evertonbrito.com";
-const WHATSAPP = "https://wa.me/5571999261967";
-
 const socialLinks = [
   {
     label: "Behance",
-    href: "https://www.behance.net/evertonbrito1",
+    href: "https://www.behance.net/evertonbritoweb",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
         <path d="M7.5 11c1.38 0 2.5-1.12 2.5-2.5S8.88 6 7.5 6H3v5h4.5zM3 18h5c1.38 0 2.5-1.12 2.5-2.5S9.38 13 8 13H3v5zm12-8.5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5h-5zM21 12.5c0 2.76-2.24 5-5 5s-5-2.24-5-5h10zM15 3h5v1.5h-5V3z" />
@@ -21,21 +18,12 @@ const socialLinks = [
   },
   {
     label: "Instagram",
-    href: "https://www.instagram.com/everton.brito.design",
+    href: "https://www.instagram.com/evertonbritoweb/",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="2" width="20" height="20" rx="5" />
         <circle cx="12" cy="12" r="5" />
         <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
-      </svg>
-    ),
-  },
-  {
-    label: "LinkedIn",
-    href: "https://www.linkedin.com/in/evertonbrito",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z" />
       </svg>
     ),
   },
@@ -71,22 +59,6 @@ export function Footer() {
           />
 
           <div className="flex flex-wrap items-center justify-center gap-6">
-            <a
-              href={`mailto:${EMAIL}`}
-              data-cursor={t.cursor.open}
-              className="text-[1rem] text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
-            >
-              {EMAIL}
-            </a>
-            <a
-              href={WHATSAPP}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-cursor={t.cursor.open}
-              className="text-[1rem] text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
-            >
-              {t.footer.whatsapp}
-            </a>
             <MagneticButton
               href="#contact"
               as="a"
