@@ -24,7 +24,7 @@ import { homedir } from "node:os";
 import { statusDoRelatorio } from "../lib/demanda.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const BASE = process.env.PORT ? "http://localhost:" + process.env.PORT : "http://localhost:3102";
+const BASE = process.env.PORT ? "http://localhost:" + process.env.PORT : "http://localhost:3100";
 const ENV_FILE = join(ROOT, "apps", "plataforma", ".env.local");
 const CHROME = join(homedir(), "AppData", "Local", "Google", "Chrome", "Application", "chrome.exe");
 

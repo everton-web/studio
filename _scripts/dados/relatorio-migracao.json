@@ -1,9 +1,9 @@
 {
-  "geradoEm": "2026-09-29T17:11:21.101Z",
-  "banco": "D:\\studio-v3-03\\apps\\plataforma\\data\\plataforma.sqlite",
-  "vault": "D:/Obsidian - Claude/🏢 Agência",
+  "geradoEm": "2026-09-29T18:24:03.295Z",
+  "banco": "D:\\studio\\apps\\plataforma\\data\\plataforma.sqlite",
+  "vault": "D:/studio/vault",
   "vaultVisivel": true,
-  "copiaPrevia": "D:\\studio-v3-03\\apps\\plataforma\\data\\backups\\plataforma.pre-migracao-20260929-141121.sqlite",
+  "copiaPrevia": null,
   "arquivosFonte": {
     "leads": 16,
     "clientes": 2,
