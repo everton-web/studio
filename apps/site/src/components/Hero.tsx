@@ -70,7 +70,7 @@ export function Hero() {
           style={{
             fontFamily: "var(--font-sans)",
             fontSize:
-              "min(clamp(2.3rem, 6.2vw, 7.5rem), calc((100svh - 240px) / 5.5), calc((100vw - 2 * var(--gutter)) / 11))",
+              "min(clamp(2.2rem, 4.8vw, 5.75rem), calc((100svh - 240px) / 5.5), calc((100vw - 2 * var(--gutter)) / 11))",
             fontWeight: 500,
             lineHeight: 1,
             letterSpacing: "-0.075em",
@@ -79,7 +79,7 @@ export function Hero() {
           {t.hero.lines.map((rawLine, i) => {
             const line = colarUltimaPalavra(rawLine);
             return (
-            <span key={i} className="block overflow-hidden">
+            <span key={i} className="block overflow-hidden pb-[0.18em] -mb-[0.18em]">
               <motion.span
                 custom={i}
                 variants={lineReveal}

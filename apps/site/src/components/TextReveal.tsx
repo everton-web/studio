@@ -50,7 +50,7 @@ export function LineReveal({
   return (
     <Tag ref={ref as never} className={className} style={style}>
       {lines.map((line, i) => (
-        <span key={i} className="block overflow-hidden">
+        <span key={i} className="block overflow-hidden pb-[0.18em] -mb-[0.18em]">
           <motion.span
             custom={i}
             initial="hidden"
@@ -180,7 +180,7 @@ export function WordReveal({
   return (
     <span className={className} style={style}>
       {words.map((word, i) => (
-        <span key={i} className="inline-block overflow-hidden">
+        <span key={i} className="inline-block overflow-hidden pb-[0.18em] -mb-[0.18em]">
           <motion.span
             custom={i}
             initial="hidden"

@@ -50,7 +50,7 @@ export function Footer() {
             className="mb-10"
             style={{
               fontFamily: "var(--font-sans)",
-              fontSize: "clamp(2.6rem, 9vw, 8.5rem)",
+              fontSize: "clamp(2.4rem, 6vw, 5.25rem)",
               fontWeight: 500,
               lineHeight: 1,
               letterSpacing: "-0.075em",

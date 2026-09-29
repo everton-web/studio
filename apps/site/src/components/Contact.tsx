@@ -91,7 +91,7 @@ export function Contact() {
                 className="mb-6"
                 style={{
                   fontFamily: "var(--font-sans)",
-                  fontSize: "clamp(2rem, 5.2vw, 4.25rem)",
+                  fontSize: "clamp(1.9rem, 4.2vw, 3.5rem)",
                   fontWeight: 500,
                   lineHeight: 1.05,
                   letterSpacing: "-0.06em",

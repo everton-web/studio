@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import { AnimatedSection } from "./AnimatedSection";
 import { TriangleIcon } from "./TriangleIcon";
 import { LineReveal } from "./TextReveal";
@@ -10,11 +10,78 @@ import { precoComDesconto, formatBRL } from "@/lib/promo";
 import { PromoBanner } from "./PromoBanner";
 import { semViuva } from "@/lib/texto";
 
-const cardTransition = { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const };
+// Bento na ideia do hunter.prodyai: 6 cartões de tamanhos diferentes, rótulo em cima,
+// título e texto embaixo, borda que acende seguindo o cursor (inclusive nos vizinhos).
+type Item = {
+  label: string;
+  title: string;
+  text: string;
+  price: string;
+  priceValue: number;
+  note: string;
+  from?: boolean;
+  area: string;
+  grande?: boolean;
+};
+
+const AREA_CLASS: Record<string, string> = {
+  a: "md:[grid-area:a]",
+  b: "md:[grid-area:b]",
+  c: "md:[grid-area:c]",
+  d: "md:[grid-area:d]",
+  e: "md:[grid-area:e]",
+  f: "md:[grid-area:f]",
+};
 
 export function Services() {
   const { t } = useLang();
   const { ativa } = usePromo();
+  const grid = useRef<HTMLDivElement>(null);
+  const [aceso, setAceso] = useState(false);
+
+  const s = t.services;
+  const [lp, pv, op, si] = s.core;
+  const [cons, ment] = s.special.items;
+  type Core = { title: string; result: string; tags: readonly string[]; price: string; priceValue: number };
+  type Extra = { title: string; description: string; price: string; priceValue: number; priceNote: string };
+  const core = (x: Core, area: string, grande = false): Item => ({
+    label: x.tags[0],
+    title: x.title,
+    text: x.result,
+    price: x.price,
+    priceValue: x.priceValue,
+    note: "",
+    from: true,
+    area,
+    grande,
+  });
+  const extra = (x: Extra, area: string): Item => ({
+    label: s.special.label,
+    title: x.title,
+    text: x.description,
+    price: x.price,
+    priceValue: x.priceValue,
+    note: x.priceNote,
+    area,
+  });
+  const itens: Item[] = [
+    core(lp, "a"),
+    core(op, "b"),
+    core(si, "c", true),
+    core(pv, "d", true),
+    extra(cons, "e"),
+    extra(ment, "f"),
+  ];
+
+  // posição do cursor relativa a cada cartão: a luz passa de um cartão para o vizinho
+  function mover(e: PointerEvent<HTMLDivElement>) {
+    if (e.pointerType !== "mouse" || !grid.current) return;
+    grid.current.querySelectorAll<HTMLElement>("[data-bento]").forEach((el) => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--mx", `${e.clientX - r.left}px`);
+      el.style.setProperty("--my", `${e.clientY - r.top}px`);
+    });
+  }
 
   return (
     <section
@@ -28,221 +95,135 @@ export function Services() {
             <div className="divider-accent" />
             <span className="section-label">
               <TriangleIcon className="w-3 h-3" />
-              {t.services.label}
+              {s.label}
             </span>
           </div>
 
           <div className="flex items-end justify-between gap-8 mb-16 max-md:flex-col max-md:items-start max-md:gap-4">
             <LineReveal
               lines={[
-                t.services.titleBefore,
-                <span key="accent" className="serif">{t.services.titleAccent}</span>,
+                s.titleBefore,
+                <span key="accent" className="serif">{s.titleAccent}</span>,
               ]}
               style={{
                 fontFamily: "var(--font-sans)",
-                fontSize: "clamp(2.6rem, 9vw, 8.5rem)",
+                fontSize: "clamp(2.4rem, 6vw, 5.25rem)",
                 fontWeight: 500,
                 lineHeight: 1,
                 letterSpacing: "-0.075em",
               }}
             />
             <p className="text-[var(--color-text-secondary)] max-w-[340px]" style={{ lineHeight: 1.7 }}>
-              {t.services.intro}
+              {s.intro}
             </p>
           </div>
         </AnimatedSection>
 
         <PromoBanner variant="inline" />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {t.services.core.map((service, i) => (
-            <AnimatedSection key={service.title} delay={0.1 * (i + 1)}>
-              <motion.div
-                whileHover={{ y: -4 }}
-                transition={cardTransition}
-                className="group relative overflow-hidden rounded-[14px] p-10 max-md:p-7 h-full flex flex-col"
-                style={{
-                  background: "var(--color-bg-card)",
-                  border: "1px solid var(--color-border)",
-                }}
+        <AnimatedSection>
+          <div
+            ref={grid}
+            onPointerMove={mover}
+            onPointerEnter={(e) => e.pointerType === "mouse" && setAceso(true)}
+            onPointerLeave={() => setAceso(false)}
+            className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4 bento"
+          >
+            {itens.map((it, i) => (
+              <div
+                key={it.title}
+                data-bento
+                className={`group relative rounded-[18px] p-px ${AREA_CLASS[it.area]}`}
+                style={{ background: "var(--color-border)", "--mx": "-999px", "--my": "-999px" } as CSSProperties}
               >
-                <div className="absolute bottom-0 left-0 w-full h-[3px] bg-[var(--color-accent)] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
-
-                <span
-                  className="block transition-colors transition-opacity duration-300 text-[var(--color-text-dim)] opacity-[0.55] group-hover:opacity-100 group-hover:text-[var(--color-accent)]"
-                  style={{
-                    fontSize: "clamp(2.4rem, 4vw, 3.4rem)",
-                    fontWeight: 300,
-                    fontVariantNumeric: "tabular-nums",
-                    lineHeight: 1,
-                    marginBottom: "1rem",
-                  }}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-
-                <h3
-                  className="text-[var(--color-text)] mb-4"
-                  style={{
-                    fontSize: "clamp(1.5rem, 3vw, 2.4rem)",
-                    fontWeight: 500,
-                    lineHeight: 1.1,
-                    letterSpacing: "-0.04em",
-                  }}
-                >
-                  {semViuva(service.title)}
-                </h3>
-
-                <p className="text-[var(--color-text-secondary)] mb-8" style={{ lineHeight: 1.7 }}>
-                  {service.result}
-                </p>
-
-                <div className="flex flex-wrap gap-2 mb-8">
-                  {service.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-[0.65rem] font-medium uppercase tracking-[0.08em] px-3 py-1.5 rounded-full"
-                      style={{
-                        background: "var(--color-accent-subtle)",
-                        color: "var(--color-accent)",
-                      }}
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
+                {/* borda acesa: gradiente radial no cursor, visível só enquanto o mouse está no grid */}
                 <div
-                  className="mt-auto flex items-baseline gap-2 pt-6"
-                  style={{ borderTop: "1px solid var(--color-border)" }}
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 rounded-[18px] transition-opacity duration-500"
+                  style={{
+                    opacity: aceso ? 1 : 0,
+                    background:
+                      "radial-gradient(260px circle at var(--mx) var(--my), var(--color-accent), transparent 70%)",
+                  }}
+                />
+                <div
+                  className={`relative h-full overflow-hidden rounded-[17px] flex flex-col p-7 max-md:p-6 ${it.grande ? "lg:p-9" : ""}`}
+                  style={{ background: "var(--color-bg-card)", minHeight: it.grande ? 300 : 250 }}
                 >
-                  <span className="text-[0.65rem] font-medium uppercase tracking-[0.08em] text-[var(--color-text-dim)]">
-                    {t.services.priceFrom}
-                  </span>
-                  {ativa ? (
-                    <>
-                      <s
-                        className="text-[var(--color-text-dim)]"
-                        style={{ fontSize: "0.9rem" }}
-                      >
-                        {service.price}
-                      </s>
-                      <span
-                        className="font-semibold text-[var(--color-accent)]"
-                        style={{ fontSize: "1.4rem", letterSpacing: "-0.01em" }}
-                      >
-                        {formatBRL(precoComDesconto(service.priceValue))}
-                      </span>
-                    </>
-                  ) : (
+                  {/* brilho interno suave acompanhando o cursor */}
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 transition-opacity duration-500"
+                    style={{
+                      opacity: aceso ? 1 : 0,
+                      background:
+                        "radial-gradient(420px circle at var(--mx) var(--my), var(--color-accent-subtle), transparent 65%)",
+                    }}
+                  />
+
+                  <div className="relative flex items-start justify-between gap-4">
+                    <span className="text-[0.95rem] text-[var(--color-text-secondary)]">{it.label}</span>
                     <span
-                      className="font-semibold text-[var(--color-text)]"
-                      style={{ fontSize: "1.25rem", letterSpacing: "-0.01em" }}
+                      className="text-[var(--color-text-dim)] opacity-60 group-hover:text-[var(--color-accent)] group-hover:opacity-100 transition-colors duration-300"
+                      style={{ fontSize: it.grande ? "2.4rem" : "1.1rem", fontWeight: 300, lineHeight: 1, fontVariantNumeric: "tabular-nums" }}
                     >
-                      {service.price}
-                    </span>
-                  )}
-                </div>
-              </motion.div>
-            </AnimatedSection>
-          ))}
-        </div>
-
-        {/* Seção especial: Consultoria & Mentoria (acompanhamento, não entregável) */}
-        <div
-          className="mt-6 rounded-[22px] p-10 max-md:p-7"
-          style={{
-            background:
-              "linear-gradient(180deg, var(--color-accent-subtle), transparent 60%)",
-            border: "1px solid var(--color-border)",
-          }}
-        >
-          <AnimatedSection>
-            <div className="flex items-start justify-between gap-8 mb-10 max-md:flex-col max-md:gap-4">
-              <div>
-                <span className="section-label mb-4">
-                  <TriangleIcon className="w-3 h-3" />
-                  {t.services.special.label}
-                </span>
-                <h3
-                  style={{
-                    fontSize: "clamp(1.5rem, 2.6vw, 2rem)",
-                    fontWeight: 500,
-                    lineHeight: 1.15,
-                    letterSpacing: "-0.02em",
-                  }}
-                >
-                  {t.services.special.titleBefore}{" "}
-                  <span className="serif">{t.services.special.titleAccent}</span>
-                </h3>
-              </div>
-              <p
-                className="text-[var(--color-text-secondary)] max-w-[360px] max-md:max-w-none"
-                style={{ lineHeight: 1.7 }}
-              >
-                {t.services.special.intro}
-              </p>
-            </div>
-          </AnimatedSection>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {t.services.special.items.map((item, i) => (
-              <AnimatedSection key={item.title} delay={0.1 * (i + 1)}>
-                <motion.div
-                  whileHover={{ y: -4 }}
-                  transition={cardTransition}
-                  className="group relative overflow-hidden rounded-[14px] p-7 h-full flex flex-col"
-                  style={{
-                    background: "var(--color-bg-card)",
-                    border: "1px solid var(--color-border)",
-                  }}
-                >
-                  <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[var(--color-accent)] scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500" />
-
-                  <h4 className="text-[var(--color-text)] text-lg font-medium mb-3">
-                    {semViuva(item.title)}
-                  </h4>
-                  <p
-                    className="text-[var(--color-text-secondary)] mb-8"
-                    style={{ lineHeight: 1.7 }}
-                  >
-                    {item.description}
-                  </p>
-
-                  <div className="mt-auto flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                    {ativa ? (
-                      <>
-                        <s
-                          className="text-[var(--color-text-dim)]"
-                          style={{ fontSize: "0.9rem" }}
-                        >
-                          {item.price}
-                        </s>
-                        <span
-                          className="font-semibold text-[var(--color-accent)]"
-                          style={{ fontSize: "1.25rem", letterSpacing: "-0.01em" }}
-                        >
-                          {formatBRL(precoComDesconto(item.priceValue))}
-                        </span>
-                      </>
-                    ) : (
-                      <span
-                        className="font-semibold text-[var(--color-text)]"
-                        style={{ fontSize: "1.25rem", letterSpacing: "-0.01em" }}
-                      >
-                        {item.price}
-                      </span>
-                    )}
-                    <span className="text-[0.7rem] text-[var(--color-text-dim)]">
-                      {item.priceNote}
+                      {String(i + 1).padStart(2, "0")}
                     </span>
                   </div>
-                </motion.div>
-              </AnimatedSection>
+
+                  <div className="relative mt-auto pt-10">
+                    <h3
+                      className="text-[var(--color-text)] mb-2"
+                      style={{
+                        fontSize: it.grande ? "clamp(1.5rem, 2.4vw, 2.1rem)" : "1.3rem",
+                        fontWeight: 500,
+                        lineHeight: 1.15,
+                        letterSpacing: "-0.03em",
+                      }}
+                    >
+                      {semViuva(it.title)}
+                    </h3>
+                    <p
+                      className="text-[var(--color-text-secondary)] text-[0.9rem]"
+                      style={{ lineHeight: 1.6, maxWidth: it.grande ? 460 : undefined }}
+                    >
+                      {semViuva(it.text)}
+                    </p>
+
+                    <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                      {it.from && (
+                        <span className="text-[0.65rem] font-medium uppercase tracking-[0.08em] text-[var(--color-text-dim)]">{s.priceFrom}</span>
+                      )}
+                      {ativa ? (
+                        <>
+                          <s className="text-[var(--color-text-dim)] text-[0.85rem]">{it.price}</s>
+                          <span className="font-semibold text-[var(--color-accent)]" style={{ fontSize: "1.2rem", letterSpacing: "-0.01em" }}>
+                            {formatBRL(precoComDesconto(it.priceValue))}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="font-semibold text-[var(--color-text)]" style={{ fontSize: "1.15rem", letterSpacing: "-0.01em" }}>
+                          {it.price}
+                        </span>
+                      )}
+                      {it.note && <span className="text-[0.7rem] text-[var(--color-text-dim)]">{it.note}</span>}
+                    </div>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
-        </div>
+        </AnimatedSection>
       </div>
+
+      <style>{`
+        @media (min-width: 768px) {
+          .bento { grid-template-areas: "a b" "c c" "d d" "e f"; }
+        }
+        @media (min-width: 1024px) {
+          .bento { grid-template-areas: "a b c c" "d d c c" "d d e f"; }
+        }
+      `}</style>
     </section>
   );
 }
