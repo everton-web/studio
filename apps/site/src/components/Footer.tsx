@@ -37,6 +37,18 @@ export function Footer() {
     <footer className="relative overflow-hidden" style={{ background: "var(--color-bg)" }}>
       {/* mesmas ondas do hero, espelhadas: sobem do pé e atravessam o CTA até o rodapé */}
       <HeroWaves base />
+      {/* véu no fim do rodapé: desfoque + escurecimento graduais para as informações ficarem legíveis */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[48%]"
+        style={{
+          background: "linear-gradient(to bottom, transparent 0%, rgba(10,10,11,0.75) 45%, var(--color-bg) 85%)",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
+          maskImage: "linear-gradient(to bottom, transparent 0%, #000 40%)",
+          WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, #000 40%)",
+        }}
+      />
       <section
         className="relative z-[2]"
         style={{ padding: "var(--section-pad) 0" }}
