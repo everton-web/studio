@@ -49,3 +49,13 @@ Rodapé: **Time** (personas, ao vivo, logs).
 2. Quer vender plano mensal de acompanhamento (base do relatório mensal por cliente)?
 3. Liberar o Google Agenda como fonte das reuniões?
 4. Studio Web Pro: confirma link agora e porte parcial depois?
+
+## 7. Decisões do Everton (29/09, depois da reunião)
+1. **Aprovada** a hierarquia: Agenda, Operação (Time & Fila + Projetos), Comercial, Clientes, Conteúdo, Resultados e Time no rodapé. A aba "Hoje" não foi citada: Orion mantém "Hoje" como tela inicial (é o Início atual renomeado) até o Everton dizer o contrário.
+2. **Relatório mensal embutido no preço do site:** todo dia 1, relatório automático por cliente, via link (dashboard), idealmente chegando no WhatsApp. Orion avalia viabilidade (seção 8).
+3. **Google Agenda:** em stand by.
+4. **Studio Web Pro totalmente integrado** à plataforma (não só link). Muda a decisão da seção 2: ver seção 8.
+
+## 8. Leitura do Orion sobre as decisões
+- Relatório mensal: viável. Link público com token por cliente servido pela plataforma na VPS (não pelo site, que publica via git). Dados: pixel próprio, saúde do site, leads do formulário, Clarity (API) e, com autorização do cliente, Google Search Console. Envio em 2 fases: fase 1 no dia 1 aparece no "Hoje" a lista de clientes com botão de WhatsApp já com a mensagem e o link (1 toque do Everton por cliente, custo zero); fase 2 envio automático pela API oficial do WhatsApp (Meta Cloud API, modelo de mensagem aprovado, conta Business verificada, custo por conversa).
+- Studio Web Pro totalmente integrado: a plataforma hoje guarda tudo em arquivos do vault; o SWP usa banco (Supabase) com login e regras de acesso. CRM, clientes, cofre de senhas, briefings e contratos precisam de banco de verdade (relações, segurança). Proposta: a plataforma passa a usar o banco do SWP para os dados de cliente e comercial; o vault continua como fonte de conhecimento, documentos e demandas. Partes de infoproduto do SWP (aulas, lives, biblioteca, billing Stripe) ficam fora, salvo pedido do Everton. Executar depois da VPS estável.
