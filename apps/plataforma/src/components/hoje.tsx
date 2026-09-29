@@ -13,6 +13,7 @@ type Demanda = {
   prazo: string;
   cliente: string;
   log: string[];
+  briefing?: string;
 };
 type Reuniao = { id: string; titulo: string; quando: string; duracao: number; participante: string; criada_em: string };
 type Saude = {
@@ -66,6 +67,18 @@ function Bloco({ titulo, children }: { titulo: string; children: React.ReactNode
       {children}
     </section>
   );
+}
+
+// Linha do log ("<ISO> <quem> <estado> <nota>") vira texto legível: "nota · há 2h".
+function motivoLegivel(linha: string): string {
+  const m = linha.replace(/^-\s*/, "").match(/^(\S+)\s+\S+\s+\S+\s*(.*)$/);
+  if (!m) return linha;
+  const quando = new Date(m[1]).getTime();
+  const nota = (m[2] || "").trim();
+  if (!quando) return nota || linha;
+  const min = Math.max(0, Math.round((Date.now() - quando) / 60000));
+  const ha = min < 60 ? `há ${min} min` : min < 1440 ? `há ${Math.round(min / 60)}h` : `há ${Math.round(min / 1440)} dias`;
+  return nota ? `${nota} · ${ha}` : ha;
 }
 
 export function Hoje({ placar }: { placar: { progresso: number; acumulado: number; meta: number; fase: string } }) {
@@ -180,7 +193,7 @@ export function Hoje({ placar }: { placar: { progresso: number; acumulado: numbe
             ) : (
               <div className="space-y-3">
                 {aguardando.map((d) => {
-                  const motivo = d.log.length > 0 ? d.log[d.log.length - 1] : "";
+                  const motivo = motivoLegivel(d.log.length > 0 ? d.log[d.log.length - 1] : "");
                   return (
                     <div key={d.id} className="rounded-xl border border-[var(--line)] bg-[var(--bg-1)] p-3.5">
                       <div className="flex items-start gap-2.5">
@@ -193,6 +206,9 @@ export function Hoje({ placar }: { placar: { progresso: number; acumulado: numbe
                           </div>
                           {motivo && (
                             <p className="text-[.76rem] text-[#9a9a95] mt-1.5 leading-relaxed line-clamp-2">{motivo}</p>
+                          )}
+                          {d.briefing && (
+                            <a href={`/api/briefing?path=${encodeURIComponent(d.briefing)}`} target="_blank" rel="noopener noreferrer" className="inline-block mt-1.5 text-[.76rem] text-[var(--accent)] hover:underline">abrir material ↗</a>
                           )}
                         </div>
                       </div>
