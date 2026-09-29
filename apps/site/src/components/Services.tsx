@@ -7,6 +7,8 @@ import { LineReveal } from "./TextReveal";
 import { useLang } from "@/context/LanguageContext";
 import { usePromo } from "@/hooks/usePromo";
 import { precoComDesconto, formatBRL } from "@/lib/promo";
+import { useCambio } from "@/hooks/useCambio";
+import { brlParaUsd, formatUSD, TAXA_INTERNACIONAL } from "@/lib/cambio";
 import { PromoBanner } from "./PromoBanner";
 import { semViuva } from "@/lib/texto";
 
@@ -34,8 +36,11 @@ const AREA_CLASS: Record<string, string> = {
 };
 
 export function Services() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { ativa } = usePromo();
+  const cotacao = useCambio(lang === "en");
+  // em inglês, com cotação carregada, mostra em dólar com taxas; senão, em real
+  const preco = (brl: number) => (cotacao ? formatUSD(brlParaUsd(brl, cotacao.brlPorUsd)) : formatBRL(brl));
   const grid = useRef<HTMLDivElement>(null);
   const [aceso, setAceso] = useState(false);
 
@@ -196,14 +201,14 @@ export function Services() {
                       )}
                       {ativa ? (
                         <>
-                          <s className="text-[var(--color-text-dim)] text-[0.85rem]">{it.price}</s>
+                          <s className="text-[var(--color-text-dim)] text-[0.85rem]">{preco(it.priceValue)}</s>
                           <span className="font-semibold text-[var(--color-accent)]" style={{ fontSize: "1.2rem", letterSpacing: "-0.01em" }}>
-                            {formatBRL(precoComDesconto(it.priceValue))}
+                            {preco(precoComDesconto(it.priceValue))}
                           </span>
                         </>
                       ) : (
                         <span className="font-semibold text-[var(--color-text)]" style={{ fontSize: "1.15rem", letterSpacing: "-0.01em" }}>
-                          {it.price}
+                          {preco(it.priceValue)}
                         </span>
                       )}
                       {it.note && <span className="text-[0.7rem] text-[var(--color-text-dim)]">{it.note}</span>}
@@ -213,6 +218,12 @@ export function Services() {
               </div>
             ))}
           </div>
+          {cotacao && (
+            <p className="mt-5 text-[0.75rem] text-[var(--color-text-muted)]">
+              Prices in US dollars at today&apos;s rate (US$ 1 = R$ {cotacao.brlPorUsd.toFixed(2)}, updated{" "}
+              {new Date(cotacao.quando).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}), international fees of {Math.round(TAXA_INTERNACIONAL * 100)}% included.
+            </p>
+          )}
         </AnimatedSection>
       </div>
 
