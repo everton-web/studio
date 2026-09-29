@@ -1,0 +1,29 @@
+{
+  "geradoEm": "2026-09-29T17:11:21.101Z",
+  "banco": "D:\\studio-v3-03\\apps\\plataforma\\data\\plataforma.sqlite",
+  "vault": "D:/Obsidian - Claude/🏢 Agência",
+  "vaultVisivel": true,
+  "copiaPrevia": "D:\\studio-v3-03\\apps\\plataforma\\data\\backups\\plataforma.pre-migracao-20260929-141121.sqlite",
+  "arquivosFonte": {
+    "leads": 16,
+    "clientes": 2,
+    "propostas": 0,
+    "projetos": 4
+  },
+  "porTabela": {
+    "empresa": 18,
+    "contato": 16,
+    "oportunidade": 0,
+    "projeto": 2,
+    "contrato": 0,
+    "credencial": 0,
+    "briefing": 0,
+    "relatorio": 0
+  },
+  "porOrigem": {
+    "analise": 1,
+    "cliente": 1,
+    "lead": 16
+  },
+  "hashIguais": true
+}
