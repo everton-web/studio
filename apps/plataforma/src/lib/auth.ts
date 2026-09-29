@@ -34,8 +34,8 @@ function sign(v: string) {
   return createHmac("sha256", SECRET).update(v).digest("hex");
 }
 
-export function createToken(): string {
-  const exp = Date.now() + 7 * 24 * 3600 * 1000; // 7 dias
+export function createToken(ms: number = 7 * 24 * 3600 * 1000): string {
+  const exp = Date.now() + ms; // validade do login (padrão 7 dias)
   const payload = `${AUTH_USER}.${exp}`;
   return `${payload}.${sign(payload)}`;
 }

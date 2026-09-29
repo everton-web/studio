@@ -19,6 +19,7 @@ export function LoginForm() {
   const [user, setUser] = useState("");
   const [pass, setPass] = useState("");
   const [show, setShow] = useState(false);
+  const [lembrar, setLembrar] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -30,7 +31,7 @@ export function LoginForm() {
       const r = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user: user.trim(), pass }),
+        body: JSON.stringify({ user: user.trim(), pass, lembrar }),
       });
       const j = await r.json();
       if (j.ok) {
@@ -111,7 +112,7 @@ export function LoginForm() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.45, duration: 0.6, ease }}
-              className="mb-8 relative"
+              className="mb-5 relative"
             >
               <label className="block mono mb-2.5">Senha</label>
               <input
@@ -135,6 +136,25 @@ export function LoginForm() {
                 )}
               </button>
             </motion.div>
+
+            <motion.label
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.6, ease }}
+              htmlFor="lembrar"
+              className="mb-8 flex items-center gap-3 cursor-pointer select-none text-[.86rem] text-[#b8b8b3] hover:text-white transition-colors w-fit"
+            >
+              <input id="lembrar" type="checkbox" checked={lembrar} onChange={(e) => setLembrar(e.target.checked)} className="peer sr-only" />
+              <span
+                aria-hidden
+                className="grid place-items-center w-[18px] h-[18px] rounded-[5px] border border-white/20 bg-white/[.03] transition-colors peer-checked:bg-[#FF4000] peer-checked:border-[#FF4000] peer-focus-visible:ring-2 peer-focus-visible:ring-[#FF4000]/60 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[#0d0d0f]"
+              >
+                {lembrar && (
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#0a0a0b" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+                )}
+              </span>
+              Deixar conectado
+            </motion.label>
 
             <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55, duration: 0.6, ease }}>
             <motion.button

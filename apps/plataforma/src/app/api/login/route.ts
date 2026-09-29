@@ -25,7 +25,8 @@ export async function POST(req: Request) {
 
   let user = "";
   let pass = "";
-  try { ({ user, pass } = await req.json()); } catch {
+  let lembrar = false;
+  try { ({ user, pass, lembrar } = await req.json()); } catch {
     return NextResponse.json({ ok: false, error: "Requisição inválida" }, { status: 400 });
   }
 
@@ -41,12 +42,14 @@ export async function POST(req: Request) {
     new URL(req.url).protocol === "https:";
 
   const res = NextResponse.json({ ok: true });
-  res.cookies.set("agencia_token", createToken(), {
+  // "Deixar conectado": 60 dias no aparelho; sem marcar, cookie de sessão (fecha o navegador, sai) com validade de 12h
+  const DIAS_60 = 60 * 24 * 3600;
+  res.cookies.set("agencia_token", createToken((lembrar ? DIAS_60 : 12 * 3600) * 1000), {
     httpOnly: true,
     secure: https,
     path: "/",
     sameSite: "lax",
-    maxAge: 7 * 24 * 3600,
+    ...(lembrar ? { maxAge: DIAS_60 } : {}),
   });
   return res;
 }
