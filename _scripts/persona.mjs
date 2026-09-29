@@ -31,7 +31,7 @@ const LOG_DIR = join(VAULT, "SaaS", "Agentes");
 const TMP = join(HERE, ".persona-tmp");
 const PI_CLI = process.env.PI_CLI || join(process.env.APPDATA || join(homedir(), "AppData", "Roaming"), "npm", "node_modules", "@earendil-works", "pi-coding-agent", "dist", "cli.js");
 
-const PERSONAS = ["orion", "caio", "davi", "theo", "mia", "fabio", "olga", "lia", "ops"];
+const PERSONAS = ["orion", "caio", "davi", "davi-copy", "theo", "mia", "fabio", "olga", "lia", "ops"];
 const MODELOS = {
   flash: "opencode-go/deepseek-v4.1-flash",
   pro: "opencode-go/deepseek-v4-pro",

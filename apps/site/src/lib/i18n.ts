@@ -51,8 +51,8 @@ export const translations = {
     },
     services: {
       label: "Serviços",
-      titleBefore: "O que eu",
-      titleAccent: "entrego",
+      titleBefore: "O que",
+      titleAccent: "eu entrego",
       intro: "Cada projeto é tratado como único. O escopo se adapta ao desafio, não o contrário.",
       priceFrom: "a partir de",
       core: [
@@ -111,7 +111,7 @@ export const translations = {
     portfolio: {
       label: "Portfólio",
       titleBefore: "Projetos",
-      titleAccent: "selecionados",
+      titleAccent: "que escolhi",
       cta: "Iniciar um projeto",
       seeAll: "Ver todos",
     },
@@ -208,8 +208,8 @@ export const translations = {
     },
     services: {
       label: "Services",
-      titleBefore: "What I",
-      titleAccent: "deliver",
+      titleBefore: "What",
+      titleAccent: "I deliver",
       intro: "Every project is treated as unique. The scope adapts to the challenge, not the other way around.",
       priceFrom: "from",
       core: [
@@ -267,8 +267,8 @@ export const translations = {
     },
     portfolio: {
       label: "Portfolio",
-      titleBefore: "Selected",
-      titleAccent: "projects",
+      titleBefore: "Projects",
+      titleAccent: "I chose",
       cta: "Start a project",
       seeAll: "See all",
     },
