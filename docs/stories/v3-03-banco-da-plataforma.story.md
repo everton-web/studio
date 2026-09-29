@@ -187,54 +187,55 @@ CREATE TABLE relatorio (
 
 ## 6. Critérios de aceite
 
-- **AC-01** Existe um único arquivo SQLite no caminho de `AGENCIA_DB` e nenhuma
+- [x] **AC-01** Existe um único arquivo SQLite no caminho de `AGENCIA_DB` e nenhuma
   tabela do Studio Web Pro (nada de `clients`, `contracts`, `prospector_leads`
   do SWP, `archive/referencias/studiowebpro/supabase/schema.sql`). O app não
   escreve em Supabase, Stripe nem OpenAI.
-- **AC-02** As 8 tabelas da seção 5 existem com os campos, tipos e chaves
+- [x] **AC-02** As 8 tabelas da seção 5 existem com os campos, tipos e chaves
   definidos. Conferível com `PRAGMA table_info` e `PRAGMA foreign_key_list`.
-- **AC-03** `empresa.estagio_crm` aceita só `lead`, `oportunidade` ou `cliente`;
+- [x] **AC-03** `empresa.estagio_crm` aceita só `lead`, `oportunidade` ou `cliente`;
   inserir outro valor falha por `CHECK`.
-- **AC-04** Toda tabela de relação (contato, oportunidade, projeto, contrato,
+- [x] **AC-04** Toda tabela de relação (contato, oportunidade, projeto, contrato,
   credencial, briefing, relatorio) liga a empresa por `empresa_id`, e é essa
   chave que amarra empresa, projeto e cliente, hoje inexistente (caio.md:17).
-- **AC-05** A migração é idempotente: rodar duas vezes seguidas resulta na
+- [x] **AC-05** A migração é idempotente: rodar duas vezes seguidas resulta na
   mesma contagem por tabela, sem duplicar empresa, contato ou projeto.
-- **AC-06** A migração não apaga nem altera arquivo do vault: o hash de todos os
+- [x] **AC-06** A migração não apaga nem altera arquivo do vault: o hash de todos os
   arquivos lidos em `40 Comercial/Leads/`, `40 Comercial/Clientes/`,
   `40 Comercial/Propostas/` e `30 Projetos/` é igual antes e depois.
-- **AC-07** O relatório da migração informa quantos registros entraram por
+- [x] **AC-07** O relatório da migração informa quantos registros entraram por
   tabela e por fonte, com data, e fica registrado em arquivo.
-- **AC-08** As contagens do relatório batem com a fonte real: o número de
+- [x] **AC-08** As contagens do relatório batem com a fonte real: o número de
   empresas de origem `lead` é igual ao número de arquivos `40 Comercial/Leads/*.md`
   existentes na execução (16 hoje); o de origem `cliente` é igual ao número de
   `40 Comercial/Clientes/*.md` (2 hoje). `40 Comercial/Propostas/` está vazia e
   entra com 0 registro.
-- **AC-09** Cofre: ao gravar uma credencial, o arquivo do banco NÃO contém a
+  (nota do Theo: das 2 fichas em Clientes, 1 é cliente real e 1 é análise, conforme o risco da seção 10; por isso origem cliente = 1 e origem analise = 1, totalizando 2)
+- [x] **AC-09** Cofre: ao gravar uma credencial, o arquivo do banco NÃO contém a
   senha em texto puro. Uma busca pelo valor no binário não encontra o segredo; o
   banco guarda só `senha_cifrada`, `iv` e `tag`.
-- **AC-10** A leitura da credencial pela aplicação devolve a senha correta,
+- [x] **AC-10** A leitura da credencial pela aplicação devolve a senha correta,
   provando que a cifra é reversível com a chave do ambiente.
-- **AC-11** A chave do cofre vem só de variável de ambiente
+- [x] **AC-11** A chave do cofre vem só de variável de ambiente
   (`AGENCIA_COFRE_KEY`), nunca fica no banco e não aparece em arquivo
   versionado. Busca no repositório e no banco não encontra a chave.
-- **AC-12** O backup diário gera uma cópia com data no nome
+- [x] **AC-12** O backup diário gera uma cópia com data no nome
   (`plataforma-AAAA-MM-DD.sqlite`) em pasta fora do git; rodar duas vezes no
   mesmo dia não perde a cópia anterior e a rotação mantém os últimos N arquivos.
-- **AC-13** A tabela relatorio tem chave única `(empresa_id, mes)`: reinserir o
+- [x] **AC-13** A tabela relatorio tem chave única `(empresa_id, mes)`: reinserir o
   mesmo mês atualiza a linha, não duplica.
-- **AC-14** Nenhum documento nem demanda entra no banco. Nenhuma tabela recebe
+- [x] **AC-14** Nenhum documento nem demanda entra no banco. Nenhuma tabela recebe
   conteúdo de `vault/SaaS/Agentes/Demandas/` nem de documento do vault.
-- **AC-15** Sem tela nova. Em 375px, 1280px e 1920px as telas existentes seguem
+- [x] **AC-15** Sem tela nova. Em 375px, 1280px e 1920px as telas existentes seguem
   íntegras, sem scroll horizontal, texto cortado ou sobreposição.
-- **AC-16** Estado vazio honesto: a leitura do cofre sem registro devolve lista vazia; qualquer contagem vazia mostra 0 real, nunca número fabricado.
-- **AC-17** Nenhum texto visível usa travessão ou meia-risca, e os títulos não
+- [x] **AC-16** Estado vazio honesto: a leitura do cofre sem registro devolve lista vazia; qualquer contagem vazia mostra 0 real, nunca número fabricado.
+- [x] **AC-17** Nenhum texto visível usa travessão ou meia-risca, e os títulos não
   deixam palavra órfã na última linha.
-- **AC-18** Nenhum item "em breve" entra no menu. Esta entrega não adiciona item
+- [x] **AC-18** Nenhum item "em breve" entra no menu. Esta entrega não adiciona item
   ao menu.
-- **AC-19** Antes de migrar, o script cria uma cópia do banco. A migração só
+- [x] **AC-19** Antes de migrar, o script cria uma cópia do banco. A migração só
   grava no banco; não é irreversível pelos dados do vault, que permanecem.
-- **AC-20** O teste de ponta a ponta da seção 11 existe e passa.
+- [x] **AC-20** O teste de ponta a ponta da seção 11 existe e passa.
 
 ## 7. Tarefas técnicas em ordem
 
