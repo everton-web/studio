@@ -9,6 +9,7 @@ const DIR = join(VAULT, "SaaS", "Agentes", "Demandas");
 export type DemandaStatus =
   | "fila"
   | "em_andamento"
+  | "aguardando_everton"
   | "bloqueada"
   | "aguardando_cliente"
   | "concluida"
@@ -178,7 +179,7 @@ export async function criarDemanda(op: {
     criada_em: agora,
     iniciada_em: "",
     concluida_em: "",
-    prazo: op.prazo || "",
+    prazo: op.prazo || new Date().toISOString().slice(0, 10),
     cliente: op.cliente || "",
     projeto: op.projeto || "",
     origem: op.origem || "orion",

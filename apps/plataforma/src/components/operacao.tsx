@@ -19,6 +19,7 @@ type Demanda = {
 const STATUS_ORDEM = [
   "fila",
   "em_andamento",
+  "aguardando_everton",
   "bloqueada",
   "aguardando_cliente",
   "concluida",
@@ -33,6 +34,11 @@ function fmtCurto(q: string) {
   if (!y || !m || !d) return "";
   return `${d}/${m}`;
 }
+function hojeYmd() {
+  const d = new Date();
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
 
 export function Operacao() {
   const [demandas, setDemandas] = useState<Demanda[]>([]);
@@ -41,6 +47,7 @@ export function Operacao() {
   const [busca, setBusca] = useState("");
   const [novoTexto, setNovoTexto] = useState("");
   const [novaPersona, setNovaPersona] = useState("orion");
+  const [novoPrazo, setNovoPrazo] = useState(hojeYmd);
   const [painelNova, setPainelNova] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -89,8 +96,9 @@ export function Operacao() {
 
   function despachar() {
     if (!novoTexto.trim()) return;
-    post({ action: "nova", texto: novoTexto.trim(), atribuido: novaPersona }).then(() => {
+    post({ action: "nova", texto: novoTexto.trim(), atribuido: novaPersona, prazo: novoPrazo }).then(() => {
       setNovoTexto("");
+      setNovoPrazo(hojeYmd());
       setPainelNova(false);
     });
   }
@@ -190,6 +198,13 @@ export function Operacao() {
                 </option>
               ))}
             </select>
+            <input
+              type="date"
+              value={novoPrazo}
+              onChange={(e) => setNovoPrazo(e.target.value)}
+              aria-label="prazo"
+              className="h-10 bg-[var(--bg-3)] border border-[var(--line)] rounded-xl px-3 text-[.84rem] outline-none focus:border-[#FF4000]/60"
+            />
             <button
               onClick={despachar}
               disabled={busy}

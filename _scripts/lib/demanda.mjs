@@ -203,3 +203,12 @@ export function extrairBriefing(texto) {
   const m = String(texto || "").match(/\bdocs\/demandas\/[\w-]+\/[\w-]+\.md/);
   return m ? m[0] : "";
 }
+
+// status final da demanda a partir do relatório do pi:
+// se o bloco "PENDENTE:" pedir aprovação/decisão do Everton, fica aguardando_everton
+export function statusDoRelatorio(saida = "") {
+  const m = String(saida).match(/PENDENTE:\s*([\s\S]*?)(?:\n\s*[A-ZÇÃ]{4,}:|$)/i);
+  const bloco = m ? m[1] : "";
+  const t = bloco.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  return /aprov|decis|everton/.test(t) ? "aguardando_everton" : "concluida";
+}

@@ -307,15 +307,19 @@ export function Dashboard() {
                     </p>
                   </div>
                   <div className="flex gap-2 shrink-0 pt-1">
-                    <button onClick={() => go("operacao")}
-                      className="flex items-center gap-2 h-[42px] px-4 rounded-xl bg-[#06b6d4]/12 border border-[#06b6d4]/30 text-[#22c8e5] text-[.8rem] font-semibold transition-colors hover:bg-[#06b6d4]/20">
-                      <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
-                      nova demanda
-                    </button>
-                    <button onClick={() => { localStorage.setItem("prospeccao.auto-start", "1"); go("pipeline"); }}
-                      className="flex items-center gap-2 h-[42px] px-4 rounded-xl bg-[#FF4000] hover:bg-[#ff5c22] text-[var(--accent-ink)] text-[.8rem] font-semibold transition-colors">
-                      prospecção
-                    </button>
+                    {view !== "operacao" && (
+                      <button onClick={() => go("operacao")}
+                        className="flex items-center gap-2 h-[42px] px-4 rounded-xl bg-[#06b6d4]/12 border border-[#06b6d4]/30 text-[#22c8e5] text-[.8rem] font-semibold transition-colors hover:bg-[#06b6d4]/20">
+                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+                        nova demanda
+                      </button>
+                    )}
+                    {view === "pipeline" && (
+                      <button onClick={() => { localStorage.setItem("prospeccao.auto-start", "1"); go("pipeline"); }}
+                        className="flex items-center gap-2 h-[42px] px-4 rounded-xl bg-[#FF4000] hover:bg-[#ff5c22] text-[var(--accent-ink)] text-[.8rem] font-semibold transition-colors">
+                        prospecção
+                      </button>
+                    )}
                   </div>
                 </div>
               </motion.div>

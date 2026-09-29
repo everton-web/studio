@@ -23,7 +23,7 @@ import { existsSync } from "node:fs";
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { homedir } from "node:os";
-import { criarDemanda, atualizarDemanda, acrescentarLog, extrairBriefing } from "./lib/demanda.mjs";
+import { criarDemanda, atualizarDemanda, acrescentarLog, extrairBriefing, statusDoRelatorio } from "./lib/demanda.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, "..");
@@ -176,8 +176,11 @@ function resumoDoRelatorio(out) {
       await registrar({ estado: "pronto", fim: new Date().toISOString(), resumo: resumoDoRelatorio(out), erro: "" });
       try {
         if (demandaId) {
-          await atualizarDemanda(demandaId, { status: "concluida", concluida_em: new Date().toISOString() });
-          await acrescentarLog(demandaId, `concluida ${resumoDoRelatorio(out).slice(0, 200)}`);
+          const statusFinal = statusDoRelatorio(out);
+          const parcial = { status: statusFinal };
+          if (statusFinal === "concluida") parcial.concluida_em = new Date().toISOString();
+          await atualizarDemanda(demandaId, parcial);
+          await acrescentarLog(demandaId, `${statusFinal} ${resumoDoRelatorio(out).slice(0, 200)}`);
         }
       } catch (e) {
         console.warn(`[demanda] falha ao concluir ${demandaId}: ${e?.message || e}`);

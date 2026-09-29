@@ -110,7 +110,8 @@ export function Hoje({ placar }: { placar: { progresso: number; acumulado: numbe
   });
 
   const hoje = ymd(new Date());
-  const bloqueadas = demandas.filter((d) => d.status === "bloqueada");
+  const aguardando = demandas.filter((d) => d.status === "aguardando_everton");
+  const emAndamento = demandas.filter((d) => d.status === "em_andamento");
   const reunioesHoje = reunioes.filter((r) => diaDe(r.quando) === hoje);
   const demandasHoje = demandas.filter((d) => d.prazo && diaDe(d.prazo) === hoje);
   const alertas = saude.filter(
@@ -165,16 +166,7 @@ export function Hoje({ placar }: { placar: { progresso: number; acumulado: numbe
         <h2 className="text-[clamp(1.3rem,3vw,1.6rem)] font-semibold tracking-[-.025em] leading-tight text-balance">
           {saudacao}, Everton
         </h2>
-        <p className="text-[.85rem] text-[var(--muted)] mt-1.5 capitalize">{dataExtenso}</p>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 mt-3">
-          <span className="nums text-[.9rem] text-[#3ddc84]">{fmtMoeda(placar.acumulado)}</span>
-          <span className="mono" style={{ fontSize: "0.66rem" }}>
-            {placar.progresso}% da meta
-          </span>
-          <span className="mono" style={{ fontSize: "0.66rem" }}>
-            {placar.fase || "-"}
-          </span>
-        </div>
+        <p className="text-[.85rem] text-[var(--muted)] mt-1.5">{dataExtenso}</p>
       </motion.div>
 
       {carregando ? (
@@ -183,16 +175,16 @@ export function Hoje({ placar }: { placar: { progresso: number; acumulado: numbe
         <>
           {/* a) aprovações pendentes */}
           <Bloco titulo="Aprovações pendentes">
-            {bloqueadas.length === 0 ? (
+            {aguardando.length === 0 ? (
               <div className="text-[.82rem] text-[#6b6b66]">Nada para aprovar agora.</div>
             ) : (
               <div className="space-y-3">
-                {bloqueadas.map((d) => {
+                {aguardando.map((d) => {
                   const motivo = d.log.length > 0 ? d.log[d.log.length - 1] : "";
                   return (
                     <div key={d.id} className="rounded-xl border border-[var(--line)] bg-[var(--bg-1)] p-3.5">
                       <div className="flex items-start gap-2.5">
-                        <span className="w-2 h-2 rounded-full mt-1.5 shrink-0" style={{ background: "#fb7185" }} />
+                        <span className="w-2 h-2 rounded-full mt-1.5 shrink-0" style={{ background: "#FF4000" }} />
                         <div className="min-w-0 flex-1">
                           <div className="text-[.9rem] font-medium leading-snug text-balance">{d.titulo}</div>
                           <div className="mono mt-1" style={{ fontSize: "0.64rem" }}>
@@ -231,25 +223,63 @@ export function Hoje({ placar }: { placar: { progresso: number; acumulado: numbe
 
           {/* b) agenda do dia */}
           <Bloco titulo="Agenda do dia">
-            {itensDia.length === 0 ? (
+            {itensDia.length === 0 && emAndamento.length === 0 && aguardando.length === 0 ? (
               <div className="text-[.82rem] text-[#6b6b66] leading-relaxed text-balance">
                 Nada agendado para hoje. As demandas aparecem aqui quando o Orion registra uma tarefa ou reunião.
               </div>
             ) : (
-              <div className="space-y-2">
-                {itensDia.map((it) => (
-                  <div key={`${it.tipo}-${it.id}`} className="flex items-start gap-3 py-2 border-b border-[var(--line)] last:border-0">
-                    <span className="w-14 shrink-0 nums text-[.78rem] text-[var(--ink-2)] pt-0.5">{it.hora || "dia"}</span>
-                    <span
-                      className="w-2 h-2 rounded-full mt-1.5 shrink-0"
-                      style={{ background: it.tipo === "reuniao" ? "#FF4000" : "#7aa2ff" }}
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="text-[.86rem] leading-snug truncate">{it.titulo}</div>
-                      <div className="mono mt-0.5" style={{ fontSize: "0.62rem" }}>{it.detalhe}</div>
+              <div className="space-y-4">
+                {itensDia.length > 0 && (
+                  <div className="space-y-2">
+                    {itensDia.map((it) => (
+                      <div key={`${it.tipo}-${it.id}`} className="flex items-start gap-3 py-2 border-b border-[var(--line)] last:border-0">
+                        <span className="w-14 shrink-0 nums text-[.78rem] text-[var(--ink-2)] pt-0.5">{it.hora || "dia"}</span>
+                        <span
+                          className="w-2 h-2 rounded-full mt-1.5 shrink-0"
+                          style={{ background: it.tipo === "reuniao" ? "#FF4000" : "#7aa2ff" }}
+                        />
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[.86rem] leading-snug truncate">{it.titulo}</div>
+                          <div className="mono mt-0.5" style={{ fontSize: "0.62rem" }}>{it.detalhe}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {emAndamento.length > 0 && (
+                  <div>
+                    <div className="mono mb-2" style={{ fontSize: "0.62rem" }}>Em andamento</div>
+                    <div className="space-y-1.5">
+                      {emAndamento.map((d) => (
+                        <div key={d.id} className="flex items-center gap-2.5">
+                          <span className="w-2 h-2 rounded-full shrink-0" style={{ background: "#54b8f0" }} />
+                          <div className="min-w-0 flex-1 text-[.84rem] leading-snug truncate">{d.titulo}</div>
+                          <span className="mono shrink-0" style={{ fontSize: "0.62rem", color: corAgente(d.persona) }}>
+                            {nomeAgente(d.persona)}
+                          </span>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                ))}
+                )}
+
+                {aguardando.length > 0 && (
+                  <div>
+                    <div className="mono mb-2" style={{ fontSize: "0.62rem" }}>Esperando você</div>
+                    <div className="space-y-1.5">
+                      {aguardando.map((d) => (
+                        <div key={d.id} className="flex items-center gap-2.5">
+                          <span className="w-2 h-2 rounded-full shrink-0" style={{ background: "#FF4000" }} />
+                          <div className="min-w-0 flex-1 text-[.84rem] leading-snug truncate">{d.titulo}</div>
+                          <span className="mono shrink-0" style={{ fontSize: "0.62rem", color: corAgente(d.persona) }}>
+                            {nomeAgente(d.persona)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </Bloco>

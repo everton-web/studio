@@ -4,7 +4,13 @@ import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 
 export type TipoEvento = "tarefa" | "reuniao" | "post" | "vencimento";
-export type EventoAgenda = { id: string; titulo: string; quando: string; tipo: TipoEvento };
+export type EventoAgenda = {
+  id: string;
+  titulo: string;
+  quando: string;
+  tipo: TipoEvento;
+  secao?: "em_andamento" | "aguardando_everton";
+};
 
 const TIPO_COR: Record<TipoEvento, string> = {
   tarefa: "#7aa2ff",
@@ -78,8 +84,11 @@ function Vazio({ children }: { children: React.ReactNode }) {
 function VisaoDia({ eventos, dataRef, agora, vazio }: { eventos: EventoAgenda[]; dataRef: Date; agora: Date; vazio?: string }) {
   const alvo = ymd(dataRef);
   const doDia = eventos.filter((e) => diaDe(e.quando) === alvo);
-  const semHora = doDia.filter((e) => !horaDe(e.quando));
-  const comHora = doDia.filter((e) => horaDe(e.quando));
+  const secaoHoje = alvo === ymd(agora);
+  const secaoItens = secaoHoje ? doDia.filter((e) => e.secao) : [];
+  const naTimeline = doDia.filter((e) => !e.secao);
+  const semHora = naTimeline.filter((e) => !horaDe(e.quando));
+  const comHora = naTimeline.filter((e) => horaDe(e.quando));
 
   const HORA_INI = 7;
   const HORA_FIM = 20;
@@ -101,8 +110,35 @@ function VisaoDia({ eventos, dataRef, agora, vazio }: { eventos: EventoAgenda[];
   const mostraAgora = hoje && ah >= HORA_INI && ah <= HORA_FIM;
   const agoraTop = (ah - HORA_INI) * ALT + (am / 60) * ALT;
 
+  const secaoEmAndamento = secaoItens.filter((e) => e.secao === "em_andamento");
+  const secaoAguardando = secaoItens.filter((e) => e.secao === "aguardando_everton");
+
   return (
     <div className="rounded-2xl border border-[var(--line)] bg-[var(--bg-2)] overflow-hidden">
+      {(secaoEmAndamento.length > 0 || secaoAguardando.length > 0) && (
+        <div className="p-3 border-b border-[var(--line)] space-y-3">
+          {secaoEmAndamento.length > 0 && (
+            <div>
+              <div className="mono mb-1.5" style={{ fontSize: "0.58rem" }}>Em andamento</div>
+              <div className="space-y-1.5">
+                {secaoEmAndamento.map((e) => (
+                  <Pilula key={e.id} e={e} />
+                ))}
+              </div>
+            </div>
+          )}
+          {secaoAguardando.length > 0 && (
+            <div>
+              <div className="mono mb-1.5" style={{ fontSize: "0.58rem" }}>Esperando você</div>
+              <div className="space-y-1.5">
+                {secaoAguardando.map((e) => (
+                  <Pilula key={e.id} e={e} />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
       {semHora.length > 0 && (
         <div className="p-3 border-b border-[var(--line)] space-y-1.5">
           {semHora.map((e) => (

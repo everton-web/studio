@@ -18,6 +18,7 @@ export const CORES: Record<string, string> = {
 export const ST_LBL: Record<string, string> = {
   fila: "na fila",
   em_andamento: "em andamento",
+  aguardando_everton: "Aguardando você",
   bloqueada: "bloqueada",
   aguardando_cliente: "aguardando cliente",
   concluida: "concluída",
@@ -26,6 +27,7 @@ export const ST_LBL: Record<string, string> = {
 export const ST_COR: Record<string, string> = {
   fila: "#d9a03a",
   em_andamento: "#7aa2ff",
+  aguardando_everton: "#FF4000",
   bloqueada: "#fb7185",
   aguardando_cliente: "#f59e0b",
   concluida: "#3ddc84",

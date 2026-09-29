@@ -21,6 +21,7 @@ const STATUS_MAP: Record<string, DemandaStatus> = {
   // atuais
   fila: "fila",
   em_andamento: "em_andamento",
+  aguardando_everton: "aguardando_everton",
   bloqueada: "bloqueada",
   aguardando_cliente: "aguardando_cliente",
   concluida: "concluida",
@@ -48,6 +49,7 @@ export async function POST(req: Request) {
       titulo: texto,
       persona: body.atribuido || "orion",
       origem: "kanban",
+      prazo: body.prazo,
     });
     return NextResponse.json({ ok: true, demanda }, { status: 201 });
   }
@@ -91,7 +93,7 @@ export async function POST(req: Request) {
   }
 
   if (body.action === "devolver") {
-    const d = await atualizarStatus(String(body.id), "fila", { quem: "everton", nota: "devolvida" });
+    const d = await atualizarStatus(String(body.id), "em_andamento", { quem: "everton", nota: "devolvida" });
     if (!d) return NextResponse.json({ ok: false, error: "demanda não encontrada" }, { status: 404 });
     return NextResponse.json({ ok: true });
   }

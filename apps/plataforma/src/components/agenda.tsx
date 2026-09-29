@@ -62,11 +62,27 @@ export function Agenda() {
     return () => window.removeEventListener("keydown", onKey);
   }, [aberto]);
 
+  const hoje = (() => {
+    const d = new Date();
+    const p = (n: number) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+  })();
+  const comPrazo = demandas.filter((d) => d.prazo);
+  const idsComPrazoHoje = new Set(comPrazo.filter((d) => d.prazo.slice(0, 10) === hoje).map((d) => d.id));
+  const secaoHoje = demandas.filter(
+    (d) => (d.status === "em_andamento" || d.status === "aguardando_everton") && !idsComPrazoHoje.has(d.id),
+  );
+
   const eventos: EventoAgenda[] = [
     ...reunioes.map((r) => ({ id: r.id, titulo: r.titulo, quando: r.quando, tipo: "reuniao" as const })),
-    ...demandas
-      .filter((d) => d.prazo)
-      .map((d) => ({ id: d.id, titulo: d.titulo, quando: d.prazo, tipo: "tarefa" as const })),
+    ...comPrazo.map((d) => ({ id: d.id, titulo: d.titulo, quando: d.prazo, tipo: "tarefa" as const })),
+    ...secaoHoje.map((d) => ({
+      id: d.id,
+      titulo: d.titulo,
+      quando: hoje,
+      tipo: "tarefa" as const,
+      secao: d.status === "em_andamento" ? ("em_andamento" as const) : ("aguardando_everton" as const),
+    })),
   ];
 
   function abrirModal() {
