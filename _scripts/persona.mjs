@@ -139,7 +139,9 @@ function resumoDoRelatorio(out) {
   }
   // O gateway às vezes derruba o streaming em tarefas longas ("stream interrupted") ou o pi
   // termina sem relatório. Tenta de novo sozinho; na última tentativa o pi usa o modelo flash (mais estável).
-  const TENTATIVAS = [null, null, "opencode-go/deepseek-v4.1-flash"];
+  // Economia de cota (28/09): o pi só gerencia, então roda em flash; pro só quando a tarefa pede --modelo pro.
+  const PI = modelo === MODELOS.pro ? MODELOS.pro : MODELOS.flash;
+  const TENTATIVAS = [PI, PI, MODELOS.flash];
   let ultimoErro = null;
   for (let n = 0; n < TENTATIVAS.length; n++) {
     if (n > 0) {
