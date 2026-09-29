@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Inter+Tight:wght@800;900&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0a0b;--tx:#edede8;--ac:#FF4000}
+  *{margin:0;box-sizing:border-box}
+  body{width:1000px;height:1500px;background:var(--bg);font-family:Inter,sans-serif;color:var(--tx);overflow:hidden;position:relative}
+  .dots{position:absolute;inset:0;background-image:radial-gradient(#ffffff12 1px,transparent 1.2px);background-size:24px 24px}
+  /* luz quente de luminária vinda do alto à esquerda (releitura da cena da referência) */
+  .lamp{position:absolute;left:-220px;top:-260px;width:1100px;height:1300px;border-radius:50%;
+    background:radial-gradient(closest-side,#ff6a2a88,#ff400033 45%,transparent 75%);filter:blur(40px)}
+  .cone{position:absolute;left:40px;top:-40px;width:760px;height:1500px;
+    background:linear-gradient(160deg,#ff8a4a30 0%,#ff400012 35%,transparent 60%);clip-path:polygon(18% 0,46% 0,100% 100%,0 100%);filter:blur(18px)}
+  .floor{position:absolute;left:0;right:0;bottom:0;height:300px;background:linear-gradient(180deg,transparent,#141416 40%,#0e0e10)}
+  .shadow{position:absolute;left:70px;bottom:210px;width:620px;height:70px;border-radius:50%;background:radial-gradient(closest-side,#000d,transparent);filter:blur(6px)}
+  .title{position:absolute;right:56px;top:120px;text-align:left;font-family:"Inter Tight";font-weight:900;font-size:250px;line-height:.86;letter-spacing:-.045em;
+    color:var(--ac);transform:scaleY(1.32);transform-origin:top right}
+  .title span{display:block}
+  /* textura de retícula por cima das letras, como no cartaz de referência */
+  .title::after{content:"";position:absolute;inset:0;background-image:radial-gradient(#0a0a0b55 1px,transparent 1.3px);background-size:6px 6px;mix-blend-mode:multiply;pointer-events:none}
+  .tick{position:absolute;right:48px;top:612px;width:0;height:0;border-left:26px solid transparent;border-top:26px solid var(--tx)}
+  .photo{position:absolute;left:-40px;bottom:190px;height:960px;
+    filter:sepia(.18) saturate(.95) brightness(.92) contrast(1.06) drop-shadow(-14px -6px 30px #ff400040)}
+  .top{position:absolute;top:44px;left:56px;right:56px;display:flex;justify-content:space-between;font-weight:600;font-size:17px;z-index:3}
+  .logo{display:flex;align-items:center;gap:8px}.logo svg{width:16px;height:16px}
+  .info{position:absolute;right:56px;bottom:330px;width:330px;z-index:3}
+  .info .k{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ac);margin-bottom:14px}
+  .info p{font-size:21px;line-height:1.45;color:#edede8e6;letter-spacing:-.01em}
+  .info p b{font-weight:600;color:var(--tx)}
+  .bottom{position:absolute;left:56px;right:56px;bottom:56px;display:flex;justify-content:space-between;align-items:end;z-index:3}
+  .bottom .tag{font-size:15px;color:#edede899;line-height:1.6}
+  .pill{display:inline-flex;align-items:center;gap:10px;background:var(--tx);color:var(--bg);border-radius:99px;padding:15px 28px;font-weight:500;font-size:17px}
+  .grain{position:absolute;inset:0;opacity:.1;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  .desk{position:absolute;left:-40px;right:-40px;bottom:250px;height:26px;background:linear-gradient(180deg,#3a2a22,#1a1412);box-shadow:0 30px 60px #000c}
+  .desk::after{content:"";position:absolute;left:0;right:0;top:26px;height:260px;background:linear-gradient(180deg,#120e0c,#0a0a0b)}
+  .stage{position:absolute;left:-60px;bottom:276px;width:640px;transform:perspective(1800px) rotateY(24deg) rotateX(4deg);transform-origin:left bottom;z-index:2}
+  .lid{width:640px;height:410px;border-radius:20px 20px 5px 5px;background:linear-gradient(160deg,#3a3a3e,#161618 45%,#0c0c0e);padding:12px 12px 18px;box-shadow:0 40px 90px #000d,inset 0 0 0 1.5px #4a4a50}
+  .screen{position:relative;width:100%;height:100%;border-radius:10px;overflow:hidden;background:radial-gradient(120% 90% at 30% 20%,#1c1c1f,#0a0a0b)}
+  .ghost{position:absolute;left:-30px;top:10px;font-family:'Inter Tight';font-weight:900;font-size:260px;letter-spacing:-.06em;color:#ffffff0d;line-height:1}
+  .slogo{position:absolute;left:0;right:0;top:150px;display:flex;justify-content:center;align-items:center;gap:8px;font-weight:600;font-size:30px;color:var(--tx)}
+  .slogo svg{width:26px;height:26px;color:var(--ac)}
+  .sword{position:absolute;left:0;right:0;top:215px;text-align:center;font-weight:500;font-size:18px;letter-spacing:.42em;color:#edede8cc}
+  .base{position:absolute;left:-40px;top:410px;width:720px;height:20px;border-radius:3px 3px 20px 20px;background:linear-gradient(180deg,#8a8a90,#4a4a50 40%,#1e1e22)}
+  .base::after{content:"";position:absolute;left:0;right:0;top:20px;height:18px;background:radial-gradient(closest-side,#ff40003a,transparent);filter:blur(4px)}
+</style></head>
+<body>
+  <div class="lamp"></div><div class="cone"></div><div class="dots"></div><div class="floor"></div>
+  <div class="top">
+    <div class="logo"><svg viewBox="0 0 100 100"><path d="M50 10 Q58.6 45 84.6 70 Q50 60 15.4 70 Q41.4 45 50 10Z" fill="currentColor"/></svg>everton.</div>
+    <div>Mentoria individual</div>
+  </div>
+  <div class="title"><span>MEN-</span><span>TORIAS</span></div>
+  <div class="tick"></div>
+  <div class="desk"></div>
+  <div class="stage"><div class="lid"><div class="screen"><div class="ghost">TORIA</div><div class="slogo"><svg viewBox="0 0 100 100"><path d="M50 10 Q58.6 45 84.6 70 Q50 60 15.4 70 Q41.4 45 50 10Z" fill="currentColor"/></svg>everton.</div><div class="sword">MENTORIA</div></div></div><div class="base"></div></div>
+  <div class="info">
+    <div class="k">6 meses de acompanhamento</div>
+    <p><b>Encontros a cada 15 dias</b> para tirar seus projetos do papel e evoluir com direção.</p>
+  </div>
+  <div class="bottom">
+    <div class="tag">Web design, estratégia<br>e presença digital</div>
+    <div class="pill">evertonbrito.com <span>↗</span></div>
+  </div>
+  <div class="grain"></div>
+</body></html>

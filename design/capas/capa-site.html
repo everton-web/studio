@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Inter+Tight:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0a0b;--tx:#edede8;--ac:#FF4000}
+  *{margin:0;box-sizing:border-box}
+  body{width:1200px;height:1300px;background:var(--bg);font-family:Inter,sans-serif;color:var(--tx);overflow:hidden;position:relative}
+  /* grade de pontos da IDV */
+  .dots{position:absolute;inset:0;background-image:radial-gradient(#ffffff14 1px,transparent 1.2px);background-size:26px 26px}
+  /* chama laranja que sobe da esquerda, como na referência */
+  .glow{position:absolute;left:-260px;top:260px;width:900px;height:1200px;border-radius:50%;
+    background:radial-gradient(closest-side,#FF4000 0%,#ff4000cc 30%,#ff400055 60%,transparent 100%);filter:blur(60px)}
+  .glow2{position:absolute;left:120px;top:-120px;width:700px;height:600px;border-radius:50%;background:radial-gradient(closest-side,#ff5a1f55,transparent);filter:blur(80px)}
+  .grain{position:absolute;inset:0;opacity:.09;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .top{position:absolute;top:48px;left:60px;right:60px;display:flex;justify-content:space-between;font-weight:600;font-size:17px;letter-spacing:-.01em}
+  .logo{display:flex;align-items:center;gap:8px}
+  .logo svg{width:16px;height:16px;color:var(--tx)}
+  .kicker{position:absolute;left:60px;top:170px;font-family:"Inter Tight";font-weight:800;font-size:170px;letter-spacing:-.06em;line-height:1}
+  .big{position:absolute;left:44px;top:300px;font-family:"Inter Tight";font-weight:900;font-size:262px;letter-spacing:-.07em;line-height:.9;
+    transform:scaleY(1.28);transform-origin:top left;
+    background:linear-gradient(180deg,#fff 0%,#ffffffd0 38%,#ffffff00 78%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .tags{position:absolute;left:92px;top:650px;font-weight:600;font-size:21px;line-height:1.55;letter-spacing:-.01em}
+  .tags span{display:block}.tags span:nth-child(2){margin-left:-28px}.tags span:nth-child(3){margin-left:18px}
+  /* notebook */
+  .stage{position:absolute;left:350px;top:505px;width:780px;transform:perspective(2400px) rotateY(-10deg) rotateX(2deg);transform-origin:center bottom}
+  .lid{width:780px;height:500px;border-radius:26px 26px 6px 6px;background:linear-gradient(160deg,#3a3a3e,#1a1a1c 40%,#0e0e10);padding:14px 14px 22px;
+    box-shadow:0 60px 120px #000c, inset 0 0 0 1.5px #55555c}
+  .screen{width:100%;height:100%;border-radius:14px;overflow:hidden;background:#000;position:relative}
+  .screen img{width:100%;height:100%;object-fit:cover;object-position:center 38%;display:block}
+  .screen::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,#ffffff1a 0%,transparent 28%,transparent 70%,#ffffff08)}
+  .notch{position:absolute;top:0;left:50%;width:120px;height:14px;margin-left:-60px;background:#0e0e10;border-radius:0 0 8px 8px;z-index:2}
+  .base{position:absolute;left:-60px;top:500px;width:900px;height:30px;border-radius:4px 4px 30px 30px;
+    background:linear-gradient(180deg,#9a9aa0 0%,#5a5a60 35%,#26262a 100%);transform:rotateX(0)}
+  .base::before{content:"";position:absolute;left:50%;top:0;width:200px;height:10px;margin-left:-100px;background:#2a2a2e;border-radius:0 0 12px 12px}
+  .pedestal{position:absolute;left:250px;top:1033px;width:1000px;height:260px;background:linear-gradient(180deg,#141416,#0a0a0b);box-shadow:0 -1px 0 #2a2a2e}
+  .foot{position:absolute;left:60px;right:60px;bottom:46px;display:flex;justify-content:space-between;font-size:15px;color:#edede899;z-index:3}
+  .foot b{color:var(--ac);font-weight:600}
+</style></head>
+<body>
+  <div class="glow"></div><div class="glow2"></div><div class="dots"></div>
+  <div class="top">
+    <div class="logo"><svg viewBox="0 0 100 100"><path d="M50 10 Q58.6 45 84.6 70 Q50 60 15.4 70 Q41.4 45 50 10Z" fill="currentColor"/></svg>everton.</div>
+    <div>Web Designer</div>
+  </div>
+  <div class="kicker">Novo</div>
+  <div class="big">WEBSITE</div>
+  <div class="tags"><span>Web Design</span><span>Direção de Arte</span><span>Motion</span></div>
+  <div class="pedestal"></div>
+  <div class="stage">
+    <div class="lid"><div class="screen"><div class="notch"></div><img src="site-hero.png"></div></div>
+    <div class="base"></div>
+  </div>
+  <div class="foot"><span>evertonbrito.com</span><span><b>●</b> 2026</span></div>
+  <div class="grain"></div>
+</body></html>
