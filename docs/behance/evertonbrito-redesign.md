@@ -24,7 +24,7 @@ web design, direção de arte, design system, tipografia, motion design, UI, UX,
 
 ## Ferramentas
 
-Inter, HTML/CSS, Next.js, TypeScript, Figma, Remotion (apresentação), Chrome DevTools.
+Next.js, TypeScript, Tailwind CSS, Framer Motion, Inter (Google Fonts).
 
 ## Ordem dos módulos
 

@@ -1,25 +1,5 @@
 [
   {
-    "quando": "26/09/2026, 02:17:38",
-    "de": "loop",
-    "texto": "❌ Demanda \"Voce e a Mia (conteudo/portfolio da agencia Marca Digital). \" (orquestra) → erro. Saída: ver resultado da fila"
-  },
-  {
-    "quando": "26/09/2026, 02:18:53",
-    "de": "loop",
-    "texto": "❌ Demanda \"Voce e a Mia (conteudo/portfolio da agencia Marca Digital). \" (orquestra) → erro. Saída: ver resultado da fila"
-  },
-  {
-    "quando": "26/09/2026, 02:20:15",
-    "de": "loop",
-    "texto": "❌ Demanda \"Voce e a Mia (conteudo/portfolio da agencia Marca Digital). \" (orquestra) → erro. Saída: ver resultado da fila"
-  },
-  {
-    "quando": "26/09/2026, 02:21:31",
-    "de": "loop",
-    "texto": "❌ Demanda \"Voce e a Mia (conteudo/portfolio da agencia Marca Digital). \" (orquestra) → erro. Saída: ver resultado da fila"
-  },
-  {
     "quando": "26/09/2026, 02:22:55",
     "de": "loop",
     "texto": "❌ Demanda \"Voce e a Mia (conteudo/portfolio da agencia Marca Digital). \" (orquestra) → erro. Saída: ver resultado da fila"
@@ -998,5 +978,25 @@
     "quando": "26/09/2026, 06:42:56",
     "de": "loop",
     "texto": "❌ Demanda \"Voce e a Mia (conteudo/portfolio da agencia Marca Digital). \" (orquestra) → erro. Saída: ver resultado da fila"
+  },
+  {
+    "quando": "28/09/2026, 21:36:59",
+    "de": "loop",
+    "texto": "✅ Demanda \"Voce e a Mia (conteudo/portfolio da agencia Marca Digital). \" (orquestra) → feita. Saída: ver resultado da fila"
+  },
+  {
+    "quando": "28/09/2026, 21:37:43",
+    "de": "loop",
+    "texto": "✅ Demanda \"Voce e a Mia (conteudo/portfolio da agencia Marca Digital). \" (orquestra) → feita. Saída: ver resultado da fila"
+  },
+  {
+    "quando": "28/09/2026, 21:38:36",
+    "de": "loop",
+    "texto": "✅ Demanda \"Voce e a Mia (conteudo/portfolio da agencia Marca Digital). \" (orquestra) → feita. Saída: ver resultado da fila"
+  },
+  {
+    "quando": "28/09/2026, 21:39:21",
+    "de": "loop",
+    "texto": "✅ Demanda \"Voce e a Mia (conteudo/portfolio da agencia Marca Digital). \" (orquestra) → feita. Saída: ver resultado da fila"
   }
 ]

@@ -4,47 +4,70 @@
     "engine": "bulk",
     "model": null,
     "prompt": "Voce e a Mia (conteudo/portfolio da agencia Marca Digital). Tarefa: finalizar a peca de portfolio (Behance) do site Douro Planejados (https://douroplanejados.com.br). Leia o vault em 'D:/Obsidian - Claude/🏢 Agência/50 Conteúdo/Portfolio/douro-planejados/case.md' e produza a 'behance-estrutura.md' do mesmo case: shot list (desktop 1440 + mobile 390), secoes do post, textos curtos e placeholders de imagem. NAO invente metricas nem depoimentos. Um site por vez.",
-    "status": "pendente",
-    "criado": "2026-09-26T04:33:09.147Z"
+    "status": "ok",
+    "criado": "2026-09-26T04:33:09.147Z",
+    "iniciado": "2026-09-29T00:36:17.831Z",
+    "exit": 0,
+    "saida": "D:\\studio\\_scripts\\orquestra\\resultados\\dem-mia-douro-planejados.txt",
+    "bytes": 908,
+    "fim": "2026-09-29T00:36:59.731Z"
   },
   {
     "id": "dem-mia-multibela-joias",
     "engine": "bulk",
     "model": null,
     "prompt": "Voce e a Mia (conteudo/portfolio da agencia Marca Digital). Tarefa: finalizar a peca de portfolio (Behance) do site Multibela Joias (https://lp.multibelajoias.com.br). Leia o vault em 'D:/Obsidian - Claude/🏢 Agência/50 Conteúdo/Portfolio/multibela-joias/case.md' e produza a 'behance-estrutura.md' do mesmo case: shot list (desktop 1440 + mobile 390), secoes do post, textos curtos e placeholders de imagem. NAO invente metricas nem depoimentos. Um site por vez.",
-    "status": "pendente",
-    "criado": "2026-09-26T04:33:09.206Z"
+    "status": "ok",
+    "criado": "2026-09-26T04:33:09.206Z",
+    "iniciado": "2026-09-29T00:37:07.911Z",
+    "exit": 0,
+    "saida": "D:\\studio\\_scripts\\orquestra\\resultados\\dem-mia-multibela-joias.txt",
+    "bytes": 984,
+    "fim": "2026-09-29T00:37:43.819Z"
   },
   {
     "id": "dem-mia-sandy-chambo",
     "engine": "bulk",
     "model": null,
     "prompt": "Voce e a Mia (conteudo/portfolio da agencia Marca Digital). Tarefa: finalizar a peca de portfolio (Behance) do site Sandy Chambe (https://nutrisandychambo.com.br). Leia o vault em 'D:/Obsidian - Claude/🏢 Agência/50 Conteúdo/Portfolio/sandy-chambo/case.md' e produza a 'behance-estrutura.md' do mesmo case: shot list (desktop 1440 + mobile 390), secoes do post, textos curtos e placeholders de imagem. NAO invente metricas nem depoimentos. Um site por vez.",
-    "status": "pendente",
-    "criado": "2026-09-26T04:33:09.273Z"
+    "status": "ok",
+    "criado": "2026-09-26T04:33:09.273Z",
+    "iniciado": "2026-09-29T00:37:47.940Z",
+    "exit": 0,
+    "saida": "D:\\studio\\_scripts\\orquestra\\resultados\\dem-mia-sandy-chambo.txt",
+    "bytes": 1085,
+    "fim": "2026-09-29T00:38:36.127Z"
   },
   {
     "id": "dem-mia-essenza-oral-care",
     "engine": "bulk",
     "model": null,
     "prompt": "Voce e a Mia (conteudo/portfolio da agencia Marca Digital). Tarefa: finalizar a peca de portfolio (Behance) do site Essenza Oral Care (https://essenzaoralcare.com.br). Leia o vault em 'D:/Obsidian - Claude/🏢 Agência/50 Conteúdo/Portfolio/essenza-oral-care/case.md' e produza a 'behance-estrutura.md' do mesmo case: shot list (desktop 1440 + mobile 390), secoes do post, textos curtos e placeholders de imagem. NAO invente metricas nem depoimentos. Um site por vez.",
-    "status": "pendente",
-    "criado": "2026-09-26T04:33:09.333Z"
+    "status": "ok",
+    "criado": "2026-09-26T04:33:09.333Z",
+    "iniciado": "2026-09-29T00:38:37.980Z",
+    "exit": 0,
+    "saida": "D:\\studio\\_scripts\\orquestra\\resultados\\dem-mia-essenza-oral-care.txt",
+    "bytes": 1036,
+    "fim": "2026-09-29T00:39:21.414Z"
   },
   {
     "id": "dem-mia-dr-guilherme-vieira",
     "engine": "bulk",
     "model": null,
     "prompt": "Voce e a Mia (conteudo/portfolio da agencia Marca Digital). Tarefa: finalizar a peca de portfolio (Behance) do site Dr. Guilherme Vieira (https://drguilhermevieira.com.br). Leia o vault em 'D:/Obsidian - Claude/🏢 Agência/50 Conteúdo/Portfolio/dr-guilherme-vieira/case.md' e produza a 'behance-estrutura.md' do mesmo case: shot list (desktop 1440 + mobile 390), secoes do post, textos curtos e placeholders de imagem. NAO invente metricas nem depoimentos. Um site por vez.",
-    "status": "pendente",
-    "criado": "2026-09-26T04:33:09.388Z"
+    "status": "arquivada",
+    "criado": "2026-09-26T04:33:09.388Z",
+    "iniciado": "2026-09-29T00:39:28.023Z",
+    "nota": "legado do loop-daemon, substituido por persona.mjs (28/09)"
   },
   {
     "id": "dem-muif8jiz",
     "engine": "claude",
     "model": "claude-opus-4-8",
     "prompt": "Davi: auditoria visual impeccable (desktop+mobile) do agencia-app — identidade visual/design/UI. A IDV atual parece feita de qualquer jeito. Base: 20 Playbooks/Reformulação da Plataforma.md (refs Impact. + Predictive Churn Flagging, accent #FF4000) e agencia-app/DESIGN-SYSTEM.md. Entregar diagnóstico + direção visual, SEM implementar (Fase A consolidação). Reconciliar com a IDV v2 Comando (branch feat/dashboard-analytics-ref). --ia claude",
-    "status": "pendente",
-    "criado": "2026-09-26T13:24:24.209Z"
+    "status": "arquivada",
+    "criado": "2026-09-26T13:24:24.209Z",
+    "nota": "legado do loop-daemon, substituido por persona.mjs (28/09)"
   }
 ]
