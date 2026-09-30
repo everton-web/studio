@@ -35,6 +35,7 @@ export type Lead = {
   respondeuEm: string;
   desfecho: string;
   desfechoEm: string;
+  cliente?: boolean; // já virou cliente no banco: sai do funil e vive em Clientes
 };
 
 const ESTAGIOS = [
@@ -296,7 +297,7 @@ function Modal({ open, title, onClose, children }: {
   );
 }
 
-export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Promise<void> }) {
+export function Pipeline({ leads, refresh, onIrClientes }: { leads: Lead[]; refresh: () => Promise<void>; onIrClientes?: () => void }) {
   const [modal, setModal] = useState<{ kind: "novo" } | { kind: "editar"; lead: Lead } | null>(null);
   const [abordar, setAbordar] = useState<{ lead: Lead; msg: string; tipo: MsgTipo; analise: { faltas?: { prioridade: string; item: string }[] } | null } | null>(null);
   const [detalhe, setDetalhe] = useState<Lead | null>(null);
@@ -379,8 +380,10 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
     relatorioPollRef.current = null;
   }, [detalhe]);
 
-  const ativos = leads.filter((l) => l.status !== "arquivado");
-  const arq = leads.filter((l) => l.status === "arquivado");
+  // quem virou cliente sai do funil (fica só em Clientes); a conversão abaixo usa todos
+  const viraramCliente = leads.filter((l) => l.cliente);
+  const ativos = leads.filter((l) => l.status !== "arquivado" && !l.cliente);
+  const arq = leads.filter((l) => l.status === "arquivado" && !l.cliente);
 
   const conv = calcularConversao(
     leads.map((l) => ({ estagio: l.estagio, status: l.status, contatadoEm: l.contatadoEm, respondeuEm: l.respondeuEm, desfecho: l.desfecho, desfechoEm: l.desfechoEm })) as LeadConversao[],
@@ -566,7 +569,7 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
   }
 
   const totalValendo = ativos.filter((l) => l.estagio >= 1).length;
-  const fechados = ativos.filter((l) => l.estagio === 5).length;
+  const fechados = viraramCliente.length;
 
   return (
     <MotionConfig reducedMotion="user">
@@ -622,7 +625,7 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
           {[
             { n: ativos.length, lbl: "leads ativos" },
             { n: totalValendo, lbl: "em jogo (aprovado+)" },
-            { n: fechados, lbl: "entregues" },
+            { n: fechados, lbl: "viraram cliente" },
           ].map((s, i) => (
             <div key={i} className="flex flex-col gap-1.5 bg-[var(--bg-2)] border border-[var(--line)] rounded-2xl px-4 py-3 min-w-[104px]">
               <b className="nums tabular-nums text-[1.15rem] leading-none" style={{ color: "#f7f7f5" }}>{String(s.n).padStart(2, "0")}</b>
@@ -757,7 +760,6 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
       <div className="mb-6 card p-5 sm:p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="mono" style={{ fontSize: "0.66rem" }}>funil de conversão</div>
-          <span className="mono" style={{ fontSize: "0.7rem" }}>{ativos.length} leads ativos</span>
         </div>
         <div className="space-y-2.5">
           {ESTAGIOS.map((s, si) => {
@@ -781,7 +783,7 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
       </div>
 
       {/* 6 estágios + arquivo */}
-      <div className="flex gap-4 overflow-x-auto pb-4 -mx-6 md:-mx-10 lg:-mx-14 px-6 md:px-10 lg:px-14 snap-x snap-mandatory scrollbar-thin">
+      <div className="flex gap-4 overflow-x-auto pb-4 -mx-5 md:-mx-8 lg:-mx-10 px-5 md:px-8 lg:px-10 snap-x snap-mandatory scrollbar-thin">
         {ESTAGIOS.map((s, si) => {
           const col = ativos.filter((l) => l.estagio === si);
           const over = col.length > WIP_MAX;
@@ -822,7 +824,14 @@ export function Pipeline({ leads, refresh }: { leads: Lead[]; refresh: () => Pro
                   }}
                 >
                   {col.length === 0 && (
-                    <div className="text-[.74rem] italic text-[#5d5d58] px-2 py-2">vazio · rotina 18h a 19h</div>
+                    <div className="text-[.74rem] italic text-[#5d5d58] px-2 py-2">
+                      {si === 5 ? "Quem chega aqui vira cliente e sai do funil." : "vazio · rotina 18h a 19h"}
+                    </div>
+                  )}
+                  {si === 5 && viraramCliente.length > 0 && onIrClientes && (
+                    <button onClick={onIrClientes} className="w-full text-left text-[.8rem] text-[#3ddc84] px-2 py-3 min-h-[44px]">
+                      {viraramCliente.length === 1 ? "1 lead já virou cliente" : `${viraramCliente.length} leads já viraram cliente`}. Ver em Clientes
+                    </button>
                   )}
                   {col.map((l) => (
                     <LeadCard

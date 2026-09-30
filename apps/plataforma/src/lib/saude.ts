@@ -12,6 +12,7 @@ export type SaudeSite = {
   no_ar: boolean | null;
   certificado_dias: number | null;
   formulario: string | null;
+  velocidade_ms: number | null;
   verificado_em: string;
 };
 
@@ -53,6 +54,7 @@ export async function lerSaude(): Promise<SaudeSite[]> {
         no_ar: asBool(obj.no_ar),
         certificado_dias: asNum(obj.certificado_dias),
         formulario: asStr(obj.formulario),
+        velocidade_ms: asNum(obj.velocidade_ms),
         verificado_em: asStr(obj.verificado_em) || "",
       });
     } catch {

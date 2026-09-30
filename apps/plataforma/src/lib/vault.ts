@@ -1,5 +1,13 @@
 import { readFile, writeFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
+import {
+  garantirEmpresaDoLead,
+  mapaEstagioCrm,
+  registrarEdicao,
+  registrarMovimento,
+  registrarStatus,
+  removerLead,
+} from "./funil-db";
 
 const VAULT = process.env.VAULT || "D:/Obsidian - Claude/🏢 Agência";
 
@@ -154,7 +162,18 @@ async function listLeads() {
     });
   }
   leads.sort((a, b) => (a.estagio - b.estagio) || a.criado.localeCompare(b.criado));
-  return leads;
+  // Mesmo registro de empresa do banco: quem já virou cliente sai do funil.
+  let crm = new Map<string, string>();
+  try {
+    for (const l of leads) {
+      garantirEmpresaDoLead({
+        id: l.id, nome: l.nome, segmento: l.segmento, cidade: l.cidade, site: l.site,
+        nota: l.nota, avaliacoes: l.avaliacoes, categoria: l.categoria, estagio: l.estagio, status: l.status,
+      });
+    }
+    crm = mapaEstagioCrm();
+  } catch { /* banco indisponível: o funil segue com as fichas do vault */ }
+  return leads.map((l) => ({ ...l, cliente: crm.get(l.id) === "cliente" }));
 }
 
 function appendMov(raw: string, mov: string) {
@@ -184,6 +203,14 @@ export async function pipelineOp(op: {
     };
     const body = `\n# ${op.nome}\n\n## Por que é um bom lead\n${op.porque || "_a preencher_"}\n`;
     await writeFile(join(dir, `${id}.md`), fmBlock(fm) + body, "utf8");
+    try {
+    garantirEmpresaDoLead({
+      id, nome: op.nome || id, segmento: op.segmento, cidade: op.cidade, site: op.site,
+      nota: Number(String(op.nota || "").replace(",", ".")) || 0,
+      avaliacoes: Number(String(op.avaliacoes || "").replace(/\./g, "")) || 0,
+      categoria: op.categoria || "maps", estagio: 0, status: "ativo",
+    });
+    } catch { /* banco indisponível: a ficha do vault já foi gravada */ }
     return { id, criado: now };
   }
   if (!op.id) throw new Error("lead ausente");
@@ -202,6 +229,11 @@ export async function pipelineOp(op: {
     const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
     const mov = to === 5 ? `${oggi} · entregue · pedir indicação` : `${oggi} · avançou para ${ESTAGIOS[to]}`;
     await writeFile(p, fmBlock(fm) + "\n" + appendMov(body, mov), "utf8");
+    // estágio 1 grava oportunidade e estágio 5 grava cliente, na mesma empresa
+    registrarMovimento(op.id, to, {
+      id: op.id, nome: fm.lead || op.id, segmento: fm.segmento, cidade: fm.cidade, site: fm["site-atual"],
+      categoria: fm.categoria, status: fm.status || "ativo",
+    });
     return { ok: true };
   }
   if (op.action === "update") {
@@ -220,6 +252,7 @@ export async function pipelineOp(op: {
     if (op.mensagem !== undefined) fm.mensagem = op.mensagem;
     const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
     await writeFile(p, fmBlock(fm) + "\n" + body, "utf8");
+    try { registrarEdicao(op.id, { nome: fm.lead, segmento: fm.segmento, cidade: fm.cidade, site: fm["site-atual"] }); } catch { /* banco indisponível */ }
     return { ok: true };
   }
   if (op.action === "archive") {
@@ -227,6 +260,7 @@ export async function pipelineOp(op: {
     fm["motivo-arquivo"] = (op.motivo || "").replace(/\r?\n/g, " ");
     const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
     await writeFile(p, fmBlock(fm) + "\n" + appendMov(body, `${oggi} · arquivado · ${op.motivo || "sem motivo"}`), "utf8");
+    try { registrarStatus(op.id, "arquivado"); } catch { /* banco indisponível */ }
     return { ok: true };
   }
   if (op.action === "reactivate") {
@@ -236,11 +270,13 @@ export async function pipelineOp(op: {
     fm["desfecho-em"] = "";
     const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
     await writeFile(p, fmBlock(fm) + "\n" + appendMov(body, `${oggi} · reativado`), "utf8");
+    try { registrarStatus(op.id, "ativo"); } catch { /* banco indisponível */ }
     return { ok: true };
   }
   if (op.action === "delete") {
     const { unlink } = await import("node:fs/promises");
     try { await unlink(p); } catch { /* já não existe */ }
+    try { removerLead(op.id); } catch { /* banco indisponível */ }
     return { ok: true };
   }
   if (op.action === "desfecho") {
@@ -253,6 +289,7 @@ export async function pipelineOp(op: {
     const mov = tipo === "sem-interesse" ? "sem interesse (recusou)" : "sem continuidade (não respondeu)";
     const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
     await writeFile(p, fmBlock(fm) + "\n" + appendMov(body, `${oggi} · ${mov}`), "utf8");
+    try { registrarStatus(op.id, "arquivado"); } catch { /* banco indisponível */ }
     return { ok: true };
   }
   if (op.action === "contatar") {
@@ -270,7 +307,7 @@ export async function pipelineOp(op: {
   throw new Error("ação desconhecida");
 }
 
-async function rastreamentoData() {
+export async function rastreamentoData() {
   try {
     const raw = await readFile(join(VAULT, "SaaS", "Rastreamento", "hits.json"), "utf8");
     const t = JSON.parse(raw);

@@ -61,7 +61,7 @@ const VIEW_META: Record<string, { titulo: string; sub: string }> = {
   agenda: { titulo: "Agenda", sub: "Dia, semana e mês no mesmo lugar. Reuniões nascem aqui, sem importar de fora." },
   operacao: { titulo: "Operação", sub: "A mesma demanda em quadro, lista e calendário. Uma fonte única, várias visões." },
   pipeline: { titulo: "Comercial", sub: "Leads do estágio 0 ao 5: o agente audita os sites, você aprova e aborda." },
-  clientes: { titulo: "Clientes", sub: "Lista somente leitura dos clientes cadastrados, com nome e status." },
+  clientes: { titulo: "Clientes", sub: "Quem já fechou: como está o site, o que já pagou e os acessos guardados." },
   arquivos: { titulo: "Conteúdo", sub: "Insumo (uploads do cliente) e saída (cases/portfólio) no mesmo lugar." },
   analytics: { titulo: "Resultados", sub: "Como estamos: tráfego, CPL e ROI mais o placar dos R$ 100k. A vitrine da plataforma." },
 };
@@ -307,7 +307,7 @@ export function Dashboard() {
                     </p>
                   </div>
                   <div className="flex gap-2 shrink-0 pt-1">
-                    {view !== "operacao" && (
+                    {view !== "operacao" && view !== "clientes" && (
                       <button onClick={() => go("operacao")}
                         className="flex items-center gap-2 h-[42px] px-4 rounded-xl bg-[#06b6d4]/12 border border-[#06b6d4]/30 text-[#22c8e5] text-[.8rem] font-semibold transition-colors hover:bg-[#06b6d4]/20">
                         <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
@@ -336,7 +336,7 @@ export function Dashboard() {
                   {view === "hoje" && <Hoje placar={data.placar} />}
                   {view === "agenda" && <Agenda />}
                   {view === "operacao" && <Operacao />}
-                  {view === "pipeline" && <Pipeline leads={data.pipeline} refresh={load} />}
+                  {view === "pipeline" && <Pipeline leads={data.pipeline} refresh={load} onIrClientes={() => go("clientes")} />}
                   {view === "clientes" && <Clientes />}
                   {view === "arquivos" && <Files />}
                   {view === "analytics" && (
