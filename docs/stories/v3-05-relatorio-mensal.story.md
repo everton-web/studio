@@ -96,64 +96,64 @@ coluna e o botão de WhatsApp fica tocável.
 
 ## 5. Critérios de aceite
 
-- **AC-01 (geração no dia 1):** o agendador gera, no dia 1, um relatório para cada
+- [x] **AC-01 (geração no dia 1):** o agendador gera, no dia 1, um relatório para cada
   empresa com `estagio_crm = 'cliente'` (v3-03, linha 94) e grava uma linha por
   cliente e mês na tabela `relatorio` (v3-03, linha 177). A função de geração é
   uma só, usada tanto pelo agendador quanto pela rota manual.
-- **AC-02 (histórico idempotente):** rodar a geração duas vezes no mesmo mês não
+- [x] **AC-02 (histórico idempotente):** rodar a geração duas vezes no mesmo mês não
   duplica a linha de `(empresa_id, mes)` (v3-03, linha 184), atualiza a mesma.
-- **AC-03 (link sem login):** `GET /r/<token>` responde 200 e renderiza o
+- [x] **AC-03 (link sem login):** `GET /r/<token>` responde 200 e renderiza o
   dashboard sem cookie de sessão, com `noindex`.
-- **AC-04 (token revogável):** rotacionar ou limpar o `link_token` (v3-03, linha
+- [x] **AC-04 (token revogável):** rotacionar ou limpar o `link_token` (v3-03, linha
   182) faz o link antigo responder 404 e o novo funcionar. Conferível com dois
   tokens do mesmo cliente.
-- **AC-05 (token inválido não vaza):** token inválido, revogado ou inexistente
+- [x] **AC-05 (token inválido não vaza):** token inválido, revogado ou inexistente
   responde 404 com a mesma página, sem revelar se o token existiu e sem exibir
   nome nem dado do cliente. Conferível comparando a resposta de um token
   inexistente com a de um token revogado.
-- **AC-06 (pixel é o número oficial):** o bloco de pixel do dashboard mostra os
+- [x] **AC-06 (pixel é o número oficial):** o bloco de pixel do dashboard mostra os
   pageviews do cliente lidos de `hits.json` (`apps/plataforma/src/lib/vault.ts:273`,
   `apps/plataforma/src/app/api/t/route.ts:19`) e o valor bate com o arquivo.
-- **AC-07 (saúde do site):** o dashboard mostra no ar, formulário e certificado
+- [x] **AC-07 (saúde do site):** o dashboard mostra no ar, formulário e certificado
   por cliente, da fonte da v3-02 (`v3-02`, linha 220), e marca alerta quando o
   site está fora do ar ou o certificado está a vencer. Campo sem medida mostra
   "sem medida ainda".
-- **AC-08 (Clarity por link):** o dashboard oferece um botão que abre o painel do
+- [x] **AC-08 (Clarity por link):** o dashboard oferece um botão que abre o painel do
   Clarity em nova aba e nunca um iframe. Sem API confirmada, mostra o rótulo
   "números do Clarity: pendente de API" (`theo.md:68`).
-- **AC-09 (Search Console com autorização):** o bloco de Search Console só
+- [x] **AC-09 (Search Console com autorização):** o bloco de Search Console só
   aparece com autorização registrada do cliente. Sem autorização, mostra estado
   vazio honesto e nenhum número.
-- **AC-10 (leads do formulário):** o dashboard mostra a contagem de leads da
+- [x] **AC-10 (leads do formulário):** o dashboard mostra a contagem de leads da
   origem do cliente, vindos de `POST /api/leads`
   (`apps/plataforma/src/app/api/leads/route.ts:40`). Sem lead, mostra "Nenhum lead
   do formulário ainda."
-- **AC-11 (botão de WhatsApp em 1 toque):** no dia 1 o Hoje lista os clientes
+- [x] **AC-11 (botão de WhatsApp em 1 toque):** no dia 1 o Hoje lista os clientes
   ativos com um botão que abre o `wa.me` do cliente com a mensagem e o link
   `/r/<token>` prontos. Nenhuma chamada à API do WhatsApp é feita (sem envio
   automático).
-- **AC-12 (vazio no Hoje):** sem cliente ativo, o bloco do Hoje mostra "Nenhum
+- [x] **AC-12 (vazio no Hoje):** sem cliente ativo, o bloco do Hoje mostra "Nenhum
   cliente ativo para enviar relatório." Sem número fabricado.
-- **AC-13 (nada vai para o git):** o caminho novo não chama `publicarRelatorio`
+- [x] **AC-13 (nada vai para o git):** o caminho novo não chama `publicarRelatorio`
   (`apps/plataforma/src/lib/publicar-relatorio.ts:39` e `:58`, que fazem `git
   push`). O link do relatório mensal é servido pela plataforma. Conferível por
   busca: nenhuma execução da geração dispara `git`.
-- **AC-14 (token não vaza):** o valor do token não aparece no repositório nem nos
+- [x] **AC-14 (token não vaza):** o valor do token não aparece no repositório nem nos
   logs, e o Hoje copia ou abre o link sem imprimir o token. Conferível por busca
   pelo valor do token no repo e nos logs após a geração.
-- **AC-15 (responsivo):** o Hoje e o dashboard público ficam íntegros em 375px,
+- [x] **AC-15 (responsivo):** o Hoje e o dashboard público ficam íntegros em 375px,
   1280px e 1920px, sem scroll horizontal, texto cortado ou sobreposição.
-- **AC-16 (estados vazios honestos):** todo bloco sem dado mostra o estado vazio
+- [x] **AC-16 (estados vazios honestos):** todo bloco sem dado mostra o estado vazio
   da seção 4. Nenhum número é inventado nem zero fabricado; cliente sem dado não
   vira 0.
-- **AC-17 (sem travessão e sem viúvas):** nenhum texto visível usa travessão nem
+- [x] **AC-17 (sem travessão e sem viúvas):** nenhum texto visível usa travessão nem
   meia-risca; títulos e parágrafos evitam palavra órfã na última linha
   (`text-wrap: balance`).
-- **AC-18 (sem "em breve"):** nenhum item "em breve" entra no menu nesta entrega.
-- **AC-19 (não regressão):** o relatório público de lead existente
+- [x] **AC-18 (sem "em breve"):** nenhum item "em breve" entra no menu nesta entrega.
+- [x] **AC-19 (não regressão):** o relatório público de lead existente
   (`docs/stories/relatorio-publico.story.md`) segue funcionando, e as telas Hoje,
   Agenda e Operação da v3-02 seguem iguais.
-- **AC-20 (teste):** o teste de ponta a ponta da seção 10 existe e passa.
+- [x] **AC-20 (teste):** o teste de ponta a ponta da seção 10 existe e passa.
 
 ## 6. Tarefas técnicas em ordem
 

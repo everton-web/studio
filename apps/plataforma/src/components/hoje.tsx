@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Check, RotateCcw, AlertTriangle, ShieldAlert } from "lucide-react";
+import { Check, RotateCcw, AlertTriangle, ShieldAlert, MessageCircle } from "lucide-react";
 import { AGENTES, CORES } from "./demandas";
 
 type Demanda = {
@@ -24,6 +24,17 @@ type Saude = {
   formulario: string | null;
   verificado_em: string;
 };
+
+type ItemRelatorio = {
+  empresaId: string;
+  nome: string;
+  gerado: boolean;
+  enviado: boolean;
+  semWhatsapp: boolean;
+  wa: string | null;
+  link: string | null;
+};
+type ListaRelatorios = { mes: string; mesRotulo: string; itens: ItemRelatorio[] };
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -85,21 +96,25 @@ export function Hoje({ placar }: { placar: { progresso: number; acumulado: numbe
   const [demandas, setDemandas] = useState<Demanda[]>([]);
   const [reunioes, setReunioes] = useState<Reuniao[]>([]);
   const [saude, setSaude] = useState<Saude[]>([]);
+  const [relatorios, setRelatorios] = useState<ListaRelatorios | null>(null);
+  const [gerando, setGerando] = useState(false);
   const [carregando, setCarregando] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
-      const [ro, ra, rs] = await Promise.all([
+      const [ro, ra, rs, rr] = await Promise.all([
         fetch("/api/orquestra"),
         fetch("/api/agenda"),
         fetch("/api/saude"),
+        fetch("/api/relatorio-mensal"),
       ]);
-      if ([ro, ra, rs].some((r) => r.status === 401)) {
+      if ([ro, ra, rs, rr].some((r) => r.status === 401)) {
         location.href = "/login";
         return;
       }
-      const [jo, ja, js] = await Promise.all([ro.json(), ra.json(), rs.json()]);
+      const [jo, ja, js, jr] = await Promise.all([ro.json(), ra.json(), rs.json(), rr.json().catch(() => null)]);
+      setRelatorios(jr && Array.isArray(jr.itens) ? jr : null);
       setDemandas(Array.isArray(jo.fila) ? jo.fila : []);
       setReunioes(Array.isArray(ja.reunioes) ? ja.reunioes : []);
       setSaude(Array.isArray(js.alertas) ? js.alertas : []);
@@ -171,7 +186,35 @@ export function Hoje({ placar }: { placar: { progresso: number; acumulado: numbe
     }
   }
 
+  async function gerarRelatorios() {
+    setGerando(true);
+    try {
+      await fetch("/api/relatorio-mensal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "gerar" }),
+      });
+      await load();
+    } catch {
+      /* offline */
+    } finally {
+      setGerando(false);
+    }
+  }
+
+  // O toque abre o WhatsApp (o navegador segue o link) e só então marca como enviado.
+  function marcarEnviado(empresaId: string) {
+    fetch("/api/relatorio-mensal", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "enviado", empresaId }),
+    })
+      .then(() => load())
+      .catch(() => {});
+  }
+
   const itensDia = agendaDoDia();
+  const pendentesRel = relatorios ? relatorios.itens.filter((i) => !i.gerado).length : 0;
 
   return (
     <div className="space-y-4">
@@ -345,6 +388,68 @@ export function Hoje({ placar }: { placar: { progresso: number; acumulado: numbe
               </div>
             )}
           </Bloco>
+
+          {/* c2) relatórios mensais dos clientes */}
+          {relatorios && (
+            <Bloco titulo="Relatórios dos clientes">
+              {relatorios.itens.length === 0 ? (
+                <div className="text-[.82rem] text-[#6b6b66] leading-relaxed text-balance">
+                  Nenhum cliente ativo para enviar relatório.
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <p className="text-[.8rem] text-[var(--muted)] leading-relaxed">
+                    Relatório de {relatorios.mesRotulo}. Um toque abre o WhatsApp com a mensagem e o link prontos.
+                  </p>
+                  {relatorios.itens.map((it) => (
+                    <div
+                      key={it.empresaId}
+                      className="flex flex-wrap items-center gap-3 rounded-xl border border-[var(--line)] bg-[var(--bg-1)] p-3.5"
+                    >
+                      <div className="min-w-0 flex-1 basis-40">
+                        <div className="text-[.9rem] font-medium leading-snug">{it.nome}</div>
+                        <div className="text-[.76rem] text-[#9a9a95] mt-1">
+                          {!it.gerado ? "relatório ainda não gerado" : it.enviado ? "enviado" : "pronto para enviar"}
+                          {it.gerado && it.link && (
+                            <>
+                              {" · "}
+                              <a href={it.link} target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] hover:underline">
+                                ver relatório ↗
+                              </a>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      {it.gerado && it.wa && (
+                        <a
+                          href={it.wa}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => marcarEnviado(it.empresaId)}
+                          className="flex items-center justify-center gap-2 h-11 px-5 rounded-xl bg-[#FF4000] hover:bg-[#ff5c22] text-[var(--accent-ink)] text-[.84rem] font-semibold transition-colors w-full sm:w-auto"
+                        >
+                          <MessageCircle className="w-4 h-4" strokeWidth={2.2} />
+                          {it.enviado ? "mandar de novo" : "mandar no WhatsApp"}
+                        </a>
+                      )}
+                      {it.gerado && !it.wa && (
+                        <span className="text-[.78rem] text-[#9a9a95]">sem WhatsApp cadastrado</span>
+                      )}
+                    </div>
+                  ))}
+                  {pendentesRel > 0 && (
+                    <button
+                      onClick={gerarRelatorios}
+                      disabled={gerando}
+                      className="flex items-center justify-center h-11 px-5 rounded-xl border border-[var(--line-2)] text-[#c4c4c0] hover:text-white disabled:opacity-60 text-[.84rem] font-medium transition-colors w-full sm:w-auto"
+                    >
+                      {gerando ? "gerando…" : `gerar relatório de ${relatorios.mesRotulo}`}
+                    </button>
+                  )}
+                </div>
+              )}
+            </Bloco>
+          )}
 
           {/* d) placar */}
           <Bloco titulo="Placar">
