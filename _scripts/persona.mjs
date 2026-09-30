@@ -2,7 +2,9 @@
 // ─────────────────────────────────────────────────────────────────────────────
 //  PERSONA — aciona um agente do Studio pela cadeia oficial:
 //
-//      Orion (Claude)  →  pi (gerente da tarefa)  →  opencode (executa)
+//      Orion (Claude)  →  pi (gerente da tarefa)  →  Codex (executa)
+//  30/09/2026: créditos do OpenCode Go acabaram; motor padrão virou o Codex (assinatura ChatGPT).
+//  --motor opencode volta à cadeia antiga (regra em personas/_EXECUCAO-opencode.md).
 //
 //  Decisão do Everton (2026-09-27): vale para TODAS as personas.
 //  O pi recebe a ficha da persona + a regra de execução (personas/_EXECUCAO.md),
@@ -33,12 +35,14 @@ const TMP = join(HERE, ".persona-tmp");
 const PI_CLI = process.env.PI_CLI || join(process.env.APPDATA || join(homedir(), "AppData", "Roaming"), "npm", "node_modules", "@earendil-works", "pi-coding-agent", "dist", "cli.js");
 
 const PERSONAS = ["orion", "caio", "davi", "davi-copy", "theo", "mia", "fabio", "olga", "lia", "ops"];
-const MODELOS = {
-  flash: "opencode-go/deepseek-v4.1-flash",
-  pro: "opencode-go/deepseek-v4-pro",
-  glm: "opencode-go/glm-5.3",
-  kimi: "opencode-go/kimi-k3",
+const CODEX_CLI = process.env.CODEX_CLI || "C:/Program Files/WindowsApps/OpenAI.Codex_26.924.2738.0_x64__2p2nqsd0c76g0/app/resources/codex.exe";
+const MOTORES = {
+  codex: { pi: "openai-codex/gpt-5.5", modelos: { flash: "gpt-5.5", pro: "gpt-6-astra" }, regra: "_EXECUCAO.md" },
+  opencode: { pi: null, modelos: { flash: "opencode-go/deepseek-v4.1-flash", pro: "opencode-go/deepseek-v4-pro", glm: "opencode-go/glm-5.3", kimi: "opencode-go/kimi-k3" }, regra: "_EXECUCAO-opencode.md" },
 };
+const motorArg = process.argv.indexOf("--motor");
+const MOTOR = MOTORES[(motorArg > 0 && process.argv[motorArg + 1]) || process.env.PERSONA_MOTOR || "codex"] || MOTORES.codex;
+const MODELOS = MOTOR.modelos;
 
 const args = process.argv.slice(2);
 const persona = (args[0] || "").toLowerCase();
@@ -53,6 +57,7 @@ for (let i = 1; i < args.length; i++) {
   if (a === "--titulo") { tituloOpc = (args[++i] || "").trim(); continue; }
   if (a === "--modelo" || a === "--model") { const v = args[++i] || ""; modelo = MODELOS[v] || v || modelo; continue; }
   if (a === "--janela") { janela = true; continue; }
+  if (a === "--motor") { i++; continue; }
   if (a === "--ia") { i++; continue; } // legado: a cadeia agora é sempre pi → opencode
   task.push(a);
 }
@@ -71,8 +76,8 @@ async function fichaDaPersona() {
 async function prepararArquivos() {
   await mkdir(TMP, { recursive: true });
   const nome = persona.charAt(0).toUpperCase() + persona.slice(1);
-  const regra = (await readFile(join(ROOT, "personas", "_EXECUCAO.md"), "utf8"))
-    .replaceAll("{{MODELO}}", modelo).replaceAll("{{PERSONA}}", nome);
+  const regra = (await readFile(join(ROOT, "personas", MOTOR.regra), "utf8"))
+    .replaceAll("{{MODELO}}", modelo).replaceAll("{{CODEX}}", CODEX_CLI).replaceAll("{{PERSONA}}", nome);
   const carimbo = Date.now();
   const fRegra = join(TMP, `${persona}-${carimbo}-regra.md`);
   const fFicha = join(TMP, `${persona}-${carimbo}-ficha.md`);
@@ -87,7 +92,7 @@ function rodarPi({ fRegra, fFicha, fTarefa }, piModelo) {
   return new Promise((res, rej) => {
     const pArgs = [PI_CLI, "-p", "--no-session", ...(piModelo ? ["--model", piModelo] : []),
       "--append-system-prompt", fFicha, "--append-system-prompt", fRegra,
-      `@${fTarefa}`, "Execute a tarefa anexada seguindo a regra de execução (delegue ao opencode, confira e responda com o relatório)."];
+      `@${fTarefa}`, "Execute a tarefa anexada seguindo a regra de execução (delegue ao executor, confira e responda com o relatório)."];
     const c = spawn(process.execPath, pArgs, { cwd: ROOT, shell: false, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
     let out = "", err = "";
     c.stdout.on("data", (d) => { out += d; process.stdout.write(d); });
@@ -147,10 +152,10 @@ function resumoDoRelatorio(out) {
     console.warn(`[demanda] falha ao criar: ${e?.message || e}`);
   }
 
-  const cab = `[${new Date().toLocaleString("pt-BR")}] ${persona.toUpperCase()} · pi → opencode (${modelo}) · ${tarefa.slice(0, 90).replace(/\s+/g, " ")}`;
+  const cab = `[${new Date().toLocaleString("pt-BR")}] ${persona.toUpperCase()} · pi → executor (${modelo}) · ${tarefa.slice(0, 90).replace(/\s+/g, " ")}`;
   await mkdir(LOG_DIR, { recursive: true });
   await appendFile(join(LOG_DIR, `${persona}.log`), cab + "\n", "utf8").catch(() => {});
-  console.log(`\n🧭 Orion → pi (${arq.nome}) → opencode · ${modelo}\n`);
+  console.log(`\n🧭 Orion → pi (${arq.nome}) → executor · ${modelo}\n`);
   if (janela) {
     abrirJanela(arq);
     await registrar({ estado: "janela", resumo: "rodando numa janela visível do pi" });
@@ -160,8 +165,8 @@ function resumoDoRelatorio(out) {
   // O gateway às vezes derruba o streaming em tarefas longas ("stream interrupted") ou o pi
   // termina sem relatório. Tenta de novo sozinho; na última tentativa o pi usa o modelo flash (mais estável).
   // Economia de cota (28/09): o pi só gerencia, então roda em flash; pro só quando a tarefa pede --modelo pro.
-  const PI = modelo === MODELOS.pro ? MODELOS.pro : MODELOS.flash;
-  const TENTATIVAS = [PI, PI, MODELOS.flash];
+  const PI = MOTOR.pi || (modelo === MODELOS.pro ? MODELOS.pro : MODELOS.flash);
+  const TENTATIVAS = [PI, PI, MOTOR.pi || MODELOS.flash];
   let ultimoErro = null;
   for (let n = 0; n < TENTATIVAS.length; n++) {
     if (n > 0) {
