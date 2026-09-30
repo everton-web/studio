@@ -27,6 +27,22 @@ function acharSchemaSql(): string {
   throw new Error("schema.sql não encontrado para inicializar o banco");
 }
 
+// Bancos criados antes da v3-04 não têm as colunas do card do cliente.
+// Acrescenta só o que falta, sem tocar nos dados.
+function garantirColunas(db: DatabaseSync): void {
+  const existentes = new Set(
+    db.prepare("PRAGMA table_info(empresa)").all().map((c) => String(c.name)),
+  );
+  const novas: [string, string][] = [
+    ["valor_projeto", "REAL"],
+    ["recorrencia", "REAL"],
+    ["fechado_em", "TEXT"],
+  ];
+  for (const [nome, tipo] of novas) {
+    if (!existentes.has(nome)) db.exec(`ALTER TABLE empresa ADD COLUMN ${nome} ${tipo}`);
+  }
+}
+
 // Abre o banco uma única vez (lazy). Só toca no disco na primeira chamada,
 // nunca no import, para não quebrar o build.
 export function getDb(): DatabaseSync {
@@ -38,6 +54,7 @@ export function getDb(): DatabaseSync {
   const db = new DatabaseSync(caminho);
   db.exec("PRAGMA foreign_keys = ON;");
   db.exec(readFileSync(acharSchemaSql(), "utf8"));
+  garantirColunas(db);
 
   instancia = db;
   return instancia;

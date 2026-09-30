@@ -17,6 +17,7 @@ import { readFile, readdir, mkdir, writeFile } from "node:fs/promises";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import https from "node:https";
+import { existsSync } from "node:fs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const ENV_FILE = join(ROOT, "apps", "plataforma", ".env.local");
@@ -81,12 +82,13 @@ function extrairSite(raw) {
 async function baixar(url) {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), 10000);
+  const inicio = Date.now();
   try {
     const r = await fetch(url, { redirect: "follow", signal: ctrl.signal });
     const html = await r.text();
-    return { status: r.status, html };
+    return { status: r.status, html, ms: Date.now() - inicio };
   } catch {
-    return { status: 0, html: null };
+    return { status: 0, html: null, ms: null };
   } finally {
     clearTimeout(t);
   }
@@ -131,6 +133,31 @@ function certificadoDias(url) {
   });
 }
 
+// clientes do banco (empresa.estagio_crm = 'cliente') que têm site cadastrado.
+// Só lê. Se o banco não existir ou não abrir, segue só com as fichas do vault.
+async function clientesDoBanco() {
+  try {
+    const envTxt = await readFile(ENV_FILE, "utf8").catch(() => "");
+    const caminho =
+      process.env.AGENCIA_DB ||
+      parseEnv(envTxt).AGENCIA_DB ||
+      join(ROOT, "apps", "plataforma", "data", "plataforma.sqlite");
+    if (!existsSync(caminho)) return [];
+    const { DatabaseSync } = await import("node:sqlite");
+    const db = new DatabaseSync(caminho, { readOnly: true });
+    try {
+      return db
+        .prepare("SELECT id, nome, site FROM empresa WHERE estagio_crm = 'cliente' AND site IS NOT NULL AND site <> ''")
+        .all()
+        .map((l) => ({ slug: String(l.id), cliente: String(l.nome), site: /^https?:/i.test(String(l.site)) ? String(l.site) : "https://" + l.site }));
+    } finally {
+      db.close();
+    }
+  } catch {
+    return [];
+  }
+}
+
 async function main() {
   const VAULT = await acharVault();
   const DIR_CLIENTES = join(VAULT, "40 Comercial", "Clientes");
@@ -148,6 +175,8 @@ async function main() {
   let pulados = 0;
   const linhas = [];
 
+  // fila única: fichas do vault primeiro, depois clientes do banco que ainda não entraram
+  const fila = [];
   for (const f of files.sort()) {
     const raw = await readFile(join(DIR_CLIENTES, f), "utf8").catch(() => "");
     if (!raw) {
@@ -161,15 +190,22 @@ async function main() {
       pulados++;
       continue;
     }
+    fila.push({ slug: slugify(cliente), cliente, site });
+  }
+  for (const c of await clientesDoBanco()) {
+    if (!fila.some((x) => x.slug === c.slug)) fila.push(c);
+  }
 
-    const slug = slugify(cliente);
-    const { status, html } = await baixar(site);
+  for (const { slug, cliente, site } of fila) {
+    const { status, html, ms } = await baixar(site);
     const no_ar = html !== null ? status >= 200 && status < 400 : false;
     const certificado_dias = await certificadoDias(site);
     const formulario = html === null ? null : /<form/i.test(html) ? "ok" : "falha";
     const verificado_em = new Date().toISOString();
 
-    const dados = { slug, cliente, site, no_ar, certificado_dias, formulario, verificado_em };
+    // velocidade_ms: tempo até baixar a home; null quando o site não respondeu
+    const velocidade_ms = no_ar && ms !== null ? ms : null;
+    const dados = { slug, cliente, site, no_ar, certificado_dias, formulario, velocidade_ms, verificado_em };
     try {
       await mkdir(DIR_SAUDE, { recursive: true });
       await writeFile(join(DIR_SAUDE, `${slug}.json`), JSON.stringify(dados, null, 2) + "\n", "utf8");

@@ -27,6 +27,9 @@ export type Registro = {
   paid?: boolean;
   paidAt?: string;
   capture_method?: string;
+  cliente?: string; // empresa.id do banco (v3-04)
+  vencimento?: string; // YYYY-MM-DD, opcional
+  tipo?: "projeto" | "recorrencia"; // sem tipo conta como projeto
 };
 
 export function gerarOrderNsu() {
@@ -47,7 +50,23 @@ export async function lerHistorico(): Promise<Registro[]> {
   } catch { return []; }
 }
 
+// Todas as cobranças de um cliente (sem o corte de 30 arquivos do histórico geral).
+export async function lerRegistrosCliente(empresaId: string): Promise<Registro[]> {
+  try {
+    const files = (await readdir(DIR)).filter((f) => f.endsWith(".json") && !f.startsWith("."));
+    const out: Registro[] = [];
+    for (const f of files) {
+      try {
+        const r = JSON.parse(await readFile(join(DIR, f), "utf8"));
+        if (r && r.order_nsu && r.cliente === empresaId) out.push(r);
+      } catch { /* pula */ }
+    }
+    return out;
+  } catch { return []; }
+}
+
 export async function criarLink(op: {
+  cliente?: string; vencimento?: string; tipo?: "projeto" | "recorrencia";
   descricao: string; valor: number; quantidade?: number;
   order_nsu?: string; customer?: { nome?: string; email?: string; telefone?: string };
 }): Promise<Registro> {
@@ -77,6 +96,9 @@ export async function criarLink(op: {
     ok: false,
     order_nsu: payload.order_nsu as string,
   };
+  if (op.cliente) registro.cliente = op.cliente;
+  if (op.tipo === "recorrencia") registro.tipo = "recorrencia";
+  if (op.vencimento && /^\d{4}-\d{2}-\d{2}$/.test(op.vencimento)) registro.vencimento = op.vencimento;
 
   try {
     const res = await fetch(API_LINKS, {

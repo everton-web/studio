@@ -14,7 +14,10 @@ CREATE TABLE IF NOT EXISTS empresa (
   status        TEXT,
   origem        TEXT,
   criado_em     TEXT,
-  atualizado_em TEXT
+  atualizado_em TEXT,
+  valor_projeto REAL,
+  recorrencia   REAL,
+  fechado_em    TEXT
 );
 
 CREATE TABLE IF NOT EXISTS contato (

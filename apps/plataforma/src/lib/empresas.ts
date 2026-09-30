@@ -16,6 +16,9 @@ export interface NovaEmpresa {
   estagio_funil?: number | null;
   status?: string | null;
   origem?: string | null;
+  valor_projeto?: number | null;
+  recorrencia?: number | null;
+  fechado_em?: string | null;
 }
 
 export interface Empresa {
@@ -33,6 +36,9 @@ export interface Empresa {
   origem: string | null;
   criado_em: string | null;
   atualizado_em: string | null;
+  valor_projeto: number | null;
+  recorrencia: number | null;
+  fechado_em: string | null;
 }
 
 // Aceita só os estágios previstos no CHECK do schema.
@@ -59,11 +65,14 @@ function mapear(linha: Record<string, unknown>): Empresa {
     origem: linha.origem == null ? null : String(linha.origem),
     criado_em: linha.criado_em == null ? null : String(linha.criado_em),
     atualizado_em: linha.atualizado_em == null ? null : String(linha.atualizado_em),
+    valor_projeto: linha.valor_projeto == null ? null : Number(linha.valor_projeto),
+    recorrencia: linha.recorrencia == null ? null : Number(linha.recorrencia),
+    fechado_em: linha.fechado_em == null ? null : String(linha.fechado_em),
   };
 }
 
 const COLUNAS =
-  "id, nome, segmento, cidade, site, nota_google, avaliacoes, categoria, estagio_crm, estagio_funil, status, origem, criado_em, atualizado_em";
+  "id, nome, segmento, cidade, site, nota_google, avaliacoes, categoria, estagio_crm, estagio_funil, status, origem, criado_em, atualizado_em, valor_projeto, recorrencia, fechado_em";
 
 // Cria uma empresa. Valida o estágio antes de gravar.
 export function criarEmpresa(dados: NovaEmpresa): { id: string } {
@@ -72,8 +81,8 @@ export function criarEmpresa(dados: NovaEmpresa): { id: string } {
   const agora = new Date().toISOString();
   db.prepare(
     `INSERT INTO empresa
-       (id, nome, segmento, cidade, site, nota_google, avaliacoes, categoria, estagio_crm, estagio_funil, status, origem, criado_em, atualizado_em)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       (id, nome, segmento, cidade, site, nota_google, avaliacoes, categoria, estagio_crm, estagio_funil, status, origem, criado_em, atualizado_em, valor_projeto, recorrencia, fechado_em)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   ).run(
     dados.id,
     dados.nome,
@@ -89,6 +98,9 @@ export function criarEmpresa(dados: NovaEmpresa): { id: string } {
     dados.origem ?? null,
     agora,
     agora,
+    dados.valor_projeto ?? null,
+    dados.recorrencia ?? null,
+    dados.fechado_em ?? (dados.estagio_crm === "cliente" ? agora.slice(0, 10) : null),
   );
   return { id: dados.id };
 }
@@ -108,13 +120,70 @@ export function listarEmpresas(): Empresa[] {
 }
 
 // Muda o estágio da empresa e atualiza o carimbo de tempo.
+// Ao virar cliente, grava a data de fechamento (uma vez só).
 export function mudarEstagio(id: string, estagio_crm: string): { id: string; estagio_crm: EstagioCrm } {
   validarEstagio(estagio_crm);
   const db = getDb();
-  db.prepare("UPDATE empresa SET estagio_crm = ?, atualizado_em = ? WHERE id = ?").run(
-    estagio_crm,
-    new Date().toISOString(),
-    id,
-  );
+  const agora = new Date().toISOString();
+  db.prepare(
+    "UPDATE empresa SET estagio_crm = ?, atualizado_em = ?, fechado_em = CASE WHEN ? = 'cliente' AND fechado_em IS NULL THEN ? ELSE fechado_em END WHERE id = ?",
+  ).run(estagio_crm, agora, estagio_crm, agora.slice(0, 10), id);
   return { id, estagio_crm };
+}
+
+// Lista as empresas de um ou mais estágios, em ordem alfabética.
+export function listarPorEstagio(estagios: EstagioCrm[]): Empresa[] {
+  const db = getDb();
+  const marcas = estagios.map(() => "?").join(",");
+  const linhas = db
+    .prepare(`SELECT ${COLUNAS} FROM empresa WHERE estagio_crm IN (${marcas}) ORDER BY nome`)
+    .all(...estagios);
+  return linhas.map(mapear);
+}
+
+// Estágio do funil (0 a 5) para estágio do CRM: 0 lead, 1 a 4 oportunidade, 5 cliente.
+export function estagioCrmDoFunil(funil: number): EstagioCrm {
+  if (funil >= 5) return "cliente";
+  if (funil >= 1) return "oportunidade";
+  return "lead";
+}
+
+export interface CamposEmpresa {
+  nome?: string;
+  segmento?: string | null;
+  cidade?: string | null;
+  site?: string | null;
+  status?: string | null;
+  valor_projeto?: number | null;
+  recorrencia?: number | null;
+  fechado_em?: string | null;
+  estagio_funil?: number | null;
+}
+
+// Atualiza só os campos informados. Nunca mexe no estágio do CRM (use mudarEstagio).
+export function atualizarEmpresa(id: string, campos: CamposEmpresa): boolean {
+  const permitidos: (keyof CamposEmpresa)[] = [
+    "nome", "segmento", "cidade", "site", "status",
+    "valor_projeto", "recorrencia", "fechado_em", "estagio_funil",
+  ];
+  const sets: string[] = [];
+  const valores: (string | number | null)[] = [];
+  for (const k of permitidos) {
+    if (campos[k] === undefined) continue;
+    sets.push(`${k} = ?`);
+    valores.push(campos[k] as string | number | null);
+  }
+  if (sets.length === 0) return false;
+  sets.push("atualizado_em = ?");
+  valores.push(new Date().toISOString());
+  const r = getDb()
+    .prepare(`UPDATE empresa SET ${sets.join(", ")} WHERE id = ?`)
+    .run(...valores, id);
+  return Number(r.changes) > 0;
+}
+
+// Remove a empresa e, por cascata, contatos, credenciais, contratos e briefings dela.
+export function excluirEmpresa(id: string): boolean {
+  const r = getDb().prepare("DELETE FROM empresa WHERE id = ?").run(id);
+  return Number(r.changes) > 0;
 }

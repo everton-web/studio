@@ -112,6 +112,20 @@ export function lerCredencial(id: string): CredencialLida | null {
   };
 }
 
+// Indica se a chave do cofre está configurada (sem expor a chave).
+export function cofreConfigurado(): boolean {
+  return Boolean(process.env.AGENCIA_COFRE_KEY);
+}
+
+// Remove uma credencial do cofre. Devolve false se o id não existe.
+export function removerCredencial(id: string, empresa_id?: string): boolean {
+  const db = getDb();
+  const r = empresa_id
+    ? db.prepare("DELETE FROM credencial WHERE id = ? AND empresa_id = ?").run(id, empresa_id)
+    : db.prepare("DELETE FROM credencial WHERE id = ?").run(id);
+  return Number(r.changes) > 0;
+}
+
 // Lista credenciais sem a senha. Sem registro, devolve [].
 export function listarCredenciais(empresa_id?: string): CredencialResumo[] {
   const db = getDb();

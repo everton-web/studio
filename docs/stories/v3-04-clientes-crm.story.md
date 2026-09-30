@@ -114,68 +114,68 @@ A gaveta abre com o nome, o estágio `cliente` e o site. Blocos, na ordem:
 
 ## 5. Critérios de aceite
 
-- **AC-01 (mesmo modelo):** Comercial e Clientes leem a mesma tabela `empresa` do banco da
+- [x] **AC-01 (mesmo modelo):** Comercial e Clientes leem a mesma tabela `empresa` do banco da
   v3-03 (`docs/stories/v3-03-banco-da-plataforma.story.md:85`). Clientes lista `empresa` com
   `estagio_crm = 'cliente'`; Comercial lista `estagio_crm IN ('lead','oportunidade')`.
   Conferível por `GET /api/clientes` e `GET /api/comercial`.
-- **AC-02 (virar cliente sem redigitar):** mover um lead ao estágio 5 (Entrega) pelo caminho
+- [x] **AC-02 (virar cliente sem redigitar):** mover um lead ao estágio 5 (Entrega) pelo caminho
   da aplicação grava `empresa.estagio_crm = 'cliente'` e o card aparece em Clientes com o
   mesmo `empresa.id`. Nenhum registro de empresa novo é criado nessa passagem.
-- **AC-03 (sem duplicação):** a mesma `empresa.id` não aparece ao mesmo tempo em Comercial e
+- [x] **AC-03 (sem duplicação):** a mesma `empresa.id` não aparece ao mesmo tempo em Comercial e
   em Clientes. Depois de virar cliente, ela some do funil de Comercial e aparece só em
   Clientes (resolve a falta de chave de caio.md:56).
-- **AC-04 (estágios):** `empresa.estagio_crm` só aceita `lead`, `oportunidade` ou `cliente`
+- [x] **AC-04 (estágios):** `empresa.estagio_crm` só aceita `lead`, `oportunidade` ou `cliente`
   (v3-03 AC-03), e o app mapeia estágio 1 do funil para `oportunidade` e estágio 5 para
   `cliente`. Inserir outro valor falha.
-- **AC-05 (funil preservado):** o Comercial mantém os 6 estágios de
+- [x] **AC-05 (funil preservado):** o Comercial mantém os 6 estágios de
   `apps/plataforma/src/components/pipeline.tsx:40` e a conversão de
   `apps/plataforma/src/lib/conversao.ts:36`. Nada foi recriado como aba nova.
-- **AC-06 (saúde do site):** a gaveta mostra no ar, formulário, certificado e velocidade,
+- [x] **AC-06 (saúde do site):** a gaveta mostra no ar, formulário, certificado e velocidade,
   por cliente, e mostra alerta quando o site está fora do ar, o formulário falha ou o
   certificado está a vencer. Campo sem medida mostra "sem medida ainda", nunca zero.
-- **AC-07 (pixel oficial):** a gaveta mostra os pageviews do pixel do cliente, de
+- [x] **AC-07 (pixel oficial):** a gaveta mostra os pageviews do pixel do cliente, de
   `apps/plataforma/src/lib/vault.ts:273` (gravado por
   `apps/plataforma/src/app/api/t/route.ts:19`). Esse é o número oficial da tela. Sem hit,
   mostra o estado vazio de `apps/plataforma/src/components/rastreamento.tsx:78`.
-- **AC-08 (Clarity por link):** a gaveta oferece um botão que abre o painel do Clarity em
+- [x] **AC-08 (Clarity por link):** a gaveta oferece um botão que abre o painel do Clarity em
   nova aba e NUNCA um iframe. Nenhum número do Clarity é exibido como embutido; sem API
   confirmada, mostra o rótulo honesto "números do Clarity: pendente de API" (ATA seção 2).
-- **AC-09 (valor e recorrência):** a gaveta mostra o valor do projeto e a recorrência ou MRR
+- [x] **AC-09 (valor e recorrência):** a gaveta mostra o valor do projeto e a recorrência ou MRR
   do cliente, migrados do frontmatter (`40 Comercial/Clientes/Concept Implantes Dentários.md:9`
   e `:10`). Sem recorrência, mostra "sem recorrência ainda", não um R$ 0 fabricado.
-- **AC-10 (cobranças InfinitePay):** a gaveta lista as cobranças do cliente com status (pago
+- [x] **AC-10 (cobranças InfinitePay):** a gaveta lista as cobranças do cliente com status (pago
   ou pendente) e data, os próximos vencimentos (30 dias) e o histórico. Isso exige o campo
   `cliente` no tipo `Registro` (`apps/plataforma/src/lib/infinitepay.ts:15`) gravado por
   `criarLink` (`apps/plataforma/src/lib/infinitepay.ts:69`), conforme fabio.md:25. Sem
   cobrança, estado vazio honesto.
-- **AC-11 (divergência sinalizada):** quando o `valor-projeto` e a soma das cobranças pagas
+- [x] **AC-11 (divergência sinalizada):** quando o `valor-projeto` e a soma das cobranças pagas
   divergem, a gaveta sinaliza a divergência em vez de esconder (fabio.md:35). Conferível com
   um cliente de valor 1.997 e uma cobrança paga de 1.000, que mostra o alerta.
-- **AC-12 (briefing por link):** a gaveta cria e mostra um link único de briefing por cliente
+- [x] **AC-12 (briefing por link):** a gaveta cria e mostra um link único de briefing por cliente
   e o status (aguardando resposta ou respondido), usando a tabela `briefing` da v3-03
   (`docs/stories/v3-03-banco-da-plataforma.story.md:167`). Sem briefing, estado vazio honesto.
-- **AC-13 (cofre):** a gaveta lista as credenciais do cliente pelo rótulo e revela a senha só
+- [x] **AC-13 (cofre):** a gaveta lista as credenciais do cliente pelo rótulo e revela a senha só
   por ação explícita. A senha nunca é renderizada em markdown, nunca vai para log e o arquivo
   do banco não a guarda em claro (v3-03 AC-09). Sem credencial, "sem credenciais cadastradas".
-- **AC-14 (contrato rápido):** a gaveta gera um contrato a partir dos dados do cliente e lista
+- [x] **AC-14 (contrato rápido):** a gaveta gera um contrato a partir dos dados do cliente e lista
   os contratos dele, no modelo de `PLATFORM.md:40` e
   `archive/referencias/studiowebpro/supabase/schema.sql:564`. Sem contrato, "Nenhum contrato
   ainda."
-- **AC-15 (SWP separado):** nenhuma tabela, chave ou rota do Studio Web Pro (Supabase, Stripe,
+- [x] **AC-15 (SWP separado):** nenhuma tabela, chave ou rota do Studio Web Pro (Supabase, Stripe,
   OpenAI) é usada. A plataforma só reescreve carteira, briefing, cofre e contrato no seu
   próprio banco (ATA seção 9). Conferível por busca no código e no banco.
-- **AC-16 (responsivo):** em 375px, 1280px e 1920px a grade de cards e a gaveta ficam
+- [x] **AC-16 (responsivo):** em 375px, 1280px e 1920px a grade de cards e a gaveta ficam
   íntegras, sem scroll horizontal, texto cortado ou sobreposição. Em 375px os blocos da
   gaveta empilham em uma coluna.
-- **AC-17 (estados vazios honestos):** todo bloco sem dado mostra o estado vazio da seção 4.
+- [x] **AC-17 (estados vazios honestos):** todo bloco sem dado mostra o estado vazio da seção 4.
   Nenhum número é inventado nem zero fabricado; campo sem medida não vira 0.
-- **AC-18 (sem "em breve"):** nenhum item "em breve" entra no menu. Comercial e Clientes abrem
+- [x] **AC-18 (sem "em breve"):** nenhum item "em breve" entra no menu. Comercial e Clientes abrem
   telas reais.
-- **AC-19 (sem travessão e sem viúvas):** nenhum texto visível usa travessão nem meia-risca;
+- [x] **AC-19 (sem travessão e sem viúvas):** nenhum texto visível usa travessão nem meia-risca;
   títulos e parágrafos evitam palavra órfã na última linha (`text-wrap: balance`).
-- **AC-20 (não regressão):** arrastar cartão, aceitar e registrar desfecho no pipeline seguem
+- [x] **AC-20 (não regressão):** arrastar cartão, aceitar e registrar desfecho no pipeline seguem
   funcionando; Resultados e a fonte única de demandas seguem iguais.
-- **AC-21 (teste):** o teste de ponta a ponta da seção 10 existe e passa.
+- [x] **AC-21 (teste):** o teste de ponta a ponta da seção 10 existe e passa.
 
 ## 6. Tarefas técnicas em ordem
 
