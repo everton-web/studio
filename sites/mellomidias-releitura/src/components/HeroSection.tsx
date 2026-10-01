@@ -111,6 +111,32 @@ export function HeroSection({ media }: { media: HeroMedia }) {
         });
       };
     });
+    // Saída do hero amarrada ao scroll: título sobe e desfoca, vídeo aproxima e escurece,
+    // números sobem em cascata. Volta tudo ao lugar quando a página sobe de novo.
+    queries.add({
+      motion: "(prefers-reduced-motion: no-preference)",
+      desktop: "(min-width: 1024px)",
+    }, (context) => {
+      const { motion, desktop } = context.conditions as { motion: boolean; desktop: boolean };
+      if (!motion) return;
+      const statItems = gsap.utils.toArray<HTMLElement>(".hero-stat", root);
+      gsap.from(".hero-stat > *", { y: 28, opacity: 0, duration: 0.8, stagger: 0.09, delay: 0.5, ease: "power3.out" });
+      const exit = gsap.timeline({
+        defaults: { ease: "none" },
+        scrollTrigger: { trigger: root, start: "top top", end: "bottom top", scrub: 0.5 },
+      });
+      // Desfoque só no desktop: no celular o filtro em texto grande custa caro.
+      exit.to(".hero-title", desktop
+        ? { yPercent: -38, opacity: 0.15, filter: "blur(8px)", duration: 1 }
+        : { yPercent: -22, opacity: 0.15, duration: 1 }, 0)
+        .to(".hero-badge", { y: -60, opacity: 0, duration: 0.6 }, 0)
+        .to([".hero-description", ".hero-cta-area"], { y: desktop ? -90 : -50, opacity: 0, duration: 0.8, stagger: 0.08 }, 0.05)
+        .to(".hero-media", { scale: 1.15, duration: 1 }, 0)
+        .to(".hero-darken", { opacity: 0.75, duration: 1 }, 0);
+      statItems.forEach((stat, index) => {
+        exit.to(stat, { y: -(desktop ? 70 : 40) - index * (desktop ? 45 : 25), duration: 1 }, 0);
+      });
+    });
     queries.add("(min-width: 1024px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)", () => {
       const cta = button.current;
       const hitArea = cta?.parentElement;
@@ -148,12 +174,15 @@ export function HeroSection({ media }: { media: HeroMedia }) {
       <div id="hero-motion" className="hero-backdrop" aria-hidden="true">
         <div className="hero-light hero-light-primary" />
         <div className="hero-light hero-light-secondary" />
+        <div className="hero-media">
         {media.poster && <div className="hero-poster" />}
         {hasVideo && <video ref={video} className="hero-video" data-ready={videoReady} muted loop playsInline preload="none" poster={media.poster ? "/media/hero-poster.jpg" : undefined} onPlaying={() => setVideoReady(true)} onError={() => setMediaFailed(true)} tabIndex={-1} disablePictureInPicture>
           {media.webm && <source src="/media/hero-loop.webm" type="video/webm" onError={() => sourceFailed("webm")} />}
           {media.mp4 && <source src="/media/hero-loop.mp4" type="video/mp4" onError={() => sourceFailed("mp4")} />}
         </video>}
+        </div>
         <div className="hero-backdrop-shade" />
+        <div className="hero-darken" />
       </div>
       <div className="container hero-content">
         <p id="hero-badge" className="hero-badge"><span aria-hidden="true" className="hero-badge-dot" />{hero.badge}</p>

@@ -174,7 +174,7 @@ img, video { display: block; height: auto; }
 .partners-window { overflow-x: auto; mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent); }
 .partners-track { display: flex; width: max-content; }
 .partners-section[data-motion-ready="true"] .partners-window { overflow: hidden; }
-.partners-section[data-motion-ready="true"] .partners-track { animation: partners-marquee 36s linear infinite; }
+.partners-section[data-motion-ready="true"] .partners-track { will-change: transform; }
 .partners-section:not([data-motion-ready="true"]) .motion-toggle { visibility: hidden; }
 .partners-list { display: flex; align-items: center; flex-shrink: 0; gap: var(--space-16); margin: 0; padding: 0 var(--space-16) 0 0; list-style: none; }
 .partner-wordmark { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 64px; font-family: var(--font-display); font-size: clamp(1.5rem, 2.5vw, 2rem); font-weight: 650; line-height: 1.15; letter-spacing: -0.035em; white-space: nowrap; }
@@ -199,7 +199,8 @@ img, video { display: block; height: auto; }
 .method-viewport { min-width: 0; }
 .method-journey { position: relative; }
 .method-line { position: absolute; top: 24px; bottom: 24px; left: 23px; width: 2px; background: var(--border); pointer-events: none; }
-.method-line > span { display: block; width: 100%; height: 100%; background: var(--accent-ink); transform-origin: top left; }
+.method-line-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.method-line-draw { fill: none; stroke: var(--accent-ink); stroke-width: 2; stroke-linecap: round; filter: drop-shadow(0 0 6px rgb(225 20 30 / 70%)); }
 .method-track { position: relative; display: flex; flex-direction: column; gap: var(--space-8); margin: 0; padding: 0; list-style: none; }
 .method-step { display: grid; grid-template-columns: 48px minmax(0, 1fr); align-items: start; gap: var(--space-4); min-width: 0; }
 .method-number { display: grid; place-items: center; width: 48px; height: 48px; border: 1px solid var(--accent-ink); border-radius: 50%; background: var(--bg); color: var(--accent-ink); font-family: var(--font-display); font-size: 1.125rem; font-weight: 600; font-variant-numeric: tabular-nums; }
@@ -332,14 +333,6 @@ img, video { display: block; height: auto; }
 .about-point-number { padding-top: 3px; color: var(--accent-ink); font-family: var(--font-display); font-size: 0.875rem; font-weight: 600; font-variant-numeric: tabular-nums; }
 .about-point h3 { margin-bottom: var(--space-1); font-size: 1.125rem; letter-spacing: -0.02em; }
 .about-point p { font-size: 0.9375rem; }
-.about-founder { position: relative; width: 100%; max-width: 480px; margin: 0 auto; }
-.about-portrait { position: relative; overflow: hidden; aspect-ratio: 4 / 5; border-radius: var(--radius); background: #120a0c; box-shadow: inset 0 0 0 1px rgb(255 255 255 / 8%); }
-.about-portrait-art { position: absolute; inset: -12% 0; display: grid; place-items: center; background: radial-gradient(ellipse 70% 45% at 50% 100%, rgb(225 20 30 / 85%), rgb(122 10 16 / 50%) 45%, transparent 75%), radial-gradient(ellipse 50% 35% at 50% 38%, rgb(255 255 255 / 6%), transparent 70%), linear-gradient(180deg, #1c0f12, #0d0608); }
-.about-initials { color: transparent; font-family: var(--font-display); font-size: clamp(6rem, 30vw, 11rem); font-weight: 700; letter-spacing: -0.06em; line-height: 1; -webkit-text-stroke: 1px rgb(244 239 239 / 38%); }
-.about-placeholder-note { position: absolute; top: var(--space-4); right: var(--space-4); padding: 4px var(--space-3); border: 1px solid rgb(255 255 255 / 14%); border-radius: 999px; background: rgb(10 5 7 / 55%); color: var(--ink-muted); font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; }
-.about-founder-tag { position: absolute; left: var(--space-4); bottom: var(--space-4); display: flex; flex-direction: column; padding: var(--space-3) var(--space-4); border: 1px solid rgb(255 255 255 / 10%); border-radius: 14px; background: rgb(10 5 7 / 78%); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-.about-founder-tag strong { font-family: var(--font-display); font-size: 1.125rem; letter-spacing: -0.02em; }
-.about-founder-tag span { color: var(--ink-muted); font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; }
 
 /* Formulário em 2 passos. */
 .lead-section { position: relative; background: var(--surface); border-block: 1px solid var(--border); }
@@ -447,7 +440,6 @@ img, video { display: block; height: auto; }
   .results-stat { display: flex; flex-direction: column; gap: var(--space-2); padding-block: var(--space-6) 0; }
   .results-stat dd { font-size: clamp(2.25rem, 3.6vw, 3.25rem); }
   .results-cases { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .about-layout { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); column-gap: clamp(48px, 7vw, 120px); }
   .lead-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: clamp(48px, 7vw, 120px); }
   .lead-copy { position: sticky; top: calc(var(--header-height) + var(--space-8)); }
   .faq-layout { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr); column-gap: clamp(48px, 7vw, 120px); align-items: start; }
@@ -539,7 +531,6 @@ h1, h2, h3, h4 { letter-spacing: -0.02em; }
 @media (max-width: 639px) { .partner-logo img { height: calc(var(--logo-h, 44px) * 0.82); } }
 
 /* Retrato real do fundador. */
-.about-portrait-art img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
 
 /* Galeria de prints reais. */
 .proof-gallery { position: relative; margin-top: clamp(64px, 10vw, 128px); }
@@ -597,3 +588,75 @@ html.lightbox-open { overflow: hidden; }
 .lightbox-nav { display: flex; justify-content: center; gap: var(--space-3); padding-bottom: var(--space-2); }
 @keyframes lightbox-in { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) { .lightbox[open], .lightbox-figure img { animation: none; } }
+
+/* ===== Motion v3: fundo vivo, faixa cinética e Quem somos integrado ===== */
+
+/* Luz ambiente fixa atrás das seções transparentes: muda de tom e de lugar conforme a seção. */
+.ambient { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.ambient-tint { position: absolute; inset: 0; background: linear-gradient(180deg, #1c070c, #120509 55%, #22080e); opacity: 0; }
+.ambient-glow { position: absolute; top: 50%; left: 50%; width: 120vmax; height: 120vmax; margin: -60vmax 0 0 -60vmax; border-radius: 50%; background: radial-gradient(circle, rgb(225 20 30 / 20%), rgb(225 20 30 / 6%) 32%, transparent 60%); opacity: 0; will-change: transform, opacity; }
+
+/* Wipe: linha de luz que abre do centro no topo das seções. */
+.seam-host { position: relative; }
+.seam-host::before { content: ""; position: absolute; z-index: 0; top: 0; left: 0; right: 0; height: clamp(80px, 12vw, 160px); pointer-events: none; background: linear-gradient(90deg, transparent 6%, var(--accent-ink) 50%, transparent 94%) top / 100% 1px no-repeat, radial-gradient(ellipse 45% 100% at 50% 0%, rgb(225 20 30 / 16%), transparent 75%); transform: scaleX(var(--seam, 0)); opacity: var(--seam, 0); }
+
+/* Títulos divididos por palavra: a máscara deixa espaço para acentos e descendentes. */
+.h2-word-mask { padding-block: 0.08em 0.14em; margin-block: -0.08em -0.14em; }
+
+/* Hero: camada de mídia que aproxima e véu que escurece na saída. */
+.hero-media { position: absolute; inset: 0; transform-origin: 65% 45%; will-change: transform; }
+.hero-darken { position: absolute; inset: 0; background: var(--bg); opacity: 0; }
+
+/* Faixa de tipografia cinética. */
+.kinetic-band { position: relative; display: grid; gap: clamp(4px, 1vw, 16px); overflow: clip; padding-block: clamp(56px, 9vw, 128px); }
+.kinetic-track { display: flex; width: max-content; will-change: transform; }
+.kinetic-group { display: flex; flex-shrink: 0; }
+.kinetic-word { display: inline-flex; align-items: center; padding-right: 0.28em; color: var(--ink); font-family: var(--font-display); font-size: clamp(3.25rem, 12.5vw, 11.5rem); font-weight: 700; line-height: 1.02; letter-spacing: -0.04em; white-space: nowrap; }
+.kinetic-word i { margin-left: 0.28em; color: var(--accent); font-style: normal; }
+.kinetic-word-ghost { color: transparent; -webkit-text-stroke: 1.5px rgb(244 239 239 / 42%); }
+.kinetic-row-outline .kinetic-word { color: transparent; -webkit-text-stroke: 1.5px rgb(255 97 105 / 80%); }
+.kinetic-row-outline .kinetic-word-ghost { color: var(--accent); -webkit-text-stroke: 0; }
+.kinetic-row-outline .kinetic-word i { color: var(--ink); -webkit-text-stroke: 0; }
+
+/* Resultados: palco 3D para o tilt do celular. */
+.results-proof { perspective: 1200px; }
+.results-phone { will-change: transform; }
+
+/* CTA final: símbolo vetorial e faixa de luz em camada própria. */
+.final-symbol { width: 64px; height: auto; overflow: visible; opacity: 1; }
+.final-symbol path { fill: var(--ink); stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
+.final-bands { position: absolute; inset: -20% -10%; will-change: transform; }
+
+/* Quem somos: retrato fundido ao fundo, sem caixa. */
+.about-section { position: relative; isolation: isolate; overflow: clip; padding-top: var(--space-8); }
+.about-founder { position: relative; z-index: 0; width: 100%; max-width: 640px; margin: 0 auto calc(-1 * clamp(72px, 20vw, 160px)); }
+.about-glow-wrap { position: absolute; inset: 8% -10% 0; z-index: 0; display: grid; place-items: center; pointer-events: none; }
+.about-glow { width: 100%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgb(225 20 30 / 50%), rgb(122 10 16 / 22%) 42%, transparent 68%); animation: about-breathe 7s ease-in-out infinite alternate; }
+@keyframes about-breathe { from { transform: scale(0.88); opacity: 0.55; } to { transform: scale(1.08); opacity: 1; } }
+.about-name { position: absolute; z-index: 1; top: 14%; left: 0; right: 0; overflow: hidden; pointer-events: none; }
+.about-name span { display: block; color: transparent; font-family: var(--font-display); font-size: clamp(5rem, 26vw, 15rem); font-weight: 800; line-height: 0.9; letter-spacing: -0.03em; text-transform: uppercase; white-space: nowrap; -webkit-text-stroke: 1.5px rgb(225 20 30 / 55%); }
+/* lighten: o fundo escuro da foto deixa o nome aparecer; rosto e camisa ficam na frente dele. */
+.about-photo { position: relative; z-index: 2; mix-blend-mode: lighten; }
+.about-photo img { width: 100%; height: auto; aspect-ratio: 880 / 1100; object-fit: cover; object-position: 50% 0%; -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 7%, #000 70%, transparent 98%), linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%); mask-image: linear-gradient(180deg, transparent 0%, #000 7%, #000 70%, transparent 98%), linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%); -webkit-mask-composite: source-in; mask-composite: intersect; }
+.about-founder-tag { position: absolute; z-index: 3; left: var(--gutter); bottom: 23%; display: flex; flex-direction: column; gap: 2px; }
+.about-tag-line { display: block; width: 40px; height: 2px; margin-bottom: var(--space-3); background: var(--accent-ink); }
+.about-founder-tag strong { font-family: var(--font-display); font-size: clamp(1.25rem, 4vw, 1.625rem); font-weight: 650; line-height: 1.2; letter-spacing: -0.02em; text-shadow: 0 2px 16px rgb(10 5 7 / 80%); }
+.about-founder-tag > span:last-child { color: var(--ink-muted); font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; }
+.about-layout { position: relative; z-index: 1; }
+
+@media (min-width: 1024px) {
+  .about-section { --portrait-w: min(56vw, 900px); --portrait-top: clamp(40px, 6vw, 96px); min-height: calc(var(--portrait-w) * 1.25 + var(--portrait-top) + 40px); padding-top: var(--section-space); }
+  .about-founder { position: absolute; top: var(--portrait-top); right: 0; width: var(--portrait-w); max-width: none; margin: 0; }
+  .about-glow-wrap { inset: 0; }
+  .about-glow { width: 85%; }
+  .about-name { top: 12%; }
+  .about-name span { font-size: clamp(8rem, 15vw, 15rem); }
+  .about-photo img { -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 7%, #000 74%, transparent 98%), linear-gradient(90deg, transparent 0%, #000 17%, #000 94%, transparent 100%); mask-image: linear-gradient(180deg, transparent 0%, #000 7%, #000 74%, transparent 98%), linear-gradient(90deg, transparent 0%, #000 17%, #000 94%, transparent 100%); }
+  .about-founder-tag { left: 12%; bottom: 20%; }
+  .about-layout { width: 100%; }
+  .about-copy { max-width: min(46%, 560px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ambient { display: none; }
+  .about-glow { animation: none; }
+}

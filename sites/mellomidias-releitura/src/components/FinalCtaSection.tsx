@@ -4,9 +4,16 @@ import { useEffect, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { finalCta, site, brand } from "@/data/content";
+import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
+import { finalCta, site } from "@/data/content";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+gsap.registerPlugin(useGSAP, ScrollTrigger, DrawSVGPlugin);
+
+// Símbolo M redesenhado em vetor a partir de /brand/simbolo-m.webp (256 x 202) para poder desenhar o contorno.
+const SYMBOL_PATHS = [
+  "M62 1L128 52L195 1V37L128 91L62 37Z",
+  "M0 27L128 126L256 27V142L204 182V141L128 202L52 141V181L0 141Z",
+];
 
 type Media = { webm: boolean; mp4: boolean; poster: boolean };
 
@@ -48,9 +55,23 @@ export function FinalCtaSection({ media }: { media: Media }) {
         y: 48, opacity: 0, scale: 0.97, duration: 1, ease: "power3.out",
         scrollTrigger: { trigger: ".final-card", start: "top 85%", once: true },
       });
-      gsap.from(".final-content > *", {
+      gsap.from(".final-content > :not(.final-symbol)", {
         y: 24, opacity: 0, duration: 0.7, stagger: 0.1, delay: 0.2, ease: "power3.out",
         scrollTrigger: { trigger: ".final-card", start: "top 85%", once: true },
+      });
+
+      // O M desenha o contorno e depois preenche, conforme o bloco sobe na tela.
+      gsap.timeline({
+        scrollTrigger: { trigger: ".final-card", start: "top 80%", end: "top 25%", scrub: 0.6 },
+      })
+        .fromTo(".final-symbol path", { drawSVG: "0%", fillOpacity: 0 }, { drawSVG: "100%", duration: 1, stagger: 0.25, ease: "power1.inOut" })
+        .to(".final-symbol path", { fillOpacity: 1, duration: 0.5, ease: "power2.out" }, ">-0.1")
+        .fromTo(".final-symbol", { scale: 0.85 }, { scale: 1, duration: 1.5, ease: "power2.out" }, 0);
+
+      // A faixa de luz atravessa o bloco acompanhando o scroll.
+      gsap.fromTo(".final-bands", { yPercent: 28, xPercent: -8, rotate: 4 }, {
+        yPercent: -30, xPercent: 8, rotate: -4, ease: "none",
+        scrollTrigger: { trigger: ".final-card", start: "top bottom", end: "bottom top", scrub: true },
       });
     });
     return () => media.revert();
@@ -61,8 +82,10 @@ export function FinalCtaSection({ media }: { media: Media }) {
       <div className="container">
         <div className="final-card">
           <div className="final-backdrop" aria-hidden="true">
-            <div className="final-band final-band-a" />
-            <div className="final-band final-band-b" />
+            <div className="final-bands">
+              <div className="final-band final-band-a" />
+              <div className="final-band final-band-b" />
+            </div>
             {hasVideo && (
               <video ref={video} className="final-video" muted loop playsInline preload="none" poster={media.poster ? "/media/hero-poster.jpg" : undefined} tabIndex={-1} disablePictureInPicture>
                 {media.webm && <source src="/media/hero-loop.webm" type="video/webm" />}
@@ -72,7 +95,9 @@ export function FinalCtaSection({ media }: { media: Media }) {
             <div className="final-shade" />
           </div>
           <div className="final-content">
-            <img className="final-symbol" src={brand.symbol.src} width={brand.symbol.width} height={brand.symbol.height} alt="" loading="lazy" />
+            <svg className="final-symbol" viewBox="-2 -2 260 206" width="64" height="51" aria-hidden="true" focusable="false">
+              {SYMBOL_PATHS.map((d) => <path key={d} d={d} />)}
+            </svg>
             <h2 id="cta-final-title">{finalCta.title}</h2>
             <p className="lead">{finalCta.description}</p>
             <a className="button button-light final-cta" href={site.ctaHref}>

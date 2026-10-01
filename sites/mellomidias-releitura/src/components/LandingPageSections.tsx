@@ -4,6 +4,7 @@ import { HeroSection } from "@/components/HeroSection";
 import { PartnersSection } from "@/components/PartnersSection";
 import { ManifestoSection } from "@/components/ManifestoSection";
 import { MethodSection } from "@/components/MethodSection";
+import { KineticBand } from "@/components/KineticBand";
 import { ResultsSection } from "@/components/ResultsSection";
 import { AboutSection } from "@/components/AboutSection";
 import { LeadFormSection } from "@/components/LeadFormSection";
@@ -20,6 +21,7 @@ export function LandingPageSections() {
       <PartnersSection />
       <ManifestoSection />
       <MethodSection />
+      <KineticBand />
       <ResultsSection />
       <AboutSection />
       <LeadFormSection />

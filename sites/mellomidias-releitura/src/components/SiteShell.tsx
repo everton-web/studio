@@ -7,6 +7,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import { brand, navigation, site } from "@/data/content";
 import { SiteFooter } from "@/components/SiteFooter";
+import { MotionDirector } from "@/components/MotionDirector";
+import { scrollMotion } from "@/lib/scroll-motion";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -16,8 +18,13 @@ export function ScrollSetup() {
     media.add("(prefers-reduced-motion: no-preference)", () => {
       // Lenis reads scroll-padding and scroll-margin from CSS, including breakpoints.
       const lenis = new Lenis({ autoRaf: false, smoothWheel: true, anchors: true });
-      const tick = (time: number) => lenis.raf(time * 1000);
-      lenis.on("scroll", ScrollTrigger.update);
+      const tick = (time: number) => {
+        lenis.raf(time * 1000);
+        // Decai para zero quando o scroll para; o evento de scroll repõe o valor real.
+        scrollMotion.velocity *= 0.9;
+      };
+      const onScroll = () => { scrollMotion.velocity = lenis.velocity; ScrollTrigger.update(); };
+      lenis.on("scroll", onScroll);
       gsap.ticker.lagSmoothing(0);
       gsap.ticker.add(tick);
       const refresh = () => lenis.resize();
@@ -25,7 +32,8 @@ export function ScrollSetup() {
       return () => {
         gsap.ticker.remove(tick);
         ScrollTrigger.removeEventListener("refresh", refresh);
-        lenis.off("scroll", ScrollTrigger.update);
+        lenis.off("scroll", onScroll);
+        scrollMotion.velocity = 0;
         lenis.destroy();
         // Restore GSAP defaults when this page-level scroll owner is removed.
         gsap.ticker.lagSmoothing(500, 33);
@@ -200,6 +208,7 @@ export function SiteShell({ children }: Readonly<{ children: ReactNode }>) {
       <Header />
       <main id="conteudo" tabIndex={-1}>{children}</main>
       <SiteFooter />
+      <MotionDirector />
     </>
   );
 }

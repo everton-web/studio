@@ -22,8 +22,9 @@ export function ResultsSection() {
       // O chat tem altura fixa e cresce de baixo para cima, como no app: nada empurra a página.
       gsap.set(messages, { display: "none", opacity: 0, y: 18, scale: 0.96 });
       // Conversa em sequência: digitando, mensagem; digitando, mensagem.
+      // A conversa começa quando o celular chega ao centro da tela.
       const conversation = gsap.timeline({
-        scrollTrigger: { trigger: ".results-phone", start: "top 80%", once: true },
+        scrollTrigger: { trigger: ".results-phone", start: "center 58%", once: true },
       });
       messages.forEach((message, index) => {
         const incoming = message.dataset.side === "in";
@@ -39,6 +40,14 @@ export function ResultsSection() {
           transformOrigin: incoming ? "left bottom" : "right bottom",
         }, "<");
       });
+
+      // Tilt 3D amarrado ao scroll: o celular chega inclinado, assenta de frente no centro e sai girando ao contrário.
+      gsap.timeline({
+        defaults: { ease: "none" },
+        scrollTrigger: { trigger: ".results-proof", start: "top bottom", end: "bottom top", scrub: 0.6 },
+      })
+        .fromTo(".results-phone", { rotateX: 22, rotateY: -18, rotateZ: -3, y: 60 }, { rotateX: 0, rotateY: 0, rotateZ: 0, y: 0, duration: 1 })
+        .to(".results-phone", { rotateX: -10, rotateY: 12, rotateZ: 2, y: -30, duration: 1 }, ">0.35");
 
       gsap.from(".results-case", {
         y: 24, opacity: 0, duration: 0.7, stagger: 0.12, ease: "power3.out",

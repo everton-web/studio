@@ -20,13 +20,19 @@ export function ProofGallery() {
   const [active, setActive] = useState<number | null>(null);
   const [edges, setEdges] = useState({ start: true, end: false });
 
-  // Entrada dos prints em cascata, só transform e opacity.
+  // Entrada em leque amarrada ao scroll: cada print sobe girando a partir de um eixo abaixo da faixa.
   useGSAP(() => {
     const media = gsap.matchMedia();
     media.add("(prefers-reduced-motion: no-preference)", () => {
-      gsap.from(".proof-item", {
-        y: 40, opacity: 0, duration: 0.8, stagger: 0.08, ease: "power3.out",
-        scrollTrigger: { trigger: ".proof-track", start: "top 85%", once: true },
+      const items = gsap.utils.toArray<HTMLElement>(".proof-item");
+      const middle = (items.length - 1) / 2;
+      gsap.fromTo(items, {
+        y: 140, opacity: 0,
+        rotate: (index: number) => (index - middle) * 7,
+        transformOrigin: "50% 160%",
+      }, {
+        y: 0, opacity: 1, rotate: 0, ease: "power3.out", stagger: 0.12,
+        scrollTrigger: { trigger: ".proof-track", start: "top 95%", end: "top 45%", scrub: 0.8 },
       });
     });
     return () => media.revert();
