@@ -1,0 +1,37 @@
+{
+  "name": "mellomidias-releitura",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3210",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "build": "next build",
+    "start": "npx serve out -l 3210",
+    "remotion": "remotion studio remotion/index.ts",
+    "render:hero": "remotion render remotion/index.ts HeroLoop public/media/hero-loop.mp4 --codec h264 --crf 22",
+    "render:hero-webm": "remotion render remotion/index.ts HeroLoop public/media/hero-loop.webm --codec vp9",
+    "render:poster": "remotion still remotion/index.ts HeroLoop public/media/hero-poster.jpg --frame 90"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "@remotion/cli": "^4.0.531",
+    "gsap": "^3.15.0",
+    "lenis": "^1.3.26",
+    "motion": "^13.4.6",
+    "next": "^16.3.5",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "remotion": "^4.0.531"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^20.19.43",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.3.5",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3"
+  }
+}
