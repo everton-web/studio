@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { form, leadSection, revenueOptions, steps, trafficOptions } from "@/data/content";
+import { QualificacaoCard, type Qualificacao } from "@/components/QualificacaoCard";
 
 type Fields = { name: string; phone: string; instagram: string; revenue: string; traffic: string };
 type FieldName = keyof Fields;
@@ -51,7 +52,13 @@ export function LeadFormSection() {
   const [fields, setFields] = useState<Fields>(EMPTY);
   const [errors, setErrors] = useState<Errors>({});
   const [touched, setTouched] = useState<Partial<Record<FieldName, boolean>>>({});
+  const [sending, setSending] = useState(false);
+  const [qualif, setQualif] = useState<Qualificacao | null>(null);
+  const [demo, setDemo] = useState(false);
   const panel = useRef<HTMLDivElement>(null);
+
+  // Card "O que o Gabriel recebe" só aparece com ?demo=1 (quem preenche nunca vê a classificação).
+  useEffect(() => { setDemo(new URLSearchParams(window.location.search).has("demo")); }, []);
   const firstRender = useRef(true);
 
   // Move o foco para o início de cada passo (exceto no carregamento da página).
@@ -88,13 +95,31 @@ export function LeadFormSection() {
     return true;
   };
 
-  const submit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (step === 1 && checkStep(1)) setStep(2);
-    else if (step === 2 && checkStep(2)) setStep(3); // Releitura: sem envio real.
+  // Envia para a qualificação (JEV, no servidor). O lead nunca se perde: se a IA falhar, segue para o sucesso.
+  const enviar = async () => {
+    setSending(true);
+    try {
+      const r = await fetch("/api/qualificar.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nome: fields.name, whatsapp: fields.phone, instagram: fields.instagram, faturamento: fields.revenue, investe: fields.traffic }),
+        signal: AbortSignal.timeout(12000),
+      });
+      const j = await r.json();
+      if (j?.ok) setQualif(j as Qualificacao);
+    } catch { /* segue sem classificação */ }
+    setSending(false);
+    setStep(3);
   };
 
-  const reset = () => { setFields(EMPTY); setErrors({}); setTouched({}); setStep(1); };
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (sending) return;
+    if (step === 1 && checkStep(1)) setStep(2);
+    else if (step === 2 && checkStep(2)) void enviar();
+  };
+
+  const reset = () => { setFields(EMPTY); setErrors({}); setTouched({}); setQualif(null); setStep(1); };
 
   const fieldProps = (field: FieldName) => ({
     id: `${id}-${field}`,
@@ -165,8 +190,8 @@ export function LeadFormSection() {
                   </svg>
                   <h3 tabIndex={-1} data-autofocus>{form.successTitle}{firstName ? `, ${firstName}` : ""}.</h3>
                   <p>{form.successDescription}</p>
-                  <p className="lead-demo-note">{form.demoNotice}</p>
-                  <button type="button" className="button button-ghost" onClick={reset}>Preencher de novo</button>
+                  {demo && <QualificacaoCard dados={qualif} />}
+                  {demo && <button type="button" className="button button-ghost" onClick={reset}>Testar outro lead</button>}
                 </motion.div>
               ) : (
                 <motion.form key={`step-${step}`} noValidate onSubmit={submit} {...slide} transition={{ duration: 0.35, ease: EASE }}>
@@ -223,8 +248,8 @@ export function LeadFormSection() {
                         Voltar
                       </button>
                     )}
-                    <button type="submit" className="button button-primary lead-submit">
-                      {step === 1 ? "Continuar" : "Quero meu plano estratégico"}
+                    <button type="submit" className="button button-primary lead-submit" disabled={sending} aria-busy={sending}>
+                      {step === 1 ? "Continuar" : sending ? "Enviando" : "Quero meu plano estratégico"}
                       <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
                     </button>
                   </div>
