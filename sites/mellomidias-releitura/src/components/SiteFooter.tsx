@@ -1,11 +1,11 @@
-import { navigation, site, social } from "@/data/content";
+import { brand, navigation, site, social } from "@/data/content";
 
 export function SiteFooter() {
   return (
     <footer className="site-footer">
       <div className="container footer-grid">
         <div className="footer-brand">
-          <a className="wordmark" href="#hero" aria-label="Mello Mídias, voltar ao início">mello<span>mídias</span><span className="brand-dot" aria-hidden="true">.</span></a>
+          <a className="brand-logo brand-logo-footer" href="#hero"><img src={brand.logo.src} width={brand.logo.width} height={brand.logo.height} alt={brand.logo.alt} loading="lazy" /></a>
           <p>Assessoria de performance comercial para clínicas odontológicas. Tráfego, comercial e dados em um só sistema.</p>
         </div>
         <nav className="footer-nav" aria-label="Seções">

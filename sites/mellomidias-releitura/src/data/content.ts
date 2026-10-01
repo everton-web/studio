@@ -27,13 +27,19 @@ export const stats = [
   { id: "experiencia", value: 4, prefix: "+", suffix: " anos", display: "+4 anos", label: "de mercado odontológico" },
 ] as const;
 
+export const brand = {
+  logo: { src: "/brand/logo-mello-midias.webp", width: 788, height: 172, alt: "Mello Mídias Assessoria" },
+  symbol: { src: "/brand/simbolo-m.webp", width: 256, height: 202 },
+} as const;
+
+// Logos reais (ref/assets 01 a 07). A Essenza foi invertida no arquivo para aparecer no fundo escuro.
 export const partners = [
-  { id: "simone", name: "Simone H.", descriptor: "Cirurgiã dentista" },
-  { id: "odonto-company", name: "OdontoCompany", descriptor: "" },
-  { id: "bem-viver", name: "Bem Viver", descriptor: "Implantes" },
-  { id: "essenza", name: "essenza", descriptor: "" },
-  { id: "oral-sin", name: "Oral Sin", descriptor: "Implantes" },
-  { id: "aline", name: "Aline Schwanck", descriptor: "Cirurgiã dentista" },
+  { id: "simone-h", name: "Dra. Simone H., cirurgiã dentista", width: 376, height: 140 },
+  { id: "odonto-company", name: "OdontoCompany", width: 435, height: 140 },
+  { id: "bem-viver", name: "Bem Viver Implantes", width: 170, height: 140 },
+  { id: "essenza", name: "Essenza Oral Care", width: 440, height: 70 },
+  { id: "oral-sin", name: "Oral Sin Implantes", width: 440, height: 113 },
+  { id: "aline-schwanck", name: "Dra. Aline Schwanck, cirurgiã dentista", width: 275, height: 140 },
 ] as const;
 
 export const manifesto = "Sem diagnóstico, qualquer ação é achismo.";
@@ -52,7 +58,21 @@ export const results = {
   chatTitle: "Comercial da clínica",
   chatSubtitle: "grupo de acompanhamento",
   caption: "Mensagens recriadas a partir dos prints reais de clientes da Mello Mídias.",
+  galleryEyebrow: "Resultados reais",
+  galleryTitle: "Os prints, do jeito que chegaram",
+  galleryHint: "Arraste para o lado. Toque em um print para ampliar.",
 } as const;
+
+// Prints reais (ref/assets feed-1 a feed-7). Números copiados do que está escrito em cada print.
+export const proofs = [
+  { id: "feed-1", highlight: "ROAS 9,7x", detail: "Relatório de abril: R$ 6.298 em mídia, R$ 61.150 convertidos", width: 900, height: 959 },
+  { id: "feed-2", highlight: "ROAS 9,8x", detail: "R$ 12.411 investidos, R$ 122.652 de retorno", width: 900, height: 1045 },
+  { id: "feed-7", highlight: "R$ 350.950 em fevereiro", detail: "555 leads e 28 fechamentos no mês", width: 900, height: 647 },
+  { id: "feed-5", highlight: "13 dias, R$ 97 mil", detail: "R$ 97.765,00 em orçamentos aprovados", width: 900, height: 1227 },
+  { id: "feed-6", highlight: "R$ 38 mil convertidos", detail: "R$ 3.000 em tráfego e 13 fechamentos em abril", width: 900, height: 1054 },
+  { id: "feed-4", highlight: "Orçamento de R$ 25.550", detail: "E a meta de vendas do mês batida", width: 900, height: 891 },
+  { id: "feed-3", highlight: "3 procedimentos em um dia", detail: "Clínica com 2 meses de Mello Mídias", width: 900, height: 1184 },
+] as const;
 
 // Textos dos prints de WhatsApp da referência (desktop-04.png), sem números novos.
 export const chat = [
@@ -72,7 +92,7 @@ export const about = {
   title: "Uma assessoria que pensa no crescimento da sua clínica. Não só nas campanhas.",
   description: "A Mello Mídias foi fundada por Gabriel Mello, especialista em estratégia de tráfego e crescimento comercial, com mais de R$ 10 milhões gerenciados em mídia paga e dezenas de clínicas atendidas em todo o Brasil nos últimos 4 anos.",
   approach: "Nossa diferença está no diagnóstico: antes de rodar qualquer anúncio, entendemos o seu negócio. Tráfego, comercial e dados integrados em um sistema que funciona junto, não em peças separadas.",
-  founder: { name: "Gabriel Mello", role: "Fundador · Mello Mídias", initials: "GM", placeholder: "foto do fundador" },
+  founder: { name: "Gabriel Mello", role: "Fundador · Mello Mídias", photo: "/brand/gabriel-mello.webp", photoSmall: "/brand/gabriel-mello-480.webp", alt: "Gabriel Mello, fundador da Mello Mídias, de braços cruzados em fundo vermelho" },
   differentiators: [
     { id: "assessoria", title: "Assessoria, não agência", text: "Não somos uma agência de tráfego. Somos uma assessoria de performance comercial." },
     { id: "parceria", title: "Resultado como parceiro", text: "Responsabilidade direta pelos resultados. Assumimos o crescimento como parceiros." },

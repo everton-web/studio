@@ -5,7 +5,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
-import { navigation, site } from "@/data/content";
+import { brand, navigation, site } from "@/data/content";
 import { SiteFooter } from "@/components/SiteFooter";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -169,7 +169,7 @@ export function Header() {
       {menuOpen && <div className="menu-backdrop" aria-hidden="true" data-lenis-prevent onClick={() => setMenuOpen(false)} />}
       <header ref={header} className="site-header" data-menu-open={menuOpen}>
         <div className="container header-row">
-          <a className="wordmark" href="#hero" aria-label="Mello Mídias, início" onClick={() => setMenuOpen(false)}>mello<span>mídias</span><span className="brand-dot" aria-hidden="true">.</span></a>
+          <a className="brand-logo" href="#hero" onClick={() => setMenuOpen(false)}><img src={brand.logo.src} width={brand.logo.width} height={brand.logo.height} alt={brand.logo.alt} fetchPriority="high" /></a>
           <nav className="desktop-nav" aria-label="Navegação principal">
             {navigation.map((link) => <a key={link.href} href={link.href}>{link.label}</a>)}
           </nav>

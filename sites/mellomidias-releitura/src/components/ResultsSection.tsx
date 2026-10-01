@@ -5,6 +5,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cases, chat, results, site, stats } from "@/data/content";
+import { ProofGallery } from "@/components/ProofGallery";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -140,6 +141,7 @@ export function ResultsSection() {
           </a>
         </div>
       </div>
+      <ProofGallery />
     </section>
   );
 }

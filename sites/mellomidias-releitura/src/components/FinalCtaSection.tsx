@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { finalCta, site } from "@/data/content";
+import { finalCta, site, brand } from "@/data/content";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -72,7 +72,7 @@ export function FinalCtaSection({ media }: { media: Media }) {
             <div className="final-shade" />
           </div>
           <div className="final-content">
-            <p className="final-wordmark" aria-hidden="true">mello<span>mídias</span><b>.</b></p>
+            <img className="final-symbol" src={brand.symbol.src} width={brand.symbol.width} height={brand.symbol.height} alt="" loading="lazy" />
             <h2 id="cta-final-title">{finalCta.title}</h2>
             <p className="lead">{finalCta.description}</p>
             <a className="button button-light final-cta" href={site.ctaHref}>

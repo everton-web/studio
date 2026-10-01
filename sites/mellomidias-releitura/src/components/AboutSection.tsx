@@ -60,10 +60,9 @@ export function AboutSection() {
 
         <figure className="about-founder">
           <div className="about-portrait">
-            <div className="about-portrait-art" aria-hidden="true">
-              <span className="about-initials">{about.founder.initials}</span>
+            <div className="about-portrait-art">
+              <img src={about.founder.photo} srcSet={`${about.founder.photoSmall} 480w, ${about.founder.photo} 880w`} sizes="(min-width: 1024px) 480px, 92vw" width={880} height={1100} alt={about.founder.alt} loading="lazy" decoding="async" />
             </div>
-            <span className="about-placeholder-note">{about.founder.placeholder}</span>
           </div>
           <figcaption className="about-founder-tag">
             <strong>{about.founder.name}</strong>

@@ -29,9 +29,8 @@ export function PartnersSection() {
       <div id="partners-marquee" className="partners-window">
         <div className="partners-track">
           {[0, 1].map((copy) => <ul key={copy} className="partners-list" aria-hidden={copy === 1 ? true : undefined}>
-            {partners.map((partner) => <li key={partner.id} className={`partner-wordmark partner-wordmark-${partner.id}`}>
-              <span>{partner.name}</span>
-              {partner.descriptor && <span className="partner-descriptor">{partner.descriptor}</span>}
+            {partners.map((partner) => <li key={partner.id} className={`partner-logo partner-logo-${partner.id}`}>
+              <img src={`/brand/parceiros/${partner.id}.webp`} width={partner.width} height={partner.height} alt={copy === 1 ? "" : partner.name} loading="lazy" decoding="async" draggable={false} />
             </li>)}
           </ul>)}
         </div>
