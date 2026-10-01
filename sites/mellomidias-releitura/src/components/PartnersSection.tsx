@@ -12,7 +12,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 export function PartnersSection() {
   const section = useRef<HTMLElement>(null);
   const track = useRef<HTMLDivElement>(null);
-  const [paused, setPaused] = useState(false);
+  const [paused] = useState(false); // sem botão visível: pausa por hover e prefers-reduced-motion
   const pausedRef = useRef(false);
   useEffect(() => { pausedRef.current = paused; }, [paused]);
 
@@ -72,9 +72,6 @@ export function PartnersSection() {
     <section ref={section} id="parceiros" className="partners-section" aria-labelledby="parceiros-title" data-motion-paused={paused}>
       <div className="container partners-heading">
         <div className="partners-title"><p className="eyebrow">Parceiros</p><h2 id="parceiros-title">Clínicas que já cresceram com a Mello Mídias</h2></div>
-        <button className="motion-toggle motion-toggle-icon" type="button" aria-label={paused ? "Retomar faixa de parceiros" : "Pausar faixa de parceiros"} aria-controls="partners-marquee" aria-pressed={paused} onClick={() => setPaused((value) => !value)}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">{paused ? <path d="m8 5 11 7-11 7Z" /> : <path d="M8 5v14M16 5v14" />}</svg>
-        </button>
       </div>
       <div id="partners-marquee" className="partners-window">
         <div ref={track} className="partners-track">

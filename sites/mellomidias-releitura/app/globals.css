@@ -469,7 +469,7 @@ h1, h2, h3, h4 { letter-spacing: -0.02em; }
 .method-section { overflow: clip; }
 .method-card { position: relative; overflow: hidden; }
 .method-card > :not(.method-ghost) { position: relative; }
-.method-ghost { position: absolute; right: var(--space-4); bottom: -0.18em; color: transparent; font-family: var(--font-display); font-size: 6rem; font-weight: 700; line-height: 1; letter-spacing: -0.04em; -webkit-text-stroke: 1px rgb(244 239 239 / 10%); pointer-events: none; }
+.method-ghost { position: absolute; right: var(--space-4); bottom: -0.18em; color: rgb(244 239 239 / 5%); font-family: var(--font-display); font-size: 6rem; font-weight: 700; line-height: 1; letter-spacing: -0.04em; pointer-events: none; }
 .final-card { clip-path: inset(0 round 28px); }
 .final-card::after { content: ""; position: absolute; inset: 0; z-index: 1; border: 1px solid rgb(255 255 255 / 8%); border-radius: inherit; pointer-events: none; }
 .final-cta { width: 100%; padding-inline: var(--space-5, 20px); }
@@ -613,9 +613,9 @@ html.lightbox-open { overflow: hidden; }
 .kinetic-group { display: flex; flex-shrink: 0; }
 .kinetic-word { display: inline-flex; align-items: center; padding-right: 0.28em; color: var(--ink); font-family: var(--font-display); font-size: clamp(3.25rem, 12.5vw, 11.5rem); font-weight: 700; line-height: 1.02; letter-spacing: -0.04em; white-space: nowrap; }
 .kinetic-word i { margin-left: 0.28em; color: var(--accent); font-style: normal; }
-.kinetic-word-ghost { color: transparent; -webkit-text-stroke: 1.5px rgb(244 239 239 / 42%); }
-.kinetic-row-outline .kinetic-word { color: transparent; -webkit-text-stroke: 1.5px rgb(255 97 105 / 80%); }
-.kinetic-row-outline .kinetic-word-ghost { color: var(--accent); -webkit-text-stroke: 0; }
+.kinetic-word-ghost { color: rgb(244 239 239 / 16%); }
+.kinetic-row-outline .kinetic-word { color: rgb(225 20 30 / 30%); }
+.kinetic-row-outline .kinetic-word-ghost { color: var(--accent); }
 .kinetic-row-outline .kinetic-word i { color: var(--ink); -webkit-text-stroke: 0; }
 
 /* Resultados: palco 3D para o tilt do celular. */
@@ -634,7 +634,7 @@ html.lightbox-open { overflow: hidden; }
 .about-glow { width: 100%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgb(225 20 30 / 50%), rgb(122 10 16 / 22%) 42%, transparent 68%); animation: about-breathe 7s ease-in-out infinite alternate; }
 @keyframes about-breathe { from { transform: scale(0.88); opacity: 0.55; } to { transform: scale(1.08); opacity: 1; } }
 .about-name { position: absolute; z-index: 1; top: 14%; left: 0; right: 0; overflow: hidden; pointer-events: none; }
-.about-name span { display: block; color: transparent; font-family: var(--font-display); font-size: clamp(5rem, 26vw, 15rem); font-weight: 800; line-height: 0.9; letter-spacing: -0.03em; text-transform: uppercase; white-space: nowrap; -webkit-text-stroke: 1.5px rgb(225 20 30 / 55%); }
+.about-name span { display: block; font-family: var(--font-display); font-size: clamp(5rem, 26vw, 15rem); font-weight: 800; line-height: 0.9; letter-spacing: -0.03em; text-transform: uppercase; white-space: nowrap; color: rgb(225 20 30 / 16%); }
 /* lighten: o fundo escuro da foto deixa o nome aparecer; rosto e camisa ficam na frente dele. */
 .about-photo { position: relative; z-index: 2; mix-blend-mode: lighten; }
 .about-photo img { width: 100%; height: auto; aspect-ratio: 880 / 1100; object-fit: cover; object-position: 50% 0%; -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 7%, #000 70%, transparent 98%), linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%); mask-image: linear-gradient(180deg, transparent 0%, #000 7%, #000 70%, transparent 98%), linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%); -webkit-mask-composite: source-in; mask-composite: intersect; }

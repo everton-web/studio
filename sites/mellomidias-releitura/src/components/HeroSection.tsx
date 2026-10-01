@@ -16,7 +16,7 @@ export function HeroSection({ media }: { media: HeroMedia }) {
   const button = useRef<HTMLAnchorElement>(null);
   const video = useRef<HTMLVideoElement>(null);
   const failedSources = useRef(new Set<string>());
-  const [paused, setPaused] = useState(false);
+  const [paused] = useState(false); // sem botão visível: pausa por hover e prefers-reduced-motion
   const [mediaFailed, setMediaFailed] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
   const hasVideo = (media.webm || media.mp4) && !mediaFailed;
@@ -204,11 +204,7 @@ export function HeroSection({ media }: { media: HeroMedia }) {
           </div>)}
         </dl>
       </div>
-      <button className="motion-toggle motion-toggle-icon hero-motion-toggle" type="button" aria-label={paused ? "Retomar animação de fundo" : "Pausar animação de fundo"} aria-controls="hero-motion hero-badge" aria-pressed={paused} onClick={() => setPaused((value) => !value)}><MotionIcon paused={paused} /></button>
     </section>
   );
 }
 
-function MotionIcon({ paused }: { paused: boolean }) {
-  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">{paused ? <path d="m8 5 11 7-11 7Z" /> : <path d="M8 5v14M16 5v14" />}</svg>;
-}
