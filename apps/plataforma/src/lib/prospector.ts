@@ -250,8 +250,12 @@ async function fonteKimi(nicho: string, lugar: string, ficha: string, limite: nu
     `Priorize consultórios, clínicas de bairro, escritórios, lojas, restaurantes, pousadas e similares independentes. ` +
     `EXCLUA: redes, franquias, grandes marcas, portais, agregadores, marketplaces, páginas de rede social, ifood/agenda. ` +
     `Responda APENAS com um JSON array válido e nada mais, no formato: [{"nome":"Nome da Empresa","site":"https://dominio.br"}]`;
-  const saida = await runIa("leitura", prompt, 60000);
-  const arr = extrairJsonArray(saida);
+  // 30/09: OpenCode Go (Kimi) sem crédito. Ordem: Gemini (API, rápido) → Codex (assinatura) → Kimi.
+  let arr: { nome?: string; site?: string }[] = [];
+  for (const [motor, ms] of [["gemini", 60000], ["codex", 150000], ["leitura", 60000]] as const) {
+    arr = extrairJsonArray(await runIa(motor, prompt, ms));
+    if (arr.length) break;
+  }
   const out: Candidato[] = [];
   const vistos = new Set<string>();
   for (const it of arr) {
@@ -404,7 +408,7 @@ export async function prospectar(op: { nicho?: string; cidade?: string; regiao?:
 
   if (!candidatos.length) {
     res.aviso = `Nenhuma fonte retornou candidatos de "${nicho}" em ${label}. ` +
-      (temChave ? "As fontes falharam: confira a chave Google Places e a rede." : "Sem GOOGLE_PLACES_KEY, usei Kimi + OSM: verifique se o IA Router está no ar (node _scripts/ia.mjs --check).");
+      (temChave ? "As fontes falharam: confira a chave Google Places e a rede." : "Sem GOOGLE_PLACES_KEY, usei IA (Gemini, Codex) + OSM: rode node _scripts/ia.mjs --check para ver quais motores estão vivos.");
     res.tempo = Math.round((Date.now() - t0) / 1000);
     progressoAtual.ativo = false;
     progressoAtual.fase = "";

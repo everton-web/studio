@@ -136,7 +136,45 @@ async function anthropic(task, _dir, timeoutSec, modelo) {
   return j.content?.[0]?.text?.trim() || "(vazio)";
 }
 
+// Gemini via API (GEMINI_API_KEY). Free tier: sem google_search (dá 429), então o
+// resultado é sem busca; quem consome valida o que vier (ex.: prospector checa o site por HTTP).
+const GEMINI_MODELOS = ["gemini-3.5-flash-lite", "gemini-3.8-flash", "gemini-3.5-flash"];
+async function gemini(task, _dir, timeoutSec, modelo) {
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) throw new Error("GEMINI_API_KEY não definido");
+  let ultimo = "";
+  for (const m of modelo ? [modelo] : GEMINI_MODELOS) {
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+      body: JSON.stringify({ contents: [{ parts: [{ text: task }] }] }),
+      signal: AbortSignal.timeout(timeoutSec * 1000),
+    }).catch((e) => ({ ok: false, status: 0, json: async () => ({ error: { message: e.message } }) }));
+    const j = await r.json().catch(() => ({}));
+    if (r.ok) return (j.candidates?.[0]?.content?.parts || []).map((p) => p.text || "").join("").trim() || "(vazio)";
+    ultimo = `${m}: ${j?.error?.message?.slice(0, 120) || "HTTP " + r.status}`;
+    if (![429, 503, 404].includes(r.status)) break; // erro de verdade: não adianta outro modelo
+  }
+  throw new Error(`gemini falhou (${ultimo})`);
+}
+
+// Codex (assinatura ChatGPT) em sandbox só-leitura, prompt por stdin.
+const CODEX_CLI = process.env.CODEX_CLI || "C:/Program Files/WindowsApps/OpenAI.Codex_26.924.2738.0_x64__2p2nqsd0c76g0/app/resources/codex.exe";
+function codex(task, dir, timeoutSec, modelo) {
+  return new Promise((res, rej) => {
+    const c = spawn(CODEX_CLI, ["exec", "-s", "read-only", "--skip-git-repo-check", "--ephemeral", "-C", dir, "-m", modelo || "gpt-5.5", "-"], { windowsHide: true, shell: false });
+    let out = "", err = "";
+    const t = setTimeout(() => { c.kill(); rej(new Error(`codex timeout ${timeoutSec}s`)); }, timeoutSec * 1000);
+    c.stdout.on("data", (d) => (out += d)); c.stderr.on("data", (d) => (err += d));
+    c.on("error", (e) => { clearTimeout(t); rej(e); });
+    c.on("close", (code) => { clearTimeout(t); code === 0 ? res(out.trim()) : rej(new Error(err.slice(-300) || `codex exit ${code}`)); });
+    c.stdin.end(task);
+  });
+}
+
 const MOTORES = {
+  gemini:     { desc: "Gemini API (rápido, sem busca no free tier)", fn: gemini },
+  codex:      { desc: "Codex (assinatura ChatGPT), só leitura", fn: codex },
   bulk:       { desc: "DeepSeek v4 flash (mecânico)", fn: viaOpencode("opencode-go/deepseek-v4-flash") },
   "bulk-pro": { desc: "DeepSeek v4 pro (mecânico+)",  fn: viaOpencode("opencode-go/deepseek-v4-pro") },
   leitura:    { desc: "Kimi K3 (contexto gigante)",   fn: viaOpencode("opencode-go/kimi-k3") },
@@ -183,7 +221,7 @@ async function registrar(linha) {
 const FALHA_AUTH = /failed to authenticate|oauth session expired|not logged in|invalid api key|credit balance/i;
 
 async function health() {
-  const alvos = ["bulk", "leitura", "claude", "bulk-pro", "raciocinio"];
+  const alvos = ["gemini", "codex", "claude", "bulk", "leitura"];
   console.log("Health-check dos motores:\n");
   const res = await Promise.all(alvos.map(async (nome) => {
     const t0 = Date.now();
@@ -191,7 +229,7 @@ async function health() {
       const out = String(await MOTORES[nome].fn("Responda apenas com a palavra: VIVO", ROOT, 90, null)).trim();
       if (FALHA_AUTH.test(out)) return { nome, ok: false, ms: Date.now() - t0, nota: "AUTENTICAÇÃO — precisa relogar" };
       // claude: basta responder algo; os motores de API devem ecoar a senha
-      const ok = nome === "claude" ? out.length > 0 : /VIVO/i.test(out);
+      const ok = nome === "claude" || nome === "codex" ? out.length > 0 : /VIVO/i.test(out);
       return { nome, ok, ms: Date.now() - t0, nota: ok ? "" : `resposta inesperada: ${out.slice(0, 60)}` };
     } catch (e) {
       const auth = FALHA_AUTH.test(e.message);
