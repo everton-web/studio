@@ -5,11 +5,16 @@
 //                          site é VALIDADO com HTTP antes de virar candidato — barra alucinação)
 //   3. Overpass/OSM       (fallback sem chave — só funciona se algum mirror global estiver no ar)
 //   4. Cache da última leva boa (24h)
-// Fluxo: buscar → filtrar (tem site) → auditar site → criar ficha no pipeline (estágio 0).
+// Fluxo: buscar → diagnosticar o site → classificar em uma das 3 frentes → criar ficha (estágio 0).
+// Frentes (pedido do Everton, 02/10):
+//   sem-gmn        Perfil no Google não configurado: sem site ou com o perfil incompleto (só com Places).
+//   site-quebrado  Tem perfil/negócio real, mas o site está fora do ar, com erro ou estacionado.
+//   site-ruim      Site funcionando, porém mal construído (a auditoria de sempre).
 
 import { readdir, mkdir, writeFile, readFile } from "node:fs/promises";
 import { join, dirname } from "node:path";
 import { spawn } from "node:child_process";
+import { lookup, resolveNs } from "node:dns/promises";
 import { pipelineOp, gravarAnaliseNaFicha } from "./vault";
 import { analisarLead, salvarAnalise, resumoMd } from "./analise";
 
@@ -56,6 +61,16 @@ export type Candidato = {
   avaliacoes?: number;
   endereco?: string;
   segmento?: string;
+  gmn?: boolean; // veio do Google Places: o perfil no Google existe de fato
+  perfilFaltas?: string[]; // o que falta no perfil do Google (sem site, sem horário...)
+};
+
+export type Frente = "sem-gmn" | "site-quebrado" | "site-ruim";
+export const FRENTES: Frente[] = ["sem-gmn", "site-quebrado", "site-ruim"];
+export const FRENTE_LABEL: Record<Frente, string> = {
+  "sem-gmn": "Google Meu Negócio não configurado",
+  "site-quebrado": "Google Meu Negócio com site quebrado",
+  "site-ruim": "Google Meu Negócio com site mal construído",
 };
 
 export type Resultado = {
@@ -69,6 +84,7 @@ export type Resultado = {
   tempo: number;
   regiao: string;
   cidades: string[];
+  porFrente: Record<Frente, number>;
 };
 
 export const progressoAtual = {
@@ -113,6 +129,65 @@ async function siteExiste(url: string): Promise<boolean> {
     return res.status >= 200 && res.status < 400;
   } catch { return false; }
   finally { clearTimeout(t); }
+}
+
+// "aponta": o endereço resolve para um servidor. "registrado": o domínio existe (tem NS), mas
+// pode não apontar para nada, como um domínio estacionado. Domínio sem NS costuma ser invenção da IA.
+async function estadoDominio(url: string): Promise<"aponta" | "registrado" | "inexistente"> {
+  const host = hostnameDe(url);
+  if (!host) return "inexistente";
+  try { await lookup(host); return "aponta"; } catch { /* segue */ }
+  // Consulta o NS do domínio registrável (nunca do sufixo, como "com.br", que sempre tem NS).
+  const partes = host.split(".");
+  const sufixoDuplo = /^(com|net|org|edu|gov|art|adv|eng|med|odo|blog|eco|ind|inf|tur|psi|vet|arq|co|ac)\.[a-z]{2}$/.test(partes.slice(-2).join("."));
+  const registravel = partes.slice(-(sufixoDuplo ? 3 : 2)).join(".");
+  if (registravel.split(".").length < (sufixoDuplo ? 3 : 2)) return "inexistente";
+  try { if ((await resolveNs(registravel)).length) return "registrado"; } catch { /* sem NS */ }
+  return "inexistente";
+}
+
+async function dominioExiste(url: string): Promise<boolean> {
+  return (await estadoDominio(url)) !== "inexistente";
+}
+
+// Sinais de site quebrado mesmo respondendo 200: estacionado, suspenso, expirado, erro de banco...
+const SINAIS_QUEBRADO: [RegExp, string][] = [
+  [/account (has been )?suspended|conta suspensa/i, "hospedagem suspensa"],
+  [/domain (is )?(for sale|expired|parked)|este dom[ií]nio (est[aá] )?(à|a) venda|parked domain|domain parking|dom[ií]nio expirado/i, "domínio estacionado ou expirado"],
+  [/error establishing a database connection|erro ao estabelecer (uma )?conex[aã]o com o banco/i, "erro de banco de dados (WordPress)"],
+  [/<title>\s*index of \//i, "listagem de pasta (site não publicado)"],
+  [/site em constru[cç][aã]o|under construction|coming soon|em manuten[cç][aã]o|maintenance mode/i, "site em construção ou manutenção"],
+  [/welcome to nginx|apache2 (ubuntu|debian) default page|<h1>it works!<\/h1>/i, "página padrão do servidor"],
+  [/<b>(fatal error|parse error|warning)<\/b>|uncaught exception/i, "erro de programação visível"],
+];
+
+export type DiagnosticoSite = { estado: "ok" | "quebrado" | "offline" | "inexistente"; motivo: string };
+
+export async function diagnosticarSite(url: string): Promise<DiagnosticoSite> {
+  const u = url.startsWith("http") ? url : `https://${url}`;
+  const dns = await estadoDominio(u);
+  if (dns === "inexistente") return { estado: "inexistente", motivo: "domínio não existe no DNS" };
+  if (dns === "registrado") return { estado: "quebrado", motivo: "domínio registrado, mas sem site apontado" };
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 9000);
+  try {
+    const res = await fetch(u, { signal: ctrl.signal, redirect: "follow", headers: { "User-Agent": UA, "Accept-Language": "pt-BR,pt;q=0.9" } });
+    if (res.status >= 500) return { estado: "quebrado", motivo: `erro do servidor (HTTP ${res.status})` };
+    if (res.status === 404 || res.status === 410) return { estado: "quebrado", motivo: `página inicial não encontrada (HTTP ${res.status})` };
+    if (res.status === 403 || res.status === 401) return { estado: "quebrado", motivo: `acesso bloqueado (HTTP ${res.status})` };
+    if (res.status >= 400) return { estado: "quebrado", motivo: `erro HTTP ${res.status}` };
+    const html = await res.text();
+    for (const [re, motivo] of SINAIS_QUEBRADO) if (re.test(html)) return { estado: "quebrado", motivo };
+    const texto = html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    if (texto.length < 120 && !/<script/i.test(html)) return { estado: "quebrado", motivo: "página praticamente vazia" };
+    return { estado: "ok", motivo: "" };
+  } catch (e: any) {
+    if (e?.name === "AbortError" || ctrl.signal.aborted) return { estado: "offline", motivo: "site não respondeu (tempo esgotado)" };
+    const m = String(e?.cause?.code || e?.code || e?.message || "");
+    if (/CERT|SSL|TLS|SELF_SIGNED|UNABLE_TO_VERIFY/i.test(m)) return { estado: "quebrado", motivo: "certificado de segurança inválido" };
+    if (/ECONNREFUSED/i.test(m)) return { estado: "offline", motivo: "servidor recusou a conexão" };
+    return { estado: "offline", motivo: `site fora do ar (${m.slice(0, 40) || "sem resposta"})` };
+  } finally { clearTimeout(t); }
 }
 
 async function jaExiste(nome: string): Promise<boolean> {
@@ -189,10 +264,19 @@ async function fontePlaces(nicho: string, cidade: string, limite: number): Promi
   const out: Candidato[] = [];
   for (const { place_id } of ids) {
     try {
-      const r = await fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${place_id}&fields=name,rating,user_ratings_total,website,formatted_phone_number,formatted_address&language=pt-BR&key=${PLACES_KEY}`);
-      const d = await r.json() as { result?: { name?: string; rating?: number; user_ratings_total?: number; website?: string; formatted_phone_number?: string; formatted_address?: string } };
+      const r = await fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${place_id}&fields=name,rating,user_ratings_total,website,formatted_phone_number,formatted_address,opening_hours,photos,business_status&language=pt-BR&key=${PLACES_KEY}`);
+      const d = await r.json() as { result?: { name?: string; rating?: number; user_ratings_total?: number; website?: string; formatted_phone_number?: string; formatted_address?: string; opening_hours?: unknown; photos?: unknown[]; business_status?: string } };
       const res = d.result || {};
+      if (res.business_status && res.business_status !== "OPERATIONAL") continue; // fechado: não é lead
+      const faltas: string[] = [];
+      if (!res.website) faltas.push("sem site no perfil");
+      if (!res.opening_hours) faltas.push("sem horário de funcionamento");
+      if (!res.formatted_phone_number) faltas.push("sem telefone");
+      if ((res.photos?.length || 0) < 5) faltas.push("poucas fotos");
+      if ((res.user_ratings_total || 0) < 10) faltas.push("poucas avaliações");
       out.push({
+        gmn: true,
+        perfilFaltas: faltas,
         nome: res.name || "",
         site: res.website || "",
         telefone: res.formatted_phone_number || "",
@@ -203,7 +287,7 @@ async function fontePlaces(nicho: string, cidade: string, limite: number): Promi
       await sleep(120);
     } catch { /* segue */ }
   }
-  return out.filter((c) => c.nome && c.site);
+  return out.filter((c) => c.nome); // sem site também entra: é a frente "sem-gmn"
 }
 
 // ---------- fonte 2: Kimi-discovery (IA Router) ----------
@@ -263,7 +347,9 @@ async function fonteKimi(nicho: string, lugar: string, ficha: string, limite: nu
     const site = it.site.trim().startsWith("http") ? it.site.trim() : `https://${it.site.trim()}`;
     const chave = `${it.nome.trim()}|${site}`.toLowerCase();
     if (vistos.has(chave)) continue; vistos.add(chave);
-    if (!(await siteExiste(site))) continue; // domínio fantasma → fora
+    // Domínio que nem existe no DNS costuma ser invenção da IA: fora. Domínio real com site
+    // fora do ar fica (é a frente "site-quebrado"); o diagnóstico decide depois.
+    if (!(await dominioExiste(site))) continue;
     out.push({ nome: it.nome.trim(), site, cidade: ficha, segmento: nicho });
     if (out.length >= limite) break;
   }
@@ -350,7 +436,9 @@ export async function auditarSite(url: string): Promise<{ ok: boolean; problemas
 }
 
 // ---------- orquestrador ----------
-export async function prospectar(op: { nicho?: string; cidade?: string; regiao?: string; limite?: number } = {}): Promise<Resultado> {
+export async function prospectar(op: { nicho?: string; cidade?: string; regiao?: string; limite?: number; frentes?: string[] } = {}): Promise<Resultado> {
+  const frentes = new Set<Frente>((op.frentes || FRENTES).filter((x): x is Frente => (FRENTES as string[]).includes(x)));
+  if (!frentes.size) FRENTES.forEach((x) => frentes.add(x));
   const t0 = Date.now();
   const nicho = (op.nicho || "odontologia").toLowerCase();
   const limite = Math.min(30, Math.max(1, op.limite || 8));
@@ -367,7 +455,7 @@ export async function prospectar(op: { nicho?: string; cidade?: string; regiao?:
   progressoAtual.nicho = nicho;
   progressoAtual.regiao = label;
 
-  const res: Resultado = { fonte: "", auditados: 0, adicionados: [], descartados: [], erros: [], candidatos: 0, aviso: "", tempo: 0, regiao: label, cidades: alvos.map((a) => a.ficha) };
+  const res: Resultado = { fonte: "", auditados: 0, adicionados: [], descartados: [], erros: [], candidatos: 0, aviso: "", tempo: 0, regiao: label, cidades: alvos.map((a) => a.ficha), porFrente: { "sem-gmn": 0, "site-quebrado": 0, "site-ruim": 0 } };
 
   let candidatos: Candidato[] = [];
   let usouCache = false;
@@ -431,9 +519,48 @@ export async function prospectar(op: { nicho?: string; cidade?: string; regiao?:
         const host = hostnameDe(c.site);
         if (host && dominios.has(host)) { res.descartados.push({ nome: c.nome, motivo: "domínio já está no pipeline" }); return; }
 
-        const aud = await auditarSite(c.site);
+        const fonteTxt = `Fonte da ficha: ${res.fonte}${c.nota ? ` · nota Google ${c.nota}` : ""}${c.avaliacoes ? ` · ${c.avaliacoes} avaliações` : ""}.`;
+        const addFicha = async (frente: Frente, porque: string) => {
+          const notaTxt = c.nota && c.nota > 0 ? String(c.nota).replace(".", ",") : "";
+          const novo = await pipelineOp({
+            action: "add", nome: c.nome, segmento: c.segmento || nicho, cidade: c.cidade || "",
+            nota: notaTxt, avaliacoes: c.avaliacoes ? String(c.avaliacoes) : "", site: c.site,
+            contato: c.telefone || "", whatsapp: c.telefone || "", categoria: "maps", frente,
+            porque: `${FRENTE_LABEL[frente]}. ${porque} ${fonteTxt}`,
+          });
+          res.adicionados.push(c.nome);
+          res.porFrente[frente]++;
+          return novo;
+        };
+
+        // Frente 1: perfil do Google sem site
+        if (!c.site) {
+          if (!c.gmn || !frentes.has("sem-gmn")) { res.descartados.push({ nome: c.nome, motivo: "sem site (frente não selecionada)" }); return; }
+          await addFicha("sem-gmn", `Perfil no Google sem site. Falta: ${(c.perfilFaltas || []).join(", ") || "site"}.`);
+          return;
+        }
+
+        // Frente 2: site quebrado ou fora do ar
+        const diag = await diagnosticarSite(c.site);
         res.auditados++;
-        if (!aud.ok) { res.descartados.push({ nome: c.nome, motivo: "site inacessível" }); return; }
+        if (diag.estado === "inexistente") { res.descartados.push({ nome: c.nome, motivo: diag.motivo }); return; }
+        if (diag.estado !== "ok") {
+          if (!frentes.has("site-quebrado")) { res.descartados.push({ nome: c.nome, motivo: `${diag.motivo} (frente não selecionada)` }); return; }
+          const gmnTxt = c.gmn ? "Perfil no Google ativo." : "Perfil no Google a confirmar (veio da busca por IA).";
+          await addFicha("site-quebrado", `${gmnTxt} Site: ${diag.motivo}.`);
+          return;
+        }
+
+        // Perfil do Google muito incompleto, mesmo com o site no ar, também é a frente 1
+        if (c.gmn && (c.perfilFaltas?.length || 0) >= 3 && frentes.has("sem-gmn")) {
+          await addFicha("sem-gmn", `Perfil no Google incompleto: ${(c.perfilFaltas || []).join(", ")}. O site responde.`);
+          return;
+        }
+
+        // Frente 3: site no ar, mas mal construído
+        if (!frentes.has("site-ruim")) { res.descartados.push({ nome: c.nome, motivo: "site no ar (frente não selecionada)" }); return; }
+        const aud = await auditarSite(c.site);
+        if (!aud.ok) { res.descartados.push({ nome: c.nome, motivo: "site inacessível na auditoria" }); return; }
 
         const a = await analisarLead({
           id: slugNome(c.nome),
@@ -454,22 +581,7 @@ export async function prospectar(op: { nicho?: string; cidade?: string; regiao?:
           return;
         }
 
-        const notaTxt = c.nota && c.nota > 0 ? String(c.nota).replace(".", ",") : "";
-        const porque = `Presença ${a.pontuacao}/100. Auditoria: ${aud.problemas.join("; ") || "site ok"}. Fonte da ficha: ${res.fonte}${c.nota ? ` · nota Google ${c.nota}` : ""}${c.avaliacoes ? ` · ${c.avaliacoes} avaliações` : ""}.`;
-        const novo = await pipelineOp({
-          action: "add",
-          nome: c.nome,
-          segmento: c.segmento || nicho,
-          cidade: c.cidade || "",
-          nota: notaTxt,
-          avaliacoes: c.avaliacoes ? String(c.avaliacoes) : "",
-          site: c.site,
-          contato: c.telefone || "",
-          whatsapp: c.telefone || "",
-          categoria: "maps",
-          porque,
-        });
-        res.adicionados.push(c.nome);
+        const novo = await addFicha("site-ruim", `Presença ${a.pontuacao}/100. Auditoria: ${aud.problemas.join("; ") || "site ok"}.`);
         // reusa a análise já calculada em vez de rodar de novo
         if (novo && "id" in novo && novo.id) {
           try {

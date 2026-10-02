@@ -144,6 +144,7 @@ async function listLeads() {
       whatsapp: fm.whatsapp || "",
       email: fm.email || "",
       categoria: fm.categoria || fm.fonte || "maps",
+      frente: fm.frente || "",
       estagio: Math.min(5, Math.max(0, Number(fm.estagio) || 0)),
       status: fm.status || "ativo",
       solucao: fm.solucao || "",
@@ -186,7 +187,7 @@ export async function pipelineOp(op: {
   action: string; id?: string; nome?: string; segmento?: string; cidade?: string;
   nota?: string; avaliacoes?: string; site?: string; contato?: string; whatsapp?: string;
   email?: string; categoria?: string; porque?: string; solucao?: string; mensagem?: string;
-  estagio?: number; motivo?: string; desfecho?: string;
+  estagio?: number; motivo?: string; desfecho?: string; frente?: string;
 }) {
   const dir = join(VAULT, "40 Comercial", "Leads");
   if (op.action === "add") {
@@ -196,7 +197,7 @@ export async function pipelineOp(op: {
       lead: op.nome || "", segmento: op.segmento || "", cidade: op.cidade || "",
       "nota-google": op.nota || "", avaliacoes: op.avaliacoes || "",
       "site-atual": op.site || "", contato: op.contato || "", whatsapp: op.whatsapp || "",
-      email: op.email || "", categoria: op.categoria || "maps",
+      email: op.email || "", categoria: op.categoria || "maps", frente: op.frente || "",
       estagio: "0", status: "ativo", solucao: "", "motivo-arquivo": "",
       porque: (op.porque || "").replace(/\r?\n/g, " "), criado: now,
       "contatado-em": "", "respondeu-em": "", desfecho: "", "desfecho-em": "",

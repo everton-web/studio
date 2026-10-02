@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   let body: Record<string, any> = {};
   try { body = await req.json(); } catch { /* vazio */ }
   try {
-    const res = await prospectar({ nicho: body.nicho, cidade: body.cidade, regiao: body.regiao, limite: body.limite });
+    const res = await prospectar({ nicho: body.nicho, cidade: body.cidade, regiao: body.regiao, limite: body.limite, frentes: Array.isArray(body.frentes) ? body.frentes : undefined });
     return NextResponse.json({ ok: true, resumo: res });
   } catch (e: any) {
     return NextResponse.json({ ok: false, error: e?.message || "erro ao prospectar" }, { status: 500 });

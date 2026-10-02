@@ -20,6 +20,7 @@ export type Lead = {
   whatsapp: string;
   email: string;
   categoria: string;
+  frente?: string; // sem-gmn | site-quebrado | site-ruim (prospecção automática)
   estagio: number;
   status: string;
   solucao: string;
@@ -37,6 +38,14 @@ export type Lead = {
   desfechoEm: string;
   cliente?: boolean; // já virou cliente no banco: sai do funil e vive em Clientes
 };
+
+// As 3 frentes da prospecção (02/10). Cor por frente para bater o olho no funil.
+const FRENTES = [
+  { id: "sem-gmn", curto: "Sem Google", longo: "Google Meu Negócio não configurado", cor: "#d9a03a" },
+  { id: "site-quebrado", curto: "Site quebrado", longo: "Google Meu Negócio com site quebrado", cor: "#fb7185" },
+  { id: "site-ruim", curto: "Site ruim", longo: "Google Meu Negócio com site mal construído", cor: "#7aa2ff" },
+] as const;
+const frenteDe = (id?: string) => FRENTES.find((x) => x.id === id);
 
 const ESTAGIOS = [
   { nome: "Prospecção", cor: "#54b8f0", qui: "diário 18h a 19h · caio" },
@@ -162,6 +171,15 @@ function LeadCard({ lead, onEdit, onMove, onAbordar, onValidar, onApagar, onOpen
             {lead.segmento || "segmento"}{lead.cidade ? ` · ${lead.cidade}` : ""}
             {avalLbl(lead.avaliacoes) ? ` · ${avalLbl(lead.avaliacoes)} aval.` : ""}
           </div>
+          {frenteDe(lead.frente) && (
+            <span
+              title={frenteDe(lead.frente)!.longo}
+              className="mono inline-block mt-1.5 px-2 py-0.5 rounded-md border"
+              style={{ fontSize: "0.64rem", color: frenteDe(lead.frente)!.cor, borderColor: frenteDe(lead.frente)!.cor + "55", background: frenteDe(lead.frente)!.cor + "14" }}
+            >
+              {frenteDe(lead.frente)!.curto}
+            </span>
+          )}
         </div>
         <span
           className="shrink-0 nums rounded-md px-2 py-1 tabular-nums"
@@ -306,10 +324,23 @@ export function Pipeline({ leads, refresh, onIrClientes }: { leads: Lead[]; refr
   const [busy, setBusy] = useState(false);
   const [nicho, setNicho] = useState("odontologia");
   const [regiao, setRegiao] = useState("brasil");
+  const [frentesSel, setFrentesSel] = useState<string[]>(FRENTES.map((x) => x.id));
+  useEffect(() => {
+    try {
+      const salvo = JSON.parse(localStorage.getItem("prospeccao.frentes") || "null");
+      if (Array.isArray(salvo) && salvo.length) setFrentesSel(salvo);
+    } catch {}
+  }, []);
+  const alternarFrente = (id: string) => setFrentesSel((atual) => {
+    const prox = atual.includes(id) ? atual.filter((x) => x !== id) : [...atual, id];
+    const final = prox.length ? prox : atual; // pelo menos uma frente
+    try { localStorage.setItem("prospeccao.frentes", JSON.stringify(final)); } catch {}
+    return final;
+  });
   const [cidadeCustom, setCidadeCustom] = useState("");
   const [prospectBusy, setProspectBusy] = useState(false);
   const [prog, setProg] = useState("");
-  const [prospectRes, setProspectRes] = useState<{ adicionados: string[]; descartados: { nome: string; motivo: string }[]; erros: { nome: string; motivo: string }[]; fonte: string; auditados: number; candidatos: number; aviso: string; tempo: number; regiao: string; cidades: string[] } | null>(null);
+  const [prospectRes, setProspectRes] = useState<{ adicionados: string[]; descartados: { nome: string; motivo: string }[]; erros: { nome: string; motivo: string }[]; fonte: string; auditados: number; candidatos: number; aviso: string; tempo: number; regiao: string; cidades: string[]; porFrente?: Record<string, number> } | null>(null);
   const [dragging, setDragging] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState<number | null>(null);
   const [fonteInfo, setFonteInfo] = useState<{ google_places: boolean; fonte_ativa: string; ia_router: boolean; obs: string } | null>(null);
@@ -554,7 +585,7 @@ export function Pipeline({ leads, refresh, onIrClientes }: { leads: Lead[]; refr
       const r = await fetch("/api/prospector", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nicho: n, regiao: regiaoEnviar, limite: 8 }),
+        body: JSON.stringify({ nicho: n, regiao: regiaoEnviar, limite: 8, frentes: frentesSel }),
       });
       const j = await r.json();
       if (!j.ok) { alert(j.error || "erro na prospecção"); return; }
@@ -666,6 +697,26 @@ export function Pipeline({ leads, refresh, onIrClientes }: { leads: Lead[]; refr
               className="h-[52px] px-3 rounded-[14px] bg-[var(--bg-2)] border border-[var(--line)] text-[.84rem] text-[#e8e8e6] outline-none focus:border-[#7aa2ff]/60 transition-colors placeholder:text-[#5d5d58]"
             />
           )}
+          <div role="group" aria-label="Frentes da prospecção" className="flex flex-wrap items-center gap-1.5">
+            {FRENTES.map((fr) => {
+              const on = frentesSel.includes(fr.id);
+              return (
+                <button
+                  key={fr.id}
+                  type="button"
+                  aria-pressed={on}
+                  title={fr.longo}
+                  onClick={() => alternarFrente(fr.id)}
+                  className="h-[52px] px-3 rounded-[14px] border text-[.78rem] transition-colors"
+                  style={on
+                    ? { color: fr.cor, borderColor: fr.cor + "66", background: fr.cor + "18" }
+                    : { color: "#6d6d68", borderColor: "rgba(255,255,255,.08)", background: "transparent" }}
+                >
+                  {on ? "✓ " : ""}{fr.curto}
+                </button>
+              );
+            })}
+          </div>
           <div className="flex items-center gap-2 min-w-0">
             <button
               onClick={() => rodarProspeccao()}
@@ -710,6 +761,15 @@ export function Pipeline({ leads, refresh, onIrClientes }: { leads: Lead[]; refr
             <b className="text-[#b8b8b3]"> {prospectRes.candidatos}</b> candidato(s) da fonte
             {prospectRes.tempo ? <> · <span className="text-[#8a8a85]">{prospectRes.tempo}s</span></> : null}
           </div>
+          {prospectRes.porFrente && (
+            <div className="flex flex-wrap gap-2 mb-3">
+              {FRENTES.map((fr) => (
+                <span key={fr.id} className="mono px-2.5 py-1.5 rounded-lg border" style={{ fontSize: "0.7rem", color: fr.cor, borderColor: fr.cor + "40", background: fr.cor + "10" }}>
+                  {fr.curto} · {prospectRes.porFrente?.[fr.id] ?? 0}
+                </span>
+              ))}
+            </div>
+          )}
           {prospectRes.aviso && (
             <div className="mb-3 rounded-xl border border-[#d9a03a]/25 bg-[#d9a03a]/6 px-4 py-3 text-[.8rem] text-[#d9a03a]">
               ⚠ {prospectRes.aviso}
