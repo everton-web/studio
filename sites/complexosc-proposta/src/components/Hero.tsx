@@ -22,7 +22,7 @@ export function Hero() {
 
       // 1. Revelação por máscara: a foto da equipe abre do centro, com zoom lento assentando.
       intro.fromTo(q(".hero__midia"), { clipPath: "inset(18% 22% 18% 22% round 28px)" }, { clipPath: "inset(0% 0% 0% 0% round 28px)", duration: 2.2 }, 0.1)
-        .fromTo(q(".hero__midia img"), { scale: 1.28 }, { scale: 1.08, duration: 2.6 }, 0.1)
+        .fromTo(q(".hero__midia img"), { scale: 1.18 }, { scale: 1, duration: 2.6 }, 0.1)
         .fromTo(q(".hero .eyebrow"), { opacity: 0, x: -16 }, { opacity: 1, x: 0, duration: 1.2 }, 0.2)
         .fromTo(q(".hero__lead, .hero__acoes"), { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 1.4, stagger: 0.12 }, 0.9)
 ;
@@ -45,7 +45,6 @@ export function Hero() {
       });
 
       // 3. Scroll: a foto desce mais devagar que a página (parallax) e o texto sobe e esmaece.
-      gsap.to(q(".hero__midia img"), { yPercent: 12, ease: "none", scrollTrigger: { trigger: q(".hero__midia")[0], start: "top 70%", end: "bottom top", scrub: true } });
       gsap.to(q(".hero__midia"), { scale: 0.94, ease: "none", scrollTrigger: { trigger: q(".hero__midia")[0], start: "center center", end: "bottom top", scrub: true } });
       gsap.to(q(".hero__top"), { yPercent: -18, opacity: 0.25, ease: "none", scrollTrigger: { trigger: root.current, start: "top top", end: "45% top", scrub: true } });
 
