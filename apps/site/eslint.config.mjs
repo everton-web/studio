@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Legado estático (fora do app Next): index.html, css/, js/, send-form.php
     "js/**",
+    // Exports estáticos servidos pelo site, não fonte do app.
+    "public/relatorio/**",
   ]),
 ]);
 

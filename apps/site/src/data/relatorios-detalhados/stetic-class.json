@@ -4,6 +4,8 @@
   "cidade": "Fortaleza/CE",
   "site": "https://www.steticclass.com.br/",
   "geradoEm": "2026-10-02",
+  "designSystem": "/relatorio/stetic-class/design-system",
+  "prototipo": "/relatorio/stetic-class/prototipo",
   "resumo": "O Complexo SC tem um conteúdo que muita clínica gostaria de ter: centro cirúrgico próprio, equipe com nome e registro, um método autoral e uma experiência de hotelaria. O site atual não deixa nada disso aparecer. A mensagem é premium, mas a página parece genérica, e a paciente que chega pelo Instagram encontra menos do que o perfil promete.",
   "forte": {
     "titulo": "O conteúdo é muito bom",

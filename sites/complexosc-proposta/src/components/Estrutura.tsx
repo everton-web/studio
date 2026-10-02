@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { publicPath } from "@/lib/public-path";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -11,10 +12,10 @@ type Peca = { img?: string; alt: string; titulo: string; texto: string; classe: 
 
 // vel = deslocamento em % da própria altura ao atravessar a tela: camadas com velocidades diferentes dão profundidade.
 const pecas: Peca[] = [
-  { img: "/img/recepcao.webp", alt: "Recepção do Complexo SC", titulo: "Recepção", texto: "Acolhimento desde o primeiro instante.", classe: "e1", vel: -6 },
-  { img: "/img/beike.webp", alt: "Fachada da Beike, cafeteria e doceria anexa ao Complexo SC", titulo: "Beike", texto: "Cafeteria e doceria anexa, para a espera e a recuperação.", classe: "e2", vel: -22 },
-  { img: "/img/fachada.webp", alt: "Fachada do Complexo SC na Rua Barão de Aracati", titulo: "Espaço SC", texto: "Rua Barão de Aracati, 1304, Aldeota.", classe: "e3", vel: -14 },
-  { img: "/img/apartamento.webp", alt: "Apartamento de recuperação", titulo: "Apartamento", texto: "Recuperação reservada depois da cirurgia.", classe: "e4", vel: -28 },
+  { img: publicPath("/img/recepcao.webp"), alt: "Recepção do Complexo SC", titulo: "Recepção", texto: "Acolhimento desde o primeiro instante.", classe: "e1", vel: -6 },
+  { img: publicPath("/img/beike.webp"), alt: "Fachada da Beike, cafeteria e doceria anexa ao Complexo SC", titulo: "Beike", texto: "Cafeteria e doceria anexa, para a espera e a recuperação.", classe: "e2", vel: -22 },
+  { img: publicPath("/img/fachada.webp"), alt: "Fachada do Complexo SC na Rua Barão de Aracati", titulo: "Espaço SC", texto: "Rua Barão de Aracati, 1304, Aldeota.", classe: "e3", vel: -14 },
+  { img: publicPath("/img/apartamento.webp"), alt: "Apartamento de recuperação", titulo: "Apartamento", texto: "Recuperação reservada depois da cirurgia.", classe: "e4", vel: -28 },
   { alt: "", titulo: "Centro cirúrgico", texto: "Estrutura própria dentro do Complexo.", classe: "e5", vel: -10, pendente: "Foto a produzir na sessão" },
 ];
 
@@ -50,7 +51,7 @@ export function Estrutura() {
           <figure key={p.titulo} className={`estr__peca ${p.classe}`} data-vel={p.vel}>
             <div className={`estr__moldura${p.img ? "" : " estr__moldura--vazia"}`}>
               {p.img ? <img src={p.img} alt={p.alt} loading="lazy" /> : (
-                <div className="estr__vazio"><img src="/img/logo-vinho.webp" alt="" width={48} height={48} /><span className="pend">{p.pendente}</span></div>
+                <div className="estr__vazio"><img src={publicPath("/img/logo-vinho.webp")} alt="" width={48} height={48} /><span className="pend">{p.pendente}</span></div>
               )}
             </div>
             <figcaption><b>{p.titulo}</b><span>{p.texto}</span></figcaption>

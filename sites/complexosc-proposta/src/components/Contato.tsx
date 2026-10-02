@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { avisoEtico, site } from "@/data/content";
 import { Seta, WaIcon } from "@/components/Icones";
+import { publicPath } from "@/lib/public-path";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -27,7 +28,7 @@ export function Contato() {
     <section ref={root} id="contato" className="contato">
       <div className="cta">
         <div className="wrap cta__corpo">
-          <img className="cta__mono" src="/img/logo-champanhe.webp" width={88} height={88} alt="" />
+          <img className="cta__mono" src={publicPath("/img/logo-champanhe.webp")} width={88} height={88} alt="" />
           <h2 data-split>Comece<br /> pela <em>avaliação.</em></h2>
           <p className="cta__lead">Toda indicação começa em uma avaliação individual. Conte o que você deseja e a equipe responde com calma.</p>
           <div className="cta__acoes">
@@ -39,7 +40,7 @@ export function Contato() {
         <footer className="rodape">
           <div className="wrap rodape__grade">
             <div>
-              <a className="marca marca--clara" href="#hero"><img src="/img/logo-marfim.webp" width={34} height={34} alt="" /><span><b>Complexo SC</b><small>Medicina · Estética · Educação</small></span></a>
+              <a className="marca marca--clara" href="#hero"><img src={publicPath("/img/logo-marfim.webp")} width={34} height={34} alt="" /><span><b>Complexo SC</b><small>Medicina · Estética · Educação</small></span></a>
               <p className="rodape__texto">Há 17 anos cuidando das pessoas em Fortaleza.</p>
             </div>
             <div>

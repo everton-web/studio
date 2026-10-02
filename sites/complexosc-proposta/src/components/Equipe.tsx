@@ -5,6 +5,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { equipe } from "@/data/content";
+import { publicPath } from "@/lib/public-path";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -34,7 +35,7 @@ export function Equipe() {
           {equipe.map((p) => (
             <article key={p.nome} className="pro">
               <div className={`pro__foto${p.foto ? "" : " pro__foto--vazio"}`}>
-                {p.foto ? <img src={p.foto} alt={`Retrato de ${p.nome}`} loading="lazy" /> : (<><img src="/img/logo-vinho.webp" alt="" width={56} height={56} /><span>Retrato individual a produzir</span></>)}
+                {p.foto ? <img src={p.foto} alt={`Retrato de ${p.nome}`} loading="lazy" /> : (<><img src={publicPath("/img/logo-vinho.webp")} alt="" width={56} height={56} /><span>Retrato individual a produzir</span></>)}
               </div>
               <h3 className="pro__nome">{p.nome}{p.pendNome && <span className="pend pend--mini"> [{p.pendNome}]</span>}</h3>
               <p className="pro__cargo">{p.cargo}{p.pendCargo && <span className="pend"> [{p.pendCargo}]</span>}</p>

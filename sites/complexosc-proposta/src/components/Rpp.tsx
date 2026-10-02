@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { site } from "@/data/content";
 import { Seta } from "@/components/Icones";
+import { publicPath } from "@/lib/public-path";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 
@@ -50,7 +51,7 @@ export function Rpp() {
         <h2 className="rpp__grande">Reestruturação <em>Pós-Parto</em></h2>
         <div className="rpp__grade">
           <figure className="rpp__retrato">
-            <img src="/img/retrato-olga.webp" width={518} height={648} alt="Olga Vieira, fisioterapeuta e criadora do Método RPP" loading="lazy" />
+            <img src={publicPath("/img/retrato-olga.webp")} width={518} height={648} alt="Olga Vieira, fisioterapeuta e criadora do Método RPP" loading="lazy" />
           </figure>
           <div>
             <p className="rpp__frase">Recuperar a funcionalidade e a estética do corpo depois da maternidade, com um cuidado pensado para cada mulher. Cada corpo é único.</p>

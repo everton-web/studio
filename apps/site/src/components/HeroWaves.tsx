@@ -18,7 +18,8 @@ export function HeroWaves({ base = false }: { base?: boolean }) {
 
     const reduz = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let w = 0, h = 0, dpr = 1, fios = 90, passos = 140;
-    let raf = 0, visivel = true, t0 = performance.now();
+    let raf = 0, visivel = true;
+    const t0 = performance.now();
 
     const medir = () => {
       const r = cv.getBoundingClientRect();

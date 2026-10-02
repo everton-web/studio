@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import Lenis from "lenis";
 import { site } from "@/data/content";
+import { publicPath } from "@/lib/public-path";
 import { scrollMotion } from "@/lib/scroll-motion";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
@@ -113,7 +114,7 @@ function Header() {
     <header ref={header} className="topo" data-aberto={aberto}>
       <div className="wrap topo__linha">
         <a className="marca" href="#hero" onClick={() => setAberto(false)} aria-label="Complexo SC, início">
-          <img src="/img/logo-vinho.webp" width={34} height={34} alt="" />
+          <img src={publicPath("/img/logo-vinho.webp")} width={34} height={34} alt="" />
           <span><b>Complexo SC</b><small>Medicina · Estética · Educação</small></span>
         </a>
         <nav className="topo__nav" aria-label="Seções">

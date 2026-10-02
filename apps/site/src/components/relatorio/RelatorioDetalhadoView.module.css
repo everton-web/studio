@@ -431,6 +431,42 @@
   border-left: 2px solid var(--color-accent);
 }
 
+.propostaAcoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.propostaLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 64, 0, 0.45);
+  background: var(--color-accent-subtle);
+  color: var(--color-text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.propostaLink span {
+  color: var(--color-accent);
+  transition: transform 0.2s ease;
+}
+
+.propostaLink:hover {
+  background: var(--color-accent-glow);
+  border-color: var(--color-accent);
+}
+
+.propostaLink:hover span {
+  transform: translateX(3px);
+}
+
 .propostaGrid {
   display: grid;
   gap: 20px;
@@ -676,6 +712,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .back,
+  .propostaLink,
+  .propostaLink span,
   .btnWhatsapp,
   .toc a {
     transition: none;

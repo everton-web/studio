@@ -20,6 +20,8 @@ export type RelatorioDetalhado = {
   site: string;
   geradoEm: string;
   resumo: string;
+  designSystem?: string;
+  prototipo?: string;
   forte: { titulo: string; intro: string; itens: ItemForte[] };
   fraco: { titulo: string; intro: string; itens: ItemFraco[] };
   proposta: { titulo: string; texto: string; imagens: string[] };

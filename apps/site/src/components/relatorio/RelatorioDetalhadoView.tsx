@@ -101,6 +101,7 @@ export function RelatorioDetalhadoView({ data }: { data: Dados }) {
   const msg = `Olá, Everton! Li o relatório detalhado de ${data.empresa} e quero conversar.`;
   const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
   const temProximos = data.proximos.length > 0;
+  const temEntregaveis = Boolean(data.designSystem || data.prototipo);
 
   const indice = [
     { id: "forte", rotulo: data.forte.titulo },
@@ -241,6 +242,30 @@ export function RelatorioDetalhadoView({ data }: { data: Dados }) {
             <AnimatedSection>
               <p className={styles.propostaTexto}>{semViuva(data.proposta.texto)}</p>
             </AnimatedSection>
+            {temEntregaveis ? (
+              <AnimatedSection className={styles.propostaAcoes} delay={0.08}>
+                {data.designSystem ? (
+                  <a
+                    className={styles.propostaLink}
+                    href={data.designSystem}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Ver design system <span aria-hidden="true">→</span>
+                  </a>
+                ) : null}
+                {data.prototipo ? (
+                  <a
+                    className={styles.propostaLink}
+                    href={data.prototipo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Abrir protótipo <span aria-hidden="true">→</span>
+                  </a>
+                ) : null}
+              </AnimatedSection>
+            ) : null}
             {data.proposta.imagens.length > 0 ? (
               <div
                 className={`${styles.propostaGrid} ${

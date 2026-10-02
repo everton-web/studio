@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { selos, site } from "@/data/content";
 import { WaIcon, Seta } from "@/components/Icones";
+import { publicPath } from "@/lib/public-path";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 
@@ -72,7 +73,7 @@ export function Hero() {
           </div>
         </div>
         <figure className="hero__midia" data-hero-hide>
-          <img src="/img/hero-equipe.webp" width={1672} height={941} alt="Equipe do Complexo SC reunida no lounge da clínica" fetchPriority="high" />
+          <img src={publicPath("/img/hero-equipe.webp")} width={1672} height={941} alt="Equipe do Complexo SC reunida no lounge da clínica" fetchPriority="high" />
           <figcaption>A equipe do Complexo SC</figcaption>
         </figure>
         <ul className="selos" aria-label="Por que confiar">
