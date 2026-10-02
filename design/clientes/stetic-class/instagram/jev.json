@@ -1,0 +1,1952 @@
+[
+  {
+    "code": "DHWE8TDR7zL",
+    "perfil": "complexosc_",
+    "data": "March 18, 2025",
+    "tipo": "reel",
+    "tema": "institucional_datas",
+    "temaConf": 1,
+    "formato": "celebracao",
+    "formatoConf": 1,
+    "potencial": 0.55,
+    "potencialConf": 0.23,
+    "autoridade": 0.03,
+    "aviso": 0.02,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "institucional_datas",
+        "confidence": 1,
+        "probabilities": {
+          "mama": 0,
+          "rosto_pele": 0,
+          "bastidores_equipe": 0,
+          "institucional_datas": 1,
+          "pos_operatorio": 0,
+          "contorno_corporal": 0,
+          "metodo_rpp": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "celebracao",
+        "confidence": 1,
+        "probabilities": {
+          "promocional": 0,
+          "historia_de_paciente": 0,
+          "bastidor": 0,
+          "celebracao": 1,
+          "educativo": 0
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 0.55,
+        "confidence": 0.23,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0.48,
+          "1": 0.49,
+          "2": 0.03
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.03
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.02
+      }
+    }
+  },
+  {
+    "code": "Dd3x51hlLpE",
+    "perfil": "drvalderivieiraplastica",
+    "data": "September 29, 2026",
+    "tipo": "reel",
+    "tema": "bastidores_equipe",
+    "temaConf": 0.76,
+    "formato": "bastidor",
+    "formatoConf": 0.62,
+    "potencial": 0,
+    "potencialConf": 1,
+    "autoridade": 0.03,
+    "aviso": 0.04,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "bastidores_equipe",
+        "confidence": 0.76,
+        "probabilities": {
+          "institucional_datas": 0.15,
+          "metodo_rpp": 0.01,
+          "bastidores_equipe": 0.79,
+          "pos_operatorio": 0.01,
+          "rosto_pele": 0.04,
+          "contorno_corporal": 0,
+          "mama": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "bastidor",
+        "confidence": 0.62,
+        "probabilities": {
+          "historia_de_paciente": 0.02,
+          "celebracao": 0.06,
+          "educativo": 0.03,
+          "bastidor": 0.7,
+          "promocional": 0.19
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 0,
+        "confidence": 1,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 1,
+          "1": 0,
+          "2": 0
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.03
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.04
+      }
+    }
+  },
+  {
+    "code": "DdzrRcsJkHq",
+    "perfil": "drvalderivieiraplastica",
+    "data": "September 27, 2026",
+    "tipo": "reel",
+    "tema": "bastidores_equipe",
+    "temaConf": 0.81,
+    "formato": "historia_de_paciente",
+    "formatoConf": 1,
+    "potencial": 1.52,
+    "potencialConf": 0.28,
+    "autoridade": 0.96,
+    "aviso": 0.99,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "bastidores_equipe",
+        "confidence": 0.81,
+        "probabilities": {
+          "institucional_datas": 0.14,
+          "metodo_rpp": 0,
+          "mama": 0.01,
+          "bastidores_equipe": 0.85,
+          "pos_operatorio": 0,
+          "contorno_corporal": 0,
+          "rosto_pele": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "historia_de_paciente",
+        "confidence": 1,
+        "probabilities": {
+          "educativo": 0,
+          "bastidor": 0,
+          "historia_de_paciente": 1,
+          "celebracao": 0,
+          "promocional": 0
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.52,
+        "confidence": 0.28,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0.13,
+          "1": 0.21,
+          "2": 0.66
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.96
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.99
+      }
+    }
+  },
+  {
+    "code": "DdxCIQ6ib18",
+    "perfil": "drvalderivieiraplastica",
+    "data": "September 26, 2026",
+    "tipo": "foto",
+    "tema": "pos_operatorio",
+    "temaConf": 0.85,
+    "formato": "celebracao",
+    "formatoConf": 0.48,
+    "potencial": 1.73,
+    "potencialConf": 0.6,
+    "autoridade": 0.96,
+    "aviso": 0.99,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "pos_operatorio",
+        "confidence": 0.85,
+        "probabilities": {
+          "pos_operatorio": 0.88,
+          "metodo_rpp": 0,
+          "bastidores_equipe": 0.09,
+          "contorno_corporal": 0,
+          "institucional_datas": 0.03,
+          "rosto_pele": 0,
+          "mama": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "celebracao",
+        "confidence": 0.48,
+        "probabilities": {
+          "celebracao": 0.59,
+          "promocional": 0.01,
+          "historia_de_paciente": 0,
+          "educativo": 0.02,
+          "bastidor": 0.38
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.73,
+        "confidence": 0.6,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0,
+          "1": 0.26,
+          "2": 0.74
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.96
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.99
+      }
+    }
+  },
+  {
+    "code": "DducgJWCtL1",
+    "perfil": "complexosc_",
+    "data": "September 25, 2026",
+    "tipo": "reel",
+    "tema": "pos_operatorio",
+    "temaConf": 0.83,
+    "formato": "educativo",
+    "formatoConf": 0.99,
+    "potencial": 1.12,
+    "potencialConf": 0.82,
+    "autoridade": 0.85,
+    "aviso": 0.28,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "pos_operatorio",
+        "confidence": 0.83,
+        "probabilities": {
+          "mama": 0,
+          "rosto_pele": 0.14,
+          "institucional_datas": 0,
+          "contorno_corporal": 0,
+          "pos_operatorio": 0.86,
+          "metodo_rpp": 0,
+          "bastidores_equipe": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "educativo",
+        "confidence": 0.99,
+        "probabilities": {
+          "bastidor": 0,
+          "educativo": 0.99,
+          "celebracao": 0,
+          "historia_de_paciente": 0,
+          "promocional": 0.01
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.12,
+        "confidence": 0.82,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0,
+          "1": 0.88,
+          "2": 0.12
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.85
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.28
+      }
+    }
+  },
+  {
+    "code": "DdrzVNwjPwp",
+    "perfil": "complexosc_",
+    "data": "September 24, 2026",
+    "tipo": "reel",
+    "tema": "pos_operatorio",
+    "temaConf": 1,
+    "formato": "educativo",
+    "formatoConf": 0.99,
+    "potencial": 1.54,
+    "potencialConf": 0.31,
+    "autoridade": 0.93,
+    "aviso": 0.83,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "pos_operatorio",
+        "confidence": 1,
+        "probabilities": {
+          "rosto_pele": 0,
+          "institucional_datas": 0,
+          "pos_operatorio": 1,
+          "metodo_rpp": 0,
+          "mama": 0,
+          "contorno_corporal": 0,
+          "bastidores_equipe": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "educativo",
+        "confidence": 0.99,
+        "probabilities": {
+          "promocional": 0,
+          "educativo": 1,
+          "bastidor": 0,
+          "historia_de_paciente": 0,
+          "celebracao": 0
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.54,
+        "confidence": 0.31,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0,
+          "1": 0.46,
+          "2": 0.54
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.93
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.83
+      }
+    }
+  },
+  {
+    "code": "Ddo-xwIiYcC",
+    "perfil": "drvalderivieiraplastica",
+    "data": "September 23, 2026",
+    "tipo": "foto",
+    "tema": "mama",
+    "temaConf": 1,
+    "formato": "historia_de_paciente",
+    "formatoConf": 1,
+    "potencial": 1.99,
+    "potencialConf": 0.98,
+    "autoridade": 0.97,
+    "aviso": 0.98,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "mama",
+        "confidence": 1,
+        "probabilities": {
+          "bastidores_equipe": 0,
+          "institucional_datas": 0,
+          "pos_operatorio": 0,
+          "rosto_pele": 0,
+          "metodo_rpp": 0,
+          "contorno_corporal": 0,
+          "mama": 1
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "historia_de_paciente",
+        "confidence": 1,
+        "probabilities": {
+          "educativo": 0,
+          "celebracao": 0,
+          "promocional": 0,
+          "bastidor": 0,
+          "historia_de_paciente": 1
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.99,
+        "confidence": 0.98,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0,
+          "1": 0.01,
+          "2": 0.99
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.97
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.98
+      }
+    }
+  },
+  {
+    "code": "Ddoe5LjxAzy",
+    "perfil": "draolgavieira",
+    "data": "September 23, 2026",
+    "tipo": "reel",
+    "tema": "institucional_datas",
+    "temaConf": 0.83,
+    "formato": "promocional",
+    "formatoConf": 0.51,
+    "potencial": 1.45,
+    "potencialConf": 0.31,
+    "autoridade": 0.09,
+    "aviso": 0.04,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "institucional_datas",
+        "confidence": 0.83,
+        "probabilities": {
+          "rosto_pele": 0,
+          "institucional_datas": 0.86,
+          "contorno_corporal": 0,
+          "metodo_rpp": 0,
+          "mama": 0,
+          "pos_operatorio": 0,
+          "bastidores_equipe": 0.14
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "promocional",
+        "confidence": 0.51,
+        "probabilities": {
+          "bastidor": 0.12,
+          "educativo": 0.25,
+          "promocional": 0.61,
+          "historia_de_paciente": 0.01,
+          "celebracao": 0.01
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.45,
+        "confidence": 0.31,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0,
+          "1": 0.54,
+          "2": 0.46
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.09
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.04
+      }
+    }
+  },
+  {
+    "code": "DdkJYuFH61a",
+    "perfil": "complexosc_",
+    "data": "September 21, 2026",
+    "tipo": "foto",
+    "tema": "bastidores_equipe",
+    "temaConf": 0.98,
+    "formato": "bastidor",
+    "formatoConf": 0.98,
+    "potencial": 1.43,
+    "potencialConf": 0.36,
+    "autoridade": 0.86,
+    "aviso": 0.99,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "bastidores_equipe",
+        "confidence": 0.98,
+        "probabilities": {
+          "institucional_datas": 0,
+          "metodo_rpp": 0,
+          "bastidores_equipe": 0.99,
+          "pos_operatorio": 0.01,
+          "mama": 0,
+          "contorno_corporal": 0,
+          "rosto_pele": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "bastidor",
+        "confidence": 0.98,
+        "probabilities": {
+          "celebracao": 0,
+          "historia_de_paciente": 0,
+          "educativo": 0.01,
+          "promocional": 0,
+          "bastidor": 0.99
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.43,
+        "confidence": 0.36,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0,
+          "1": 0.57,
+          "2": 0.43
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.86
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.99
+      }
+    }
+  },
+  {
+    "code": "DdZu8tSgK6k",
+    "perfil": "complexosc_",
+    "data": "September 17, 2026",
+    "tipo": "reel",
+    "tema": "rosto_pele",
+    "temaConf": 1,
+    "formato": "promocional",
+    "formatoConf": 0.38,
+    "potencial": 1.31,
+    "potencialConf": 0.54,
+    "autoridade": 0.8,
+    "aviso": 0.07,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "rosto_pele",
+        "confidence": 1,
+        "probabilities": {
+          "bastidores_equipe": 0,
+          "metodo_rpp": 0,
+          "rosto_pele": 1,
+          "mama": 0,
+          "contorno_corporal": 0,
+          "institucional_datas": 0,
+          "pos_operatorio": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "promocional",
+        "confidence": 0.38,
+        "probabilities": {
+          "historia_de_paciente": 0,
+          "educativo": 0.5,
+          "promocional": 0.5,
+          "celebracao": 0,
+          "bastidor": 0
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.31,
+        "confidence": 0.54,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0,
+          "1": 0.69,
+          "2": 0.31
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.8
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.07
+      }
+    }
+  },
+  {
+    "code": "DdT-ZIqOzY4",
+    "perfil": "complexosc_",
+    "data": "September 15, 2026",
+    "tipo": "foto",
+    "tema": "institucional_datas",
+    "temaConf": 1,
+    "formato": "celebracao",
+    "formatoConf": 1,
+    "potencial": 0.23,
+    "potencialConf": 0.65,
+    "autoridade": 0.03,
+    "aviso": 0.03,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "institucional_datas",
+        "confidence": 1,
+        "probabilities": {
+          "pos_operatorio": 0,
+          "metodo_rpp": 0,
+          "mama": 0,
+          "institucional_datas": 1,
+          "contorno_corporal": 0,
+          "rosto_pele": 0,
+          "bastidores_equipe": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "celebracao",
+        "confidence": 1,
+        "probabilities": {
+          "historia_de_paciente": 0,
+          "promocional": 0,
+          "bastidor": 0,
+          "educativo": 0,
+          "celebracao": 1
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 0.23,
+        "confidence": 0.65,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0.78,
+          "1": 0.22,
+          "2": 0
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.03
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.03
+      }
+    }
+  },
+  {
+    "code": "DdKYbyhOcU6",
+    "perfil": "complexosc_",
+    "data": "September 11, 2026",
+    "tipo": "reel",
+    "tema": "institucional_datas",
+    "temaConf": 1,
+    "formato": "celebracao",
+    "formatoConf": 0.4,
+    "potencial": 0.17,
+    "potencialConf": 0.74,
+    "autoridade": 0.08,
+    "aviso": 0.1,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "institucional_datas",
+        "confidence": 1,
+        "probabilities": {
+          "metodo_rpp": 0,
+          "institucional_datas": 1,
+          "rosto_pele": 0,
+          "contorno_corporal": 0,
+          "mama": 0,
+          "bastidores_equipe": 0,
+          "pos_operatorio": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "celebracao",
+        "confidence": 0.4,
+        "probabilities": {
+          "bastidor": 0,
+          "promocional": 0,
+          "historia_de_paciente": 0,
+          "celebracao": 0.52,
+          "educativo": 0.48
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 0.17,
+        "confidence": 0.74,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0.83,
+          "1": 0.17,
+          "2": 0
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.08
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.1
+      }
+    }
+  },
+  {
+    "code": "DNWonOPxG-9",
+    "perfil": "drvalderivieiraplastica",
+    "data": "August 14, 2025",
+    "tipo": "foto",
+    "tema": "institucional_datas",
+    "temaConf": 0.9,
+    "formato": "promocional",
+    "formatoConf": 1,
+    "potencial": 0.86,
+    "potencialConf": 0.77,
+    "autoridade": 0.08,
+    "aviso": 0.04,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "institucional_datas",
+        "confidence": 0.9,
+        "probabilities": {
+          "metodo_rpp": 0,
+          "contorno_corporal": 0.01,
+          "rosto_pele": 0.05,
+          "institucional_datas": 0.91,
+          "mama": 0,
+          "pos_operatorio": 0,
+          "bastidores_equipe": 0.03
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "promocional",
+        "confidence": 1,
+        "probabilities": {
+          "historia_de_paciente": 0,
+          "promocional": 1,
+          "educativo": 0,
+          "celebracao": 0,
+          "bastidor": 0
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 0.86,
+        "confidence": 0.77,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0.15,
+          "1": 0.85,
+          "2": 0
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.08
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.04
+      }
+    }
+  },
+  {
+    "code": "DQ-M1_Ik7SL",
+    "perfil": "drvalderivieiraplastica",
+    "data": "November 12, 2025",
+    "tipo": "foto",
+    "tema": "rosto_pele",
+    "temaConf": 1,
+    "formato": "promocional",
+    "formatoConf": 0.43,
+    "potencial": 1.62,
+    "potencialConf": 0.44,
+    "autoridade": 0.96,
+    "aviso": 0.97,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "rosto_pele",
+        "confidence": 1,
+        "probabilities": {
+          "rosto_pele": 1,
+          "mama": 0,
+          "bastidores_equipe": 0,
+          "institucional_datas": 0,
+          "pos_operatorio": 0,
+          "contorno_corporal": 0,
+          "metodo_rpp": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "promocional",
+        "confidence": 0.43,
+        "probabilities": {
+          "promocional": 0.55,
+          "historia_de_paciente": 0,
+          "educativo": 0.45,
+          "celebracao": 0,
+          "bastidor": 0
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.62,
+        "confidence": 0.44,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0,
+          "1": 0.37,
+          "2": 0.63
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.96
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.97
+      }
+    }
+  },
+  {
+    "code": "DUljDiIiCM3",
+    "perfil": "drvalderivieiraplastica",
+    "data": "February 10, 2026",
+    "tipo": "foto",
+    "tema": "institucional_datas",
+    "temaConf": 0.96,
+    "formato": "celebracao",
+    "formatoConf": 0.9,
+    "potencial": 1.64,
+    "potencialConf": 0.47,
+    "autoridade": 0.07,
+    "aviso": 0.06,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "institucional_datas",
+        "confidence": 0.96,
+        "probabilities": {
+          "mama": 0,
+          "metodo_rpp": 0,
+          "rosto_pele": 0,
+          "institucional_datas": 0.97,
+          "pos_operatorio": 0.02,
+          "bastidores_equipe": 0.01,
+          "contorno_corporal": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "celebracao",
+        "confidence": 0.9,
+        "probabilities": {
+          "historia_de_paciente": 0.04,
+          "educativo": 0,
+          "celebracao": 0.93,
+          "promocional": 0.03,
+          "bastidor": 0
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.64,
+        "confidence": 0.47,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0,
+          "1": 0.35,
+          "2": 0.65
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.07
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.06
+      }
+    }
+  },
+  {
+    "code": "Ddue_CnFCoE",
+    "perfil": "drvalderivieiraplastica",
+    "data": "September 25, 2026",
+    "tipo": "reel",
+    "tema": "rosto_pele",
+    "temaConf": 1,
+    "formato": "educativo",
+    "formatoConf": 0.42,
+    "potencial": 1.58,
+    "potencialConf": 0.37,
+    "autoridade": 0.96,
+    "aviso": 0.99,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "rosto_pele",
+        "confidence": 1,
+        "probabilities": {
+          "metodo_rpp": 0,
+          "institucional_datas": 0,
+          "mama": 0,
+          "contorno_corporal": 0,
+          "pos_operatorio": 0,
+          "bastidores_equipe": 0,
+          "rosto_pele": 1
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "educativo",
+        "confidence": 0.42,
+        "probabilities": {
+          "historia_de_paciente": 0.23,
+          "educativo": 0.55,
+          "bastidor": 0,
+          "celebracao": 0,
+          "promocional": 0.22
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.58,
+        "confidence": 0.37,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0.01,
+          "1": 0.4,
+          "2": 0.59
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.96
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.99
+      }
+    }
+  },
+  {
+    "code": "DdrQMsSlH4D",
+    "perfil": "drvalderivieiraplastica",
+    "data": "September 24, 2026",
+    "tipo": "foto",
+    "tema": "bastidores_equipe",
+    "temaConf": 0.82,
+    "formato": "bastidor",
+    "formatoConf": 0.96,
+    "potencial": 1.8,
+    "potencialConf": 0.7,
+    "autoridade": 0.96,
+    "aviso": 0.98,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "bastidores_equipe",
+        "confidence": 0.82,
+        "probabilities": {
+          "bastidores_equipe": 0.85,
+          "institucional_datas": 0,
+          "pos_operatorio": 0,
+          "rosto_pele": 0,
+          "metodo_rpp": 0,
+          "contorno_corporal": 0,
+          "mama": 0.15
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "bastidor",
+        "confidence": 0.96,
+        "probabilities": {
+          "educativo": 0,
+          "celebracao": 0,
+          "promocional": 0.03,
+          "bastidor": 0.97,
+          "historia_de_paciente": 0
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.8,
+        "confidence": 0.7,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0,
+          "1": 0.19,
+          "2": 0.81
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.96
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.98
+      }
+    }
+  },
+  {
+    "code": "DdmEFUPjCJO",
+    "perfil": "drvalderivieiraplastica",
+    "data": "September 22, 2026",
+    "tipo": "reel",
+    "tema": "mama",
+    "temaConf": 1,
+    "formato": "educativo",
+    "formatoConf": 1,
+    "potencial": 1.68,
+    "potencialConf": 0.53,
+    "autoridade": 0.96,
+    "aviso": 0.99,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "mama",
+        "confidence": 1,
+        "probabilities": {
+          "rosto_pele": 0,
+          "mama": 1,
+          "bastidores_equipe": 0,
+          "institucional_datas": 0,
+          "contorno_corporal": 0,
+          "pos_operatorio": 0,
+          "metodo_rpp": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "educativo",
+        "confidence": 1,
+        "probabilities": {
+          "bastidor": 0,
+          "educativo": 1,
+          "celebracao": 0,
+          "promocional": 0,
+          "historia_de_paciente": 0
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.68,
+        "confidence": 0.53,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0,
+          "1": 0.31,
+          "2": 0.69
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.96
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.99
+      }
+    }
+  },
+  {
+    "code": "DdkE9Y_jYUJ",
+    "perfil": "drvalderivieiraplastica",
+    "data": "September 21, 2026",
+    "tipo": "reel",
+    "tema": "mama",
+    "temaConf": 1,
+    "formato": "educativo",
+    "formatoConf": 0.99,
+    "potencial": 1.49,
+    "potencialConf": 0.27,
+    "autoridade": 0.96,
+    "aviso": 0.98,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "mama",
+        "confidence": 1,
+        "probabilities": {
+          "bastidores_equipe": 0,
+          "contorno_corporal": 0,
+          "metodo_rpp": 0,
+          "mama": 1,
+          "rosto_pele": 0,
+          "pos_operatorio": 0,
+          "institucional_datas": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "educativo",
+        "confidence": 0.99,
+        "probabilities": {
+          "educativo": 0.99,
+          "celebracao": 0,
+          "historia_de_paciente": 0,
+          "bastidor": 0,
+          "promocional": 0.01
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.49,
+        "confidence": 0.27,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0,
+          "1": 0.51,
+          "2": 0.49
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.96
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.98
+      }
+    }
+  },
+  {
+    "code": "DdgiO8KIiHu",
+    "perfil": "drvalderivieiraplastica",
+    "data": "September 20, 2026",
+    "tipo": "reel",
+    "tema": "bastidores_equipe",
+    "temaConf": 1,
+    "formato": "bastidor",
+    "formatoConf": 0.93,
+    "potencial": 0.33,
+    "potencialConf": 0.5,
+    "autoridade": 0.11,
+    "aviso": 0.03,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "bastidores_equipe",
+        "confidence": 1,
+        "probabilities": {
+          "rosto_pele": 0,
+          "pos_operatorio": 0,
+          "institucional_datas": 0,
+          "bastidores_equipe": 1,
+          "contorno_corporal": 0,
+          "metodo_rpp": 0,
+          "mama": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "bastidor",
+        "confidence": 0.93,
+        "probabilities": {
+          "educativo": 0,
+          "bastidor": 0.94,
+          "promocional": 0.04,
+          "celebracao": 0.02,
+          "historia_de_paciente": 0
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 0.33,
+        "confidence": 0.5,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0.67,
+          "1": 0.32,
+          "2": 0.01
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.11
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.03
+      }
+    }
+  },
+  {
+    "code": "DdeCZWgoKND",
+    "perfil": "drvalderivieiraplastica",
+    "data": "September 19, 2026",
+    "tipo": "reel",
+    "tema": "bastidores_equipe",
+    "temaConf": 1,
+    "formato": "bastidor",
+    "formatoConf": 0.99,
+    "potencial": 1.05,
+    "potencialConf": 0.84,
+    "autoridade": 0.55,
+    "aviso": 0.03,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "bastidores_equipe",
+        "confidence": 1,
+        "probabilities": {
+          "mama": 0,
+          "pos_operatorio": 0,
+          "bastidores_equipe": 1,
+          "institucional_datas": 0,
+          "contorno_corporal": 0,
+          "metodo_rpp": 0,
+          "rosto_pele": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "bastidor",
+        "confidence": 0.99,
+        "probabilities": {
+          "educativo": 0,
+          "historia_de_paciente": 0,
+          "promocional": 0,
+          "bastidor": 1,
+          "celebracao": 0
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.05,
+        "confidence": 0.84,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0.03,
+          "1": 0.89,
+          "2": 0.08
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.55
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.03
+      }
+    }
+  },
+  {
+    "code": "DMvcFKJxd21",
+    "perfil": "draolgavieira",
+    "data": "July 30, 2025",
+    "tipo": "foto",
+    "tema": "bastidores_equipe",
+    "temaConf": 0.42,
+    "formato": "promocional",
+    "formatoConf": 0.8,
+    "potencial": 0.99,
+    "potencialConf": 0.49,
+    "autoridade": 0.09,
+    "aviso": 0.04,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "bastidores_equipe",
+        "confidence": 0.42,
+        "probabilities": {
+          "metodo_rpp": 0.01,
+          "bastidores_equipe": 0.51,
+          "rosto_pele": 0,
+          "institucional_datas": 0.48,
+          "mama": 0,
+          "pos_operatorio": 0,
+          "contorno_corporal": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "promocional",
+        "confidence": 0.8,
+        "probabilities": {
+          "historia_de_paciente": 0.01,
+          "promocional": 0.84,
+          "educativo": 0.01,
+          "celebracao": 0.07,
+          "bastidor": 0.07
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 0.99,
+        "confidence": 0.49,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0.17,
+          "1": 0.66,
+          "2": 0.17
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.09
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.04
+      }
+    }
+  },
+  {
+    "code": "Dd_tqXwxIR9",
+    "perfil": "draolgavieira",
+    "data": "October 2, 2026",
+    "tipo": "reel",
+    "tema": "metodo_rpp",
+    "temaConf": 0.9,
+    "formato": "educativo",
+    "formatoConf": 0.92,
+    "potencial": 1,
+    "potencialConf": 0.99,
+    "autoridade": 0.07,
+    "aviso": 0.82,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "metodo_rpp",
+        "confidence": 0.9,
+        "probabilities": {
+          "institucional_datas": 0,
+          "metodo_rpp": 0.91,
+          "mama": 0,
+          "rosto_pele": 0,
+          "bastidores_equipe": 0,
+          "contorno_corporal": 0.03,
+          "pos_operatorio": 0.06
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "educativo",
+        "confidence": 0.92,
+        "probabilities": {
+          "promocional": 0.06,
+          "educativo": 0.94,
+          "celebracao": 0,
+          "bastidor": 0,
+          "historia_de_paciente": 0
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1,
+        "confidence": 0.99,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0.01,
+          "1": 0.99,
+          "2": 0
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.07
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.82
+      }
+    }
+  },
+  {
+    "code": "Dd7QEBYnx4J",
+    "perfil": "draolgavieira",
+    "data": "September 30, 2026",
+    "tipo": "reel",
+    "tema": "pos_operatorio",
+    "temaConf": 1,
+    "formato": "educativo",
+    "formatoConf": 1,
+    "potencial": 1.6,
+    "potencialConf": 0.4,
+    "autoridade": 0.12,
+    "aviso": 0.11,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "pos_operatorio",
+        "confidence": 1,
+        "probabilities": {
+          "institucional_datas": 0,
+          "metodo_rpp": 0,
+          "bastidores_equipe": 0,
+          "pos_operatorio": 1,
+          "rosto_pele": 0,
+          "contorno_corporal": 0,
+          "mama": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "educativo",
+        "confidence": 1,
+        "probabilities": {
+          "educativo": 1,
+          "celebracao": 0,
+          "historia_de_paciente": 0,
+          "promocional": 0,
+          "bastidor": 0
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.6,
+        "confidence": 0.4,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0,
+          "1": 0.4,
+          "2": 0.6
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.12
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.11
+      }
+    }
+  },
+  {
+    "code": "Dd2FmV2Exwe",
+    "perfil": "draolgavieira",
+    "data": "September 28, 2026",
+    "tipo": "reel",
+    "tema": "pos_operatorio",
+    "temaConf": 1,
+    "formato": "educativo",
+    "formatoConf": 1,
+    "potencial": 1.37,
+    "potencialConf": 0.45,
+    "autoridade": 0.64,
+    "aviso": 0.81,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "pos_operatorio",
+        "confidence": 1,
+        "probabilities": {
+          "metodo_rpp": 0,
+          "institucional_datas": 0,
+          "rosto_pele": 0,
+          "contorno_corporal": 0,
+          "pos_operatorio": 1,
+          "mama": 0,
+          "bastidores_equipe": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "educativo",
+        "confidence": 1,
+        "probabilities": {
+          "educativo": 1,
+          "promocional": 0,
+          "historia_de_paciente": 0,
+          "celebracao": 0,
+          "bastidor": 0
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.37,
+        "confidence": 0.45,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0,
+          "1": 0.63,
+          "2": 0.37
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.64
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.81
+      }
+    }
+  },
+  {
+    "code": "DdMMDamx9r3",
+    "perfil": "draolgavieira",
+    "data": "September 12, 2026",
+    "tipo": "reel",
+    "tema": "bastidores_equipe",
+    "temaConf": 0.95,
+    "formato": "promocional",
+    "formatoConf": 0.26,
+    "potencial": 0,
+    "potencialConf": 0.99,
+    "autoridade": 0.02,
+    "aviso": 0.02,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "bastidores_equipe",
+        "confidence": 0.95,
+        "probabilities": {
+          "metodo_rpp": 0,
+          "bastidores_equipe": 0.96,
+          "rosto_pele": 0.01,
+          "pos_operatorio": 0,
+          "contorno_corporal": 0.02,
+          "institucional_datas": 0.01,
+          "mama": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "promocional",
+        "confidence": 0.26,
+        "probabilities": {
+          "promocional": 0.41,
+          "educativo": 0.31,
+          "celebracao": 0.18,
+          "bastidor": 0.1,
+          "historia_de_paciente": 0
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 0,
+        "confidence": 0.99,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 1,
+          "1": 0,
+          "2": 0
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.02
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.02
+      }
+    }
+  },
+  {
+    "code": "DdFLc-Yk2-u",
+    "perfil": "draolgavieira",
+    "data": "September 9, 2026",
+    "tipo": "reel",
+    "tema": "metodo_rpp",
+    "temaConf": 1,
+    "formato": "educativo",
+    "formatoConf": 1,
+    "potencial": 1.28,
+    "potencialConf": 0.56,
+    "autoridade": 0.09,
+    "aviso": 0.08,
+    "raw": {
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.08
+      },
+      "tema": {
+        "type": "choice",
+        "choice": "metodo_rpp",
+        "confidence": 1,
+        "probabilities": {
+          "bastidores_equipe": 0,
+          "pos_operatorio": 0,
+          "contorno_corporal": 0,
+          "institucional_datas": 0,
+          "mama": 0,
+          "rosto_pele": 0,
+          "metodo_rpp": 1
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "educativo",
+        "confidence": 1,
+        "probabilities": {
+          "educativo": 1,
+          "bastidor": 0,
+          "historia_de_paciente": 0,
+          "celebracao": 0,
+          "promocional": 0
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.28,
+        "confidence": 0.56,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0,
+          "1": 0.71,
+          "2": 0.29
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.09
+      }
+    }
+  },
+  {
+    "code": "DdDBhZaxVx4",
+    "perfil": "draolgavieira",
+    "data": "September 8, 2026",
+    "tipo": "reel",
+    "tema": "bastidores_equipe",
+    "temaConf": 1,
+    "formato": "bastidor",
+    "formatoConf": 0.7,
+    "potencial": 1.19,
+    "potencialConf": 0.67,
+    "autoridade": 0.42,
+    "aviso": 0.03,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "bastidores_equipe",
+        "confidence": 1,
+        "probabilities": {
+          "metodo_rpp": 0,
+          "institucional_datas": 0,
+          "contorno_corporal": 0,
+          "pos_operatorio": 0,
+          "mama": 0,
+          "bastidores_equipe": 1,
+          "rosto_pele": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "bastidor",
+        "confidence": 0.7,
+        "probabilities": {
+          "bastidor": 0.76,
+          "educativo": 0,
+          "celebracao": 0.24,
+          "promocional": 0,
+          "historia_de_paciente": 0
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.19,
+        "confidence": 0.67,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0.02,
+          "1": 0.78,
+          "2": 0.2
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.42
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.03
+      }
+    }
+  },
+  {
+    "code": "Dc_EFU9gQy5",
+    "perfil": "draolgavieira",
+    "data": "September 7, 2026",
+    "tipo": "reel",
+    "tema": "institucional_datas",
+    "temaConf": 0.54,
+    "formato": "educativo",
+    "formatoConf": 0.99,
+    "potencial": 1.06,
+    "potencialConf": 0.9,
+    "autoridade": 0.13,
+    "aviso": 0.07,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "institucional_datas",
+        "confidence": 0.54,
+        "probabilities": {
+          "metodo_rpp": 0.03,
+          "institucional_datas": 0.62,
+          "pos_operatorio": 0.01,
+          "rosto_pele": 0.17,
+          "contorno_corporal": 0,
+          "bastidores_equipe": 0.17,
+          "mama": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "educativo",
+        "confidence": 0.99,
+        "probabilities": {
+          "bastidor": 0,
+          "promocional": 0.01,
+          "educativo": 0.99,
+          "historia_de_paciente": 0,
+          "celebracao": 0
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.06,
+        "confidence": 0.9,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0,
+          "1": 0.9400000000000001,
+          "2": 0.06
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.13
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.07
+      }
+    }
+  },
+  {
+    "code": "DczJ0WjDEa8",
+    "perfil": "complexosc_",
+    "data": "September 2, 2026",
+    "tipo": "reel",
+    "tema": "institucional_datas",
+    "temaConf": 1,
+    "formato": "educativo",
+    "formatoConf": 0.99,
+    "potencial": 1.73,
+    "potencialConf": 0.6,
+    "autoridade": 0.84,
+    "aviso": 0.27,
+    "raw": {
+      "tema": {
+        "type": "choice",
+        "choice": "institucional_datas",
+        "confidence": 1,
+        "probabilities": {
+          "rosto_pele": 0,
+          "institucional_datas": 1,
+          "contorno_corporal": 0,
+          "metodo_rpp": 0,
+          "mama": 0,
+          "pos_operatorio": 0,
+          "bastidores_equipe": 0
+        }
+      },
+      "formato": {
+        "type": "choice",
+        "choice": "educativo",
+        "confidence": 0.99,
+        "probabilities": {
+          "promocional": 0.01,
+          "educativo": 0.99,
+          "bastidor": 0,
+          "historia_de_paciente": 0,
+          "celebracao": 0
+        }
+      },
+      "potencial_site": {
+        "type": "score",
+        "score": 1.73,
+        "confidence": 0.6,
+        "legend": {
+          "0": "Baixo: assunto pessoal, trend, meme, publicidade de terceiros ou data comemorativa sem relação com o cuidado da paciente",
+          "1": "Médio: conteúdo útil, mas genérico, educativo de rede social ou dependente do formato do Instagram",
+          "2": "Alto: mostra cuidado real, estrutura, equipe, história de paciente contada com ética, ou autoridade técnica que o site pode usar"
+        },
+        "probabilities": {
+          "0": 0,
+          "1": 0.27,
+          "2": 0.73
+        }
+      },
+      "autoridade_seguranca": {
+        "type": "noul",
+        "noul": 0.84
+      },
+      "aviso_etico": {
+        "type": "noul",
+        "noul": 0.27
+      }
+    }
+  }
+]
