@@ -59,7 +59,7 @@ const WIP_MAX = 3;
 const ease = [0.22, 1, 0.36, 1] as const;
 
   const notaCor = (n: number) => (n >= 4.5 ? "#3ddc84" : n >= 4 ? "#d9a03a" : "#8a8a85");
-const notaLbl = (n: number) => (n > 0 ? n.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "-");
+const notaLbl = (n: number) => (n > 0 ? n.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "sem nota");
 const avalLbl = (a: number) => (a > 0 ? `${a}` : "");
 
 function waLink(numero: string, msg: string) {
@@ -71,6 +71,7 @@ function waLink(numero: string, msg: string) {
 
 const CATS: [string, string][] = [
   ["maps", "Maps"],
+  ["ia", "IA"],
   ["indicacao", "Indicação"],
   ["site", "Site"],
   ["saas", "SaaS"],
@@ -168,7 +169,7 @@ function LeadCard({ lead, onEdit, onMove, onAbordar, onValidar, onApagar, onOpen
             <span className="mono shrink-0 rounded px-1.5 py-0.5" style={{ fontSize: "0.68rem", color: "#b8b8b3", background: "rgba(255,255,255,.05)", border: "1px solid rgba(255,255,255,.1)" }}>{catLbl(lead.categoria)}</span>
           </div>
           <div className="mono mt-1 truncate" style={{ fontSize: "0.7rem" }}>
-            {lead.segmento || "segmento"}{lead.cidade ? ` · ${lead.cidade}` : ""}
+            {NICHOS.find(([k]) => k === lead.segmento)?.[1] || lead.segmento || "segmento"}{lead.cidade ? ` · ${lead.cidade}` : ""}
             {avalLbl(lead.avaliacoes) ? ` · ${avalLbl(lead.avaliacoes)} aval.` : ""}
           </div>
           {frenteDe(lead.frente) && (
@@ -185,7 +186,7 @@ function LeadCard({ lead, onEdit, onMove, onAbordar, onValidar, onApagar, onOpen
           className="shrink-0 nums rounded-md px-2 py-1 tabular-nums"
           style={{ fontSize: "0.78rem", fontWeight: 600, color: "#050505", background: notaCor(lead.nota), opacity: lead.nota > 0 ? 1 : 0.5 }}
         >
-          ★ {notaLbl(lead.nota)}
+          {lead.nota > 0 ? "★ " : ""}{notaLbl(lead.nota)}
         </span>
       </div>
 

@@ -413,25 +413,54 @@ async function fonteOsm(_nicho: string, _cidade: string, limite: number): Promis
 }
 
 // ---------- auditoria de site ----------
-export async function auditarSite(url: string): Promise<{ ok: boolean; problemas: string[]; info: string[] }> {
+export type Contatos = { whatsapp?: string; telefone?: string; email?: string };
+
+// Canais de contato publicados no próprio site: sem pelo menos um, o lead não tem como ser abordado.
+// Telefone brasileiro válido: DDD + 8 dígitos (fixo, começa com 2 a 5) ou DDD + 9 + 8 (celular).
+// Celular antigo sem o 9 ganha o 9. Qualquer outra coisa (número de tema, de outro país) é descartada.
+function foneBR(v: string): string {
+  let d = String(v || "").replace(/D/g, "");
+  if (d.startsWith("55") && d.length >= 12) d = d.slice(2);
+  if (d.startsWith("0")) d = d.slice(1);
+  if (!/^[1-9][1-9]/.test(d)) return "";
+  if (d.length === 10 && /[6-9]/.test(d[2])) d = d.slice(0, 2) + "9" + d.slice(2);
+  if (d.length === 10 && /[2-5]/.test(d[2])) return "55" + d;
+  if (d.length === 11 && d[2] === "9") return "55" + d;
+  return "";
+}
+
+function extrairContatos(html: string): Contatos {
+  const so = (v: string) => v.replace(/\D/g, "");
+  const wa = html.match(/(?:wa\.me\/|api\.whatsapp\.com\/send\/?\?phone=)(\+?\d{10,13})/i)?.[1];
+  const tel = html.match(/href=["']tel:([+\d\s().-]{8,20})["']/i)?.[1];
+  const email = html.match(/href=["']mailto:([^"'?\s]+@[^"'?\s]+)/i)?.[1];
+  return {
+    whatsapp: (wa && foneBR(wa)) || undefined,
+    telefone: (tel && foneBR(tel)) || undefined,
+    email: email && !/example|seudominio|email@/i.test(email) ? email.toLowerCase() : undefined,
+  };
+}
+
+export async function auditarSite(url: string): Promise<{ ok: boolean; problemas: string[]; info: string[]; contatos: Contatos }> {
   const u = url.startsWith("http") ? url : `https://${url}`;
   const problemas: string[] = [];
   const info: string[] = [];
   try {
     const html = await fetchTexto(u);
+    const contatos = extrairContatos(html);
     const low = html.toLowerCase();
     if (!/<meta[^>]+name=["']viewport["']/i.test(html)) problemas.push("sem meta viewport (quebra no celular)");
     if (!/wa\.me\/|api\.whatsapp\.com|whatsapp/i.test(low)) problemas.push("sem botão/WhatsApp visível");
-    if (!/tel:/i.test(low)) problemas.push("sem telefone clicável");
+    if (!/tel:/i.test(low) && !contatos.whatsapp) problemas.push("sem telefone clicável");
     if (!/<title>/i.test(low)) problemas.push("sem título de página");
     const year = (html.match(/20\d\d/) || [])[0];
     if (year && Number(year) < 2023) problemas.push(`conteúdo datado (${year})`);
     if (/wix\.com|google\.com\/sites|webnode|gratis/i.test(low)) problemas.push("plataforma gratuita/terceirizada");
     if (/<style/i.test(html) && html.length < 8000) info.push("página minimalista");
     if (/responsive|mobile/i.test(low)) info.push("indícios de responsividade no código");
-    return { ok: true, problemas, info };
+    return { ok: true, problemas, info, contatos };
   } catch (e: any) {
-    return { ok: false, problemas: [`site inacessível (${e?.message || "erro"})`], info: [] };
+    return { ok: false, problemas: [`site inacessível (${e?.message || "erro"})`], info: [], contatos: {} };
   }
 }
 
@@ -519,13 +548,16 @@ export async function prospectar(op: { nicho?: string; cidade?: string; regiao?:
         const host = hostnameDe(c.site);
         if (host && dominios.has(host)) { res.descartados.push({ nome: c.nome, motivo: "domínio já está no pipeline" }); return; }
 
-        const fonteTxt = `Fonte da ficha: ${res.fonte}${c.nota ? ` · nota Google ${c.nota}` : ""}${c.avaliacoes ? ` · ${c.avaliacoes} avaliações` : ""}.`;
-        const addFicha = async (frente: Frente, porque: string) => {
+        const origem = res.fonte.startsWith("google-places") ? "Google Maps" : res.fonte.startsWith("overpass") ? "OpenStreetMap" : "busca por IA";
+        const fonteTxt = `Encontrado via ${origem}${c.nota ? ` · nota Google ${c.nota}` : ""}${c.avaliacoes ? ` · ${c.avaliacoes} avaliações` : ""}.`;
+        const addFicha = async (frente: Frente, porque: string, contatos: Contatos = {}) => {
           const notaTxt = c.nota && c.nota > 0 ? String(c.nota).replace(".", ",") : "";
+          const fone = c.telefone || contatos.telefone || "";
           const novo = await pipelineOp({
             action: "add", nome: c.nome, segmento: c.segmento || nicho, cidade: c.cidade || "",
             nota: notaTxt, avaliacoes: c.avaliacoes ? String(c.avaliacoes) : "", site: c.site,
-            contato: c.telefone || "", whatsapp: c.telefone || "", categoria: "maps", frente,
+            contato: fone, whatsapp: contatos.whatsapp || fone, email: contatos.email || "",
+            categoria: origem === "busca por IA" ? "ia" : "maps", frente,
             porque: `${FRENTE_LABEL[frente]}. ${porque} ${fonteTxt}`,
           });
           res.adicionados.push(c.nome);
@@ -536,6 +568,7 @@ export async function prospectar(op: { nicho?: string; cidade?: string; regiao?:
         // Frente 1: perfil do Google sem site
         if (!c.site) {
           if (!c.gmn || !frentes.has("sem-gmn")) { res.descartados.push({ nome: c.nome, motivo: "sem site (frente não selecionada)" }); return; }
+          if (!c.telefone) { res.descartados.push({ nome: c.nome, motivo: "perfil sem site e sem telefone: sem como abordar" }); return; }
           await addFicha("sem-gmn", `Perfil no Google sem site. Falta: ${(c.perfilFaltas || []).join(", ") || "site"}.`);
           return;
         }
@@ -546,6 +579,7 @@ export async function prospectar(op: { nicho?: string; cidade?: string; regiao?:
         if (diag.estado === "inexistente") { res.descartados.push({ nome: c.nome, motivo: diag.motivo }); return; }
         if (diag.estado !== "ok") {
           if (!frentes.has("site-quebrado")) { res.descartados.push({ nome: c.nome, motivo: `${diag.motivo} (frente não selecionada)` }); return; }
+          if (!c.telefone) { res.descartados.push({ nome: c.nome, motivo: `${diag.motivo}, mas sem telefone para abordar` }); return; }
           const gmnTxt = c.gmn ? "Perfil no Google ativo." : "Perfil no Google a confirmar (veio da busca por IA).";
           await addFicha("site-quebrado", `${gmnTxt} Site: ${diag.motivo}.`);
           return;
@@ -561,6 +595,8 @@ export async function prospectar(op: { nicho?: string; cidade?: string; regiao?:
         if (!frentes.has("site-ruim")) { res.descartados.push({ nome: c.nome, motivo: "site no ar (frente não selecionada)" }); return; }
         const aud = await auditarSite(c.site);
         if (!aud.ok) { res.descartados.push({ nome: c.nome, motivo: "site inacessível na auditoria" }); return; }
+        const temContato = !!(c.telefone || aud.contatos.whatsapp || aud.contatos.telefone || aud.contatos.email);
+        if (!temContato) { res.descartados.push({ nome: c.nome, motivo: "nenhum telefone, WhatsApp ou e-mail no site" }); return; }
 
         const a = await analisarLead({
           id: slugNome(c.nome),
@@ -573,7 +609,9 @@ export async function prospectar(op: { nicho?: string; cidade?: string; regiao?:
           contato: c.telefone || "",
         });
 
-        const entra = a.pontuacao <= 75 || aud.problemas.length >= 2;
+        // "Sem telefone clicável" sozinho não justifica abordagem: precisa de problema de verdade.
+        const fortes = aud.problemas.filter((p) => !/sem telefone clicável/.test(p));
+        const entra = a.pontuacao <= 60 || fortes.length >= 2 || (fortes.length >= 1 && a.pontuacao <= 75);
         if (!entra) {
           let motivo = `presença ${a.pontuacao}/100: site forte`;
           if (aud.problemas.length === 1) motivo += ` · ${aud.problemas[0]}`;
@@ -581,7 +619,7 @@ export async function prospectar(op: { nicho?: string; cidade?: string; regiao?:
           return;
         }
 
-        const novo = await addFicha("site-ruim", `Presença ${a.pontuacao}/100. Auditoria: ${aud.problemas.join("; ") || "site ok"}.`);
+        const novo = await addFicha("site-ruim", `Presença ${a.pontuacao}/100. Auditoria: ${aud.problemas.join("; ") || "site ok"}.`, aud.contatos);
         // reusa a análise já calculada em vez de rodar de novo
         if (novo && "id" in novo && novo.id) {
           try {
