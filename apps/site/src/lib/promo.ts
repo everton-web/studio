@@ -1,10 +1,13 @@
 // Fonte única da lógica de data/preço da promoção do mês (outubro: Esquenta Black Friday).
 // Usado tanto no servidor quanto no cliente.
 
+// Liga/desliga a promoção do mês sem depender da data (desligada em 02/10 a pedido do Everton).
+export const PROMO_LIGADA = false;
+
 export const PROMO_FIM = new Date("2026-10-31T23:59:59-03:00");
 
 export function promoAtiva(now: Date = new Date()): boolean {
-  return now.getTime() < PROMO_FIM.getTime();
+  return PROMO_LIGADA && now.getTime() < PROMO_FIM.getTime();
 }
 
 export function precoComDesconto(preco: number): number {

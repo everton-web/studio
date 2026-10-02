@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { PROMO_FIM } from "@/lib/promo";
+import { PROMO_FIM, PROMO_LIGADA } from "@/lib/promo";
 
 // Store de módulo: "now" é atualizado por UM único setInterval (singleton),
 // evitando a criação de vários intervals.
@@ -39,7 +39,7 @@ const getServerSnapshot = (): number => PROMO_FIM.getTime() - 1;
 
 export function usePromo(): { ativa: boolean; restante: number } {
   const nowMs = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  const ativa = nowMs < PROMO_FIM.getTime();
+  const ativa = PROMO_LIGADA && nowMs < PROMO_FIM.getTime();
   const restante = Math.max(0, PROMO_FIM.getTime() - nowMs);
   return { ativa, restante };
 }
