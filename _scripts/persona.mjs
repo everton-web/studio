@@ -25,6 +25,7 @@ import { existsSync } from "node:fs";
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { homedir } from "node:os";
+import { codexCli } from "./lib/codex-cli.mjs";
 import { criarDemanda, atualizarDemanda, acrescentarLog, extrairBriefing, statusDoRelatorio } from "./lib/demanda.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -35,9 +36,9 @@ const TMP = join(HERE, ".persona-tmp");
 const PI_CLI = process.env.PI_CLI || join(process.env.APPDATA || join(homedir(), "AppData", "Roaming"), "npm", "node_modules", "@earendil-works", "pi-coding-agent", "dist", "cli.js");
 
 const PERSONAS = ["orion", "caio", "davi", "davi-copy", "theo", "mia", "fabio", "olga", "lia", "ops"];
-const CODEX_CLI = process.env.CODEX_CLI || "C:/Program Files/WindowsApps/OpenAI.Codex_26.924.2738.0_x64__2p2nqsd0c76g0/app/resources/codex.exe";
+// codex.exe muda de pasta a cada atualização do app: localizado na hora (lib/codex-cli.mjs).
 const MOTORES = {
-  codex: { pi: "openai-codex/gpt-5.5", modelos: { flash: "gpt-5.5", pro: "gpt-6-astra" }, regra: "_EXECUCAO.md" },
+  codex: { pi: "openai-codex/gpt-5.5", modelos: { flash: "gpt-5.5", pro: "gpt-5.6-sol" }, regra: "_EXECUCAO.md" },
   opencode: { pi: null, modelos: { flash: "opencode-go/deepseek-v4.1-flash", pro: "opencode-go/deepseek-v4-pro", glm: "opencode-go/glm-5.3", kimi: "opencode-go/kimi-k3" }, regra: "_EXECUCAO-opencode.md" },
 };
 const motorArg = process.argv.indexOf("--motor");
@@ -77,7 +78,7 @@ async function prepararArquivos() {
   await mkdir(TMP, { recursive: true });
   const nome = persona.charAt(0).toUpperCase() + persona.slice(1);
   const regra = (await readFile(join(ROOT, "personas", MOTOR.regra), "utf8"))
-    .replaceAll("{{MODELO}}", modelo).replaceAll("{{CODEX}}", CODEX_CLI).replaceAll("{{PERSONA}}", nome);
+    .replaceAll("{{MODELO}}", modelo).replaceAll("{{CODEX}}", () => codexCli()).replaceAll("{{PERSONA}}", nome);
   const carimbo = Date.now();
   const fRegra = join(TMP, `${persona}-${carimbo}-regra.md`);
   const fFicha = join(TMP, `${persona}-${carimbo}-ficha.md`);

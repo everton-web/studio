@@ -26,6 +26,7 @@ import { spawn } from "node:child_process";
 import { appendFile } from "node:fs/promises";
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { codexCli } from "./lib/codex-cli.mjs";
 
 process.noDeprecation = true; // no Windows o spawn precisa de shell:true — o aviso só polui log
 
@@ -159,10 +160,10 @@ async function gemini(task, _dir, timeoutSec, modelo) {
 }
 
 // Codex (assinatura ChatGPT) em sandbox só-leitura, prompt por stdin.
-const CODEX_CLI = process.env.CODEX_CLI || "C:/Program Files/WindowsApps/OpenAI.Codex_26.924.2738.0_x64__2p2nqsd0c76g0/app/resources/codex.exe";
+// codex.exe muda de pasta a cada atualização do app: localizado na hora (lib/codex-cli.mjs).
 function codex(task, dir, timeoutSec, modelo) {
   return new Promise((res, rej) => {
-    const c = spawn(CODEX_CLI, ["exec", "-s", "read-only", "--skip-git-repo-check", "--ephemeral", "-C", dir, "-m", modelo || "gpt-5.5", "-"], { windowsHide: true, shell: false });
+    const c = spawn(codexCli(), ["exec", "-s", "read-only", "--skip-git-repo-check", "--ephemeral", "-C", dir, "-m", modelo || "gpt-5.5", "-"], { windowsHide: true, shell: false });
     let out = "", err = "";
     const t = setTimeout(() => { c.kill(); rej(new Error(`codex timeout ${timeoutSec}s`)); }, timeoutSec * 1000);
     c.stdout.on("data", (d) => (out += d)); c.stderr.on("data", (d) => (err += d));

@@ -18,7 +18,7 @@ timeout 900 "{{CODEX}}" exec -s workspace-write -C D:/studio --add-dir "D:/Obsid
 ```
 
 - O sandbox `workspace-write` só deixa escrever em `D:/studio` e no vault, e bloqueia a rede. Não troque por outro modo.
-- Modelo desta tarefa: **{{MODELO}}**. Para código difícil pode subir para `gpt-6-astra`.
+- Modelo desta tarefa: **{{MODELO}}**. Para código difícil pode subir para `gpt-5.6-sol` (o gpt-6-astra está aposentado: estoura o limite rápido).
 - A cota é da assinatura ChatGPT do Everton: seja econômico. Uma chamada bem escrita vale mais que cinco vagas.
 - Escreva a instrução completa: o papel da persona ({{PERSONA}}), o contexto, **quais arquivos ler e onde salvar**, o formato da saída e o que é proibido.
 - Tarefa grande: quebre em chamadas por subtarefa. Para ajustar a última: `"{{CODEX}}" exec resume --last "<ajuste>"`.
