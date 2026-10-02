@@ -145,8 +145,8 @@ export const translations = {
       whatsapp: "WhatsApp",
     },
     promo: {
-      banner: "Mês do Zeca 🎈 · 20% OFF em todos os projetos até 30/09",
-      micro: "Mês do Zeca · 20% OFF até 30/09",
+      banner: "Esquenta Black Friday 🔥 · 50% OFF em todos os projetos até 31/10",
+      micro: "Esquenta Black Friday · 50% OFF até 31/10",
       days: "d",
       hours: "h",
       minutes: "m",
@@ -302,8 +302,8 @@ export const translations = {
       whatsapp: "WhatsApp",
     },
     promo: {
-      banner: "Zeca's Month 🎈 · 20% OFF all projects until Sep 30",
-      micro: "Zeca's Month · 20% OFF until Sep 30",
+      banner: "Black Friday warm-up 🔥 · 50% OFF all projects until Oct 31",
+      micro: "Black Friday warm-up · 50% OFF until Oct 31",
       days: "d",
       hours: "h",
       minutes: "m",
