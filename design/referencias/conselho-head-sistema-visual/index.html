@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conselho Head, sistema visual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;800&family=DM+Sans:wght@400;500;700&family=Barlow:wght@600&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0B0C; --bg2:#121214; --card:#17171A; --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
+  --tx:#ECECE8; --tx2:#A3A39E; --tx3:#6E6E6A; --mark:#ECECE8;
+  --mono:"IBM Plex Mono",ui-monospace,monospace; --sans:"IBM Plex Sans",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--tx);font:400 15px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+.wrap div,.wrap figure,.wrap section{min-width:0}
+.trow .s,.fam .sp{max-width:100%}
+.wrap{max-width:1280px;margin:0 auto;padding:0 48px}
+.mono{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--tx3)}
+h1,h2,h3{font-weight:600;letter-spacing:-.02em;text-wrap:balance}
+p{text-wrap:pretty}
+.muted{color:var(--tx2)}
+/* header */
+header{padding:72px 0 56px;border-bottom:1px solid var(--line)}
+header .top{display:flex;justify-content:space-between;gap:24px;margin-bottom:56px}
+header h1{font-size:64px;line-height:1;letter-spacing:-.035em;max-width:900px}
+header h1 span{color:var(--tx3)}
+header .lede{margin-top:28px;max-width:720px;font-size:17px;color:var(--tx2)}
+.meta{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:48px}
+.meta div{background:var(--bg);padding:18px 20px}
+.meta b{display:block;font-weight:500;font-size:15px;margin-top:6px}
+/* sections */
+section{padding:88px 0;border-bottom:1px solid var(--line)}
+.sh{display:grid;grid-template-columns:220px 1fr;gap:40px;margin-bottom:44px;align-items:start}
+.sh .n{font-family:var(--mono);font-size:12px;color:var(--tx3);padding-top:10px}
+.sh h2{font-size:36px;line-height:1.1}
+.sh p{margin-top:12px;color:var(--tx2);max-width:760px}
+.fig{background:var(--bg2);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.fig img{width:100%}
+.cap{padding:12px 16px;border-top:1px solid var(--line);font-size:13px;color:var(--tx2)}
+.cap b{color:var(--tx);font-weight:500}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.note{border-left:2px solid var(--line2);padding:4px 0 4px 16px;color:var(--tx2);font-size:14px;margin-top:24px;max-width:880px}
+/* palette */
+.pal{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.sw{background:var(--bg2);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.sw .c{height:112px;position:relative}
+.sw .c i{position:absolute;right:12px;bottom:10px;font:500 11px var(--mono);font-style:normal;opacity:.75}
+.sw .t{padding:14px 16px}
+.sw .hex{font:500 14px var(--mono)}
+.sw .r{font-size:13px;color:var(--tx2);margin-top:4px;line-height:1.45}
+.sw .tag{display:inline-block;margin-top:10px;font:500 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--tx3);border:1px solid var(--line2);border-radius:99px;padding:2px 8px}
+.bar{display:flex;height:44px;border-radius:10px;overflow:hidden;border:1px solid var(--line);margin-top:28px}
+.bar div{height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;font:400 12px var(--mono);color:var(--tx2)}
+.legend span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:7px;background:var(--c);vertical-align:-1px;border:1px solid var(--line2)}
+.mini{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:22px}
+.mini div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:400 12px var(--mono);color:var(--tx2)}
+.mini div b{display:block;height:26px;border-radius:5px;margin-bottom:8px}
+/* type */
+.tscale{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.trow{display:grid;grid-template-columns:150px 1fr 300px;gap:24px;align-items:center;padding:20px 24px;border-bottom:1px solid var(--line)}
+.trow:last-child{border-bottom:0}
+.trow .k{font:500 12px var(--mono);color:var(--tx3);text-transform:uppercase;letter-spacing:.05em}
+.trow .s{color:#EFEFEA;overflow:hidden;white-space:nowrap;text-overflow:clip}
+.trow .v{font:400 12.5px/1.5 var(--mono);color:var(--tx2)}
+.j{font-family:"Plus Jakarta Sans",sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:-.045em;line-height:.92}
+.jl{font-family:"Plus Jakarta Sans",sans-serif;font-weight:300;letter-spacing:-.04em}
+.dm{font-family:"DM Sans",sans-serif}
+.bc{font-family:"Barlow Condensed",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.12em}
+.bw{font-family:"Barlow",sans-serif;font-weight:600;letter-spacing:-.02em}
+.fam{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.fam > div{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px}
+.fam .sp{font-size:40px;line-height:1;color:#EFEFEA;margin:12px 0 14px;white-space:nowrap;overflow:hidden}
+.fam .r{font-size:13px;color:var(--tx2);line-height:1.5}
+.conf{display:inline-flex;gap:3px;margin-left:6px;vertical-align:1px}
+.conf i{width:14px;height:5px;border-radius:2px;background:var(--line2)}
+.conf i.on{background:var(--mark)}
+/* ribbon */
+.ribbon{display:flex;height:76px;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.ribbon div{position:relative;min-width:0}
+.ribbon div span{position:absolute;left:7px;bottom:6px;font:500 10px var(--mono);opacity:.8}
+.rlist{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:28px}
+.ri{display:grid;grid-template-columns:20px 1fr;gap:10px;font-size:13px;align-items:start;padding:10px 0;border-top:1px solid var(--line)}
+.ri b{display:block;width:14px;height:14px;border-radius:4px;margin-top:3px;border:1px solid var(--line2)}
+.ri em{font-style:normal;color:var(--tx3);font-family:var(--mono);font-size:11px;display:block}
+.thumbs{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:28px}
+.thumbs figure{border-radius:8px;overflow:hidden;border:1px solid var(--line);background:var(--bg2)}
+.thumbs figcaption{font:400 10.5px var(--mono);color:var(--tx3);padding:6px 8px}
+/* grid diagram */
+.gd{position:relative;height:300px;border:1px solid var(--line);border-radius:14px;background:var(--bg2);overflow:hidden}
+.gd .m{position:absolute;top:0;bottom:0;border-left:1px dashed rgba(255,255,255,.22)}
+.gd .m span{position:absolute;top:10px;left:6px;font:400 10.5px var(--mono);color:var(--tx2);white-space:nowrap}
+.gd .blk{position:absolute;border-radius:6px;font:400 11px var(--mono);color:#0A0A0A;padding:6px 8px}
+.kv{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+.kv div{border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.kv b{display:block;font:500 22px var(--sans);letter-spacing:-.02em;margin:4px 0}
+.kv p{font-size:13px;color:var(--tx2)}
+/* components */
+.comp{display:grid;grid-template-columns:1.15fr 1fr;gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:20px;background:var(--bg2)}
+.comp .im{background:#000;display:flex;align-items:center;justify-content:center;padding:18px;border-right:1px solid var(--line)}
+.comp .im.light{background:#EFEFEA}
+.comp .tx{padding:22px 24px}
+.comp h3{font-size:20px;margin-bottom:12px}
+.spec{width:100%;border-collapse:collapse;font-size:13px}
+.spec td{padding:7px 0;border-top:1px solid var(--line);vertical-align:top}
+.spec td:first-child{font:400 11.5px var(--mono);color:var(--tx3);text-transform:uppercase;width:120px;padding-top:9px}
+.spec td:last-child{color:var(--tx2)}
+.stick{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.stick img{border-radius:8px}
+/* 3D */
+.d3{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.d3 .grid2 img:not(.coin){aspect-ratio:4/3;object-fit:cover;object-position:50% 20%}
+.d3 img.coin{height:230px;width:100%;object-fit:contain;background:#150A27}
+.d3 .fig .cap ul{margin-top:8px;padding-left:16px}
+.d3 .fig .cap li{margin:3px 0}
+/* motion */
+.mt{width:100%;border-collapse:collapse;font-size:13.5px;margin-bottom:36px}
+.mt th{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line2)}
+.mt td{padding:12px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--tx2)}
+.mt td:first-child{color:var(--tx);font-weight:500;width:200px}
+.mt td.m{font-family:var(--mono);font-size:12px;white-space:nowrap}
+.ba{display:grid;gap:12px;align-items:center}
+.ba.two{grid-template-columns:1fr 24px 1fr}
+.ba.three{grid-template-columns:1fr 24px 1fr 24px 1fr}
+.ba.four{grid-template-columns:repeat(4,1fr)}
+.ba .ar{color:var(--tx3);text-align:center;font-family:var(--mono)}
+.ba img{border-radius:8px;border:1px solid var(--line)}
+.mrow{margin-bottom:30px}
+.mrow h4{font:500 14px var(--sans);margin-bottom:10px}
+.mrow h4 span{font:400 12px var(--mono);color:var(--tx3);margin-left:10px}
+/* critique */
+.crit{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.crit > div{border:1px solid var(--line);border-radius:14px;padding:26px 28px;background:var(--bg2)}
+.crit h3{font-size:20px;margin-bottom:16px}
+.crit ol{padding-left:18px}
+.crit li{margin:0 0 12px;color:var(--tx2);font-size:14.5px}
+.crit li b{color:var(--tx);font-weight:500}
+.take{margin-top:20px;border:1px solid var(--line2);border-radius:14px;padding:26px 28px}
+.take h3{font-size:20px;margin-bottom:12px}
+.take p{color:var(--tx2);max-width:980px}
+footer{padding:40px 0 64px;color:var(--tx3);font:400 12px var(--mono)}
+@media (max-width:900px){
+  .wrap{padding:0 16px}
+  header h1{font-size:40px}
+  .meta,.pal,.fam,.grid4,.grid3,.rlist,.kv{grid-template-columns:1fr 1fr}
+  .grid2,.comp,.d3,.crit,.sh{grid-template-columns:1fr}
+  .comp .im{border-right:0;border-bottom:1px solid var(--line)}
+  .trow{grid-template-columns:1fr}
+  .thumbs,.mini{grid-template-columns:repeat(3,1fr)}
+  .ba.two,.ba.three,.ba.four{grid-template-columns:1fr}
+  .ba .ar{display:none}
+  .mt td.m{white-space:normal}
+  .mt{display:block;overflow-x:auto}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="top"><span class="mono">Estudo interno · Marca Digital · Davi</span><span class="mono">Gravação 02/10/2026 · 22 s · 1916 x 906</span></div>
+  <h1>Conselho Head <span>(Head Academy)</span>, panorama do sistema visual</h1>
+  <p class="lede">Leitura da página de vendas a partir da gravação de rolagem. Cores medidas no pixel dos quadros originais, tamanhos medidos pela altura de caixa alta no viewport de 1916 px. Material de estudo, não referência de cópia da marca.</p>
+  <div class="meta">
+    <div><span class="mono">Cores-base</span><b>Preto, off-white, violeta, lima</b></div>
+    <div><span class="mono">Acentos de capítulo</span><b>Verde feltro, dourado, violeta noite</b></div>
+    <div><span class="mono">Voz tipográfica</span><b>Grotesca pesada, caixa alta, tracking negativo</b></div>
+    <div><span class="mono">Assinatura</span><b>3D metafórico + stickers flutuantes</b></div>
+  </div>
+</header>
+
+<!-- 1 PALETA -->
+<section>
+  <div class="sh"><div class="n">01 / Paleta</div><div><h2>Quatro cores fazem o trabalho, as outras são cenário</h2><p>HEX tirado da cor modal de uma caixa de pixels em cada superfície (função de amostragem em canvas sobre os quadros 1916 px). Proporção estimada classificando todos os pixels dos 19 quadros distintos pela cor mais próxima. Como os quadros são por tempo de rolagem, seções pinadas (o túnel) pesam mais do que pesariam por área.</p></div></div>
+
+  <div class="pal">
+    <div class="sw"><div class="c" style="background:#0A0A0A;border-bottom:1px solid var(--line)"><i style="color:#EFEFEA">hero, CTA, rodapé</i></div><div class="t"><div class="hex">#0A0A0A</div><div class="r">Preto base. Variações medidas: #111111 (arquivos, "Talvez"), #131112 (FAQ), #11130E (valor).</div><span class="tag">Fundo · ~38%</span></div></div>
+    <div class="sw"><div class="c" style="background:#EFEFEA"><i style="color:#0A0A0A">seções claras</i></div><div class="t"><div class="hex">#EFEFEA</div><div class="r">Off-white quente, papel. É também a cor do texto sobre escuro (headline medida #EFEFEA).</div><span class="tag">Fundo + texto · ~24%</span></div></div>
+    <div class="sw"><div class="c" style="background:#5001EB"><i style="color:#EFEFEA">faixa, card, destaque</i></div><div class="t"><div class="hex">#5001EB</div><div class="r">Violeta elétrico. Fundo de capítulo, superfície de card e palavra destacada sobre claro.</div><span class="tag">Destaque · ~8%</span></div></div>
+    <div class="sw"><div class="c" style="background:#CBFF0A"><i style="color:#0A0A0A">CTA, palavra-chave</i></div><div class="t"><div class="hex">#CBFF0A</div><div class="r">Lima ácido. Botão, marquee, última linha das headlines, card IDEIAS, citação ativa.</div><span class="tag">Ação · ~2%</span></div></div>
+    <div class="sw"><div class="c" style="background:#160A29"><i style="color:#EFEFEA">túnel 3D</i></div><div class="t"><div class="hex">#160A29</div><div class="r">Violeta noite do túnel. Centro com brilho #210B43, transição radial a partir de #1A0A2E.</div><span class="tag">Fundo cênico · ~14%</span></div></div>
+    <div class="sw"><div class="c" style="background:#082519"><i style="color:#D1BD85">mesa</i></div><div class="t"><div class="hex">#082519</div><div class="r">Verde feltro, varia de #072116 (borda) a #0B2D1F (tampo). Só no capítulo da mesa.</div><span class="tag">Fundo cênico · ~7%</span></div></div>
+    <div class="sw"><div class="c" style="background:#D1BD85"><i style="color:#082519">TODA SEMANA.</i></div><div class="t"><div class="hex">#D1BD85</div><div class="r">Dourado champanhe. Texto e ficha ativa da mesa. Moeda 3D mede #B8914E na sombra.</div><span class="tag">Acento local · ~1%</span></div></div>
+    <div class="sw"><div class="c" style="background:#6C1FEB"><i style="color:#EFEFEA">depoimentos</i></div><div class="t"><div class="hex">#6C1FEB</div><div class="r">Segundo violeta, mais claro. Aparece no card de depoimento e em "HISTÓRIAS.". Não bate com o #5001EB.</div><span class="tag">Inconsistência</span></div></div>
+  </div>
+
+  <div class="mini">
+    <div><b style="background:#FDFDFD"></b>#FDFDFD card branco</div>
+    <div><b style="background:#D9D1F6"></b>#D9D1F6 lavanda cartas</div>
+    <div><b style="background:#AE3DE5"></b>#AE3DE5 lilás neon</div>
+    <div><b style="background:#9E2EEB"></b>#9E2EEB pilares túnel</div>
+    <div><b style="background:#E51891"></b>#E51891 sticker lâmpada</div>
+    <div><b style="background:#CAB6F5"></b>#CAB6F5 lead s/ violeta</div>
+    <div><b style="background:#0A0A07"></b>#0A0A07 texto s/ claro</div>
+    <div><b style="background:#6D6D69"></b>#6D6D69 corpo s/ claro</div>
+    <div><b style="background:#B9B9B6"></b>#B9B9B6 corpo s/ escuro</div>
+    <div><b style="background:#B2B6AE"></b>#B2B6AE escada cinza 1</div>
+    <div><b style="background:#8D9189"></b>#8D9189 escada cinza 2</div>
+    <div><b style="background:#4E5549"></b>#4E5549 escada cinza 3</div>
+  </div>
+
+  <div class="bar">
+    <div style="flex:38.2;background:#0A0A0A"></div><div style="flex:23.8;background:#EFEFEA"></div><div style="flex:14.5;background:#160A29"></div><div style="flex:7.8;background:#5001EB"></div><div style="flex:6.8;background:#082519"></div><div style="flex:2.1;background:#7A7A75"></div><div style="flex:2.0;background:#CBFF0A"></div><div style="flex:1.6;background:#FDFDFD"></div><div style="flex:1.3;background:#D9D1F6"></div><div style="flex:1.1;background:#C9AE73"></div><div style="flex:.8;background:#A64BE0"></div>
+  </div>
+  <div class="legend">
+    <span style="--c:#0A0A0A">pretos 38,2%</span><span style="--c:#EFEFEA">off-white 23,8%</span><span style="--c:#160A29">violeta noite 14,5%</span><span style="--c:#5001EB">violeta 7,8%</span><span style="--c:#082519">verde 6,8%</span><span style="--c:#7A7A75">cinzas 2,1%</span><span style="--c:#CBFF0A">lima 2,0%</span><span style="--c:#FDFDFD">branco 1,6%</span><span style="--c:#D9D1F6">lavanda 1,3%</span><span style="--c:#C9AE73">dourado 1,1%</span><span style="--c:#A64BE0">lilás 0,8%</span>
+  </div>
+  <p class="note">Leitura: o lima ocupa só 2% da área e mesmo assim é a cor que a memória guarda. É a regra 60/30/10 levada ao extremo, com 2 em vez de 10. Contrastes medidos: lima sobre preto 16,8:1, off-white sobre violeta 7,2:1, lima sobre violeta 7,0:1. Violeta e lima têm luminância parecida, por isso convivem sem um apagar o outro.</p>
+</section>
+
+<!-- 2 TIPOGRAFIA -->
+<section>
+  <div class="sh"><div class="n">02 / Tipografia</div><div><h2>Grotesca pesada para gritar, condensada para catalogar</h2><p>Famílias identificadas por desenho de letra (Q, G, a, g, ç, numerais). Sem acesso ao CSS, o grau de certeza vai indicado. Amostras ao lado renderizadas com a candidata para comparar com o recorte.</p></div></div>
+
+  <div class="fam">
+    <div><span class="mono">Display · headlines</span><div class="sp j">Direção.</div><div class="r"><b>Plus Jakarta Sans 800</b> (alternativas: Satoshi, General Sans). Caixa alta, tracking muito negativo. Versão 300 nos degraus ("Freelancer").<span class="conf"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></div></div>
+    <div><span class="mono">Corpo · interface</span><div class="sp dm" style="font-weight:400">Corpo</div><div class="r"><b>DM Sans 400 a 700</b>. g de um andar, ç e acentos geométricos, botões e listas.<span class="conf"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></div></div>
+    <div><span class="mono">Numerais grandes</span><div class="sp bw">R$31.000+</div><div class="r"><b>Barlow 600</b> (ou Barlow Semi Condensed). Numeral estreito e alto, $ atravessado.<span class="conf"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></div></div>
+    <div><span class="mono">Rótulos · cards</span><div class="sp bc" style="letter-spacing:.02em">Cursos</div><div class="r"><b>Barlow Condensed 500 a 600</b>. Eyebrow numerada, títulos dos cards, dados.<span class="conf"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></div></div>
+  </div>
+
+  <div class="tscale">
+    <div class="trow"><div class="k">Mega numeral</div><div class="s bw" style="font-size:96px;line-height:.9">R$31.000+</div><div class="v">~240 px (12,5vw) · Barlow 600<br>caixa alta ~170 px · tracking ~-0,02em<br>lh ~0,9 · "+" em lima</div></div>
+    <div class="trow"><div class="k">Display XL</div><div class="s j" style="font-size:72px">Agora?</div><div class="v">~124 px (7,8rem) · 800 · caixa alta<br>tracking ~-0,045em · lh ~0,96<br>"Tá, mas o que eu preciso..."</div></div>
+    <div class="trow"><div class="k">Display L</div><div class="s j" style="font-size:56px">Pensado de perto.</div><div class="v">~84 a 86 px (5,3rem) · 800<br>tracking ~-0,04em · lh 0,9 a 1,0<br>telas manifesto e títulos de capítulo</div></div>
+    <div class="trow"><div class="k">Display M</div><div class="s j" style="font-size:46px">Um lugar à mesa.</div><div class="v">~68 a 72 px (4,4rem) · 800<br>hero, mesa, CTA final, "Não importa..."</div></div>
+    <div class="trow"><div class="k">Título caixa mista</div><div class="s" style="font-family:'Plus Jakarta Sans';font-weight:800;letter-spacing:-.035em;font-size:40px">Importa qual é o próximo.</div><div class="v">~44 a 52 px · 700 a 800 · caixa mista<br>citações, "Funil &amp; Primeira Monetização"</div></div>
+    <div class="trow"><div class="k">Título de item</div><div class="s dm" style="font-size:24px;font-weight:500;letter-spacing:-.02em">O Conselho Head é mais um curso?</div><div class="v">22 a 26 px · 500 a 600 · lh 1,2<br>FAQ, lista de benefícios</div></div>
+    <div class="trow"><div class="k">Corpo</div><div class="s dm" style="font-size:18px">Aqui você não recebe uma rota genérica.</div><div class="v">17 a 18 px · 400 · lh ~1,55 (27 a 28 px)<br>#6D6D69 s/ claro · #B9B9B6 s/ escuro<br>medida ~330 a 770 px</div></div>
+    <div class="trow"><div class="k">Eyebrow A</div><div class="s dm" style="font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase">Informação não é o mesmo que direção.</div><div class="v">~13 px · 700 · caixa alta<br>tracking ~0,12em · acima de headline</div></div>
+    <div class="trow"><div class="k">Eyebrow B</div><div class="s bc" style="font-size:14px;letter-spacing:.14em">02 / Direção · Degrau / 01</div><div class="v">~13 px · condensada · tracking 0,14 a 0,2em<br>numeração de capítulo, lima no túnel</div></div>
+    <div class="trow"><div class="k">Botão</div><div class="s dm" style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.01em">Quero entrar para o conselho</div><div class="v">~12 a 13 px · 600 a 700 · caixa alta<br>tracking quase zero</div></div>
+  </div>
+
+  <div class="grid2" style="margin-top:20px">
+    <figure class="fig"><img src="img/type-display.jpg" alt="Headline em caixa alta com última linha em lima"><figcaption class="cap"><b>Display XL.</b> Três linhas, a última muda de cor. A aspa vira elemento gráfico.</figcaption></figure>
+    <figure class="fig"><img src="img/type-misto.jpg" alt="Headline caixa alta e linha de apoio em lima caixa mista"><figcaption class="cap"><b>Pergunta e resposta.</b> Caixa alta em off-white, resposta em caixa mista lima menor.</figcaption></figure>
+    <figure class="fig"><img src="img/type-numeral.jpg" alt="Numeral R$31.000+"><figcaption class="cap"><b>Numeral.</b> Família diferente da headline: mais estreita, mais "placar".</figcaption></figure>
+    <figure class="fig"><img src="img/type-light.jpg" alt="Degrau: palavra leve acima de palavra pesada"><figcaption class="cap"><b>Contraste de peso.</b> 300 em cinza (onde está) contra 800 em off-white (onde vai).</figcaption></figure>
+  </div>
+  <div class="grid3" style="margin-top:20px">
+    <figure class="fig"><img src="img/type-condensada.jpg" alt="Card com tipografia condensada"><figcaption class="cap"><b>Condensada</b> nos cards de arquivo.</figcaption></figure>
+    <figure class="fig"><img src="img/type-corpo.jpg" alt="Parágrafo de corpo"><figcaption class="cap"><b>Corpo</b> DM Sans, cinza médio, medida estreita.</figcaption></figure>
+    <figure class="fig" style="display:flex;flex-direction:column"><div style="display:grid;gap:10px;padding:14px;flex:1;align-content:center"><img src="img/type-eyebrow.jpg" alt="Eyebrow seção 02"><img src="img/type-eyebrow-2.jpg" alt="Eyebrow sobre escuro"><img src="img/type-eyebrow-3.jpg" alt="Eyebrow lima no túnel"><img src="img/type-eyebrow-4.jpg" alt="Rótulos de dado"></div><figcaption class="cap"><b>Dois sistemas de eyebrow</b> na mesma linha: condensada numerada à esquerda, sans bold à direita.</figcaption></figure>
+  </div>
+</section>
+
+<!-- 3 GRID -->
+<section>
+  <div class="sh"><div class="n">03 / Grid e espaço</div><div><h2>Um container largo, quatro margens diferentes</h2><p>Medidas no viewport gravado (1916 px de largura, escala 1:1). O conteúdo vive num container de ~1700 px, mas a margem esquerda muda de seção para seção.</p></div></div>
+
+  <div class="gd">
+    <div class="m" style="left:4.85%"><span>93 px · hero, depoimentos</span></div>
+    <div class="m" style="left:5.85%;top:40px"><span>112 · 03, 04, mesa</span></div>
+    <div class="m" style="left:7.85%;top:80px"><span>150 · manifesto, FAQ, CTA</span></div>
+    <div class="m" style="left:8.9%;top:120px"><span>170 · degraus, valor</span></div>
+    <div class="m" style="left:25.2%;top:160px"><span>482 · coluna de texto da seção 02</span></div>
+    <div class="m" style="left:94.1%"><span style="left:auto;right:6px">1802</span></div>
+    <div class="blk" style="left:5.85%;width:27.5%;top:200px;height:70px;background:#EFEFEA">texto 520 a 770 px</div>
+    <div class="blk" style="left:46.5%;width:47.6%;top:200px;height:70px;background:#5001EB;color:#EFEFEA">mídia 900 a 1000 px</div>
+  </div>
+
+  <div class="kv">
+    <div><span class="mono">Container</span><b>~1690 a 1730 px</b><p>Depoimentos: 3 cards de 561 px com gap de 23 px. Mesa: 4 colunas de ~404 px com gap de 24 px. Equivale a 12 colunas com calha de 24 px.</p></div>
+    <div><span class="mono">Alinhamento</span><b>Duas lógicas</b><p>Telas manifesto centralizadas, de altura cheia (cursos, "Talvez", degrau, evolução, valor). Seções de explicação em 2 colunas assimétricas, texto à esquerda e mídia à direita, com respiro de 90 a 150 px.</p></div>
+    <div><span class="mono">Ritmo vertical</span><b>~100 a 110 px</b><p>Respiro interno de seção (5,5vw). Eyebrow a headline ~40 px, headline a corpo ~60 px. Itens de lista com 116 px de passo. Manifestos ocupam a tela inteira (~906 px).</p></div>
+  </div>
+  <p class="note">A seção 02 usa uma terceira lógica: rótulo numerado numa coluna estreita à esquerda (112 px) e conteúdo começando em 482 px, como página de revista. É o momento mais editorial da página e o mais elegante do grid.</p>
+</section>
+
+<!-- 4 RITMO -->
+<section>
+  <div class="sh"><div class="n">04 / Ritmo de seções</div><div><h2>Capítulos por cor: escuro para provocar, claro para explicar</h2><p>Sequência de fundos de cima para baixo, com largura proporcional ao tempo que cada trecho ocupou na rolagem gravada.</p></div></div>
+  <div class="ribbon">
+    <div style="flex:3;background:#0A0A0A"><span style="color:#EFEFEA">1</span></div>
+    <div style="flex:.5;background:#CBFF0A"><span style="color:#0A0A0A">2</span></div>
+    <div style="flex:3;background:#EFEFEA"><span style="color:#0A0A0A">3</span></div>
+    <div style="flex:3;background:#111111"><span style="color:#EFEFEA">4</span></div>
+    <div style="flex:2;background:#111111;border-left:1px solid #222"><span style="color:#EFEFEA">5</span></div>
+    <div style="flex:2;background:#0A0A0A;border-left:1px solid #222"><span style="color:#EFEFEA">6</span></div>
+    <div style="flex:2;background:#EFEFEA"><span style="color:#0A0A0A">7</span></div>
+    <div style="flex:2;background:linear-gradient(180deg,#0A0A0A,#210B3C)"><span style="color:#EFEFEA">8</span></div>
+    <div style="flex:8;background:radial-gradient(ellipse at 50% 55%,#2A0E55,#160A29 60%,#0E0818)"><span style="color:#CBFF0A">9 túnel</span></div>
+    <div style="flex:2;background:#5001EB"><span style="color:#EFEFEA">10</span></div>
+    <div style="flex:3;background:#EFEFEA"><span style="color:#0A0A0A">11</span></div>
+    <div style="flex:3;background:#EFEFEA;border-left:1px solid #ccc"><span style="color:#0A0A0A">12</span></div>
+    <div style="flex:3;background:#082519"><span style="color:#D1BD85">13</span></div>
+    <div style="flex:3;background:#EFEFEA"><span style="color:#0A0A0A">14</span></div>
+    <div style="flex:2;background:#11130E"><span style="color:#EFEFEA">15</span></div>
+    <div style="flex:2;background:#EFEFEA"><span style="color:#0A0A0A">16</span></div>
+    <div style="flex:2;background:#5001EB"><span style="color:#EFEFEA">17</span></div>
+    <div style="flex:2;background:#131112"><span style="color:#EFEFEA">18</span></div>
+    <div style="flex:3;background:#0A0A0A"><span style="color:#EFEFEA">19</span></div>
+  </div>
+  <div class="rlist">
+    <div class="ri"><b style="background:#0A0A0A"></b><div>1 Hero, foto + card inclinado<em>preto · 2 col</em></div></div>
+    <div class="ri"><b style="background:#CBFF0A"></b><div>2 Marquee de palavras<em>lima · faixa 80 px</em></div></div>
+    <div class="ri"><b style="background:#EFEFEA"></b><div>3 Depoimentos em carrossel<em>off-white · 3 cards</em></div></div>
+    <div class="ri"><b style="background:#111111"></b><div>4 "Você já fez cursos" + arquivos<em>grafite · centralizado</em></div></div>
+    <div class="ri"><b style="background:#111111"></b><div>5 "Talvez o que esteja te travando"<em>grafite · manifesto</em></div></div>
+    <div class="ri"><b style="background:#0A0A0A"></b><div>6 "Tá, mas o que eu preciso fazer"<em>preto · manifesto à esquerda</em></div></div>
+    <div class="ri"><b style="background:#EFEFEA"></b><div>7 02 Direção, o que é a oferta<em>off-white · editorial</em></div></div>
+    <div class="ri"><b style="background:#210B3C"></b><div>8 "Não importa o degrau"<em>preto para violeta radial</em></div></div>
+    <div class="ri"><b style="background:#160A29"></b><div>9 Túnel 3D, degraus 01 a 08<em>violeta noite · pinado</em></div></div>
+    <div class="ri"><b style="background:#5001EB"></b><div>10 "Ele começa com direção"<em>violeta · faixa</em></div></div>
+    <div class="ri"><b style="background:#EFEFEA"></b><div>11 03 O que é, tabuleiro<em>off-white · 2 col</em></div></div>
+    <div class="ri"><b style="background:#EFEFEA"></b><div>12 04 Seu acesso, 10 entregas<em>off-white · foto + lista</em></div></div>
+    <div class="ri"><b style="background:#082519"></b><div>13 05 Mesa, 8 fases ao vivo<em>verde feltro · 2 col</em></div></div>
+    <div class="ri"><b style="background:#EFEFEA"></b><div>14 06 Evolução, +R$10K, escada<em>off-white · centralizado</em></div></div>
+    <div class="ri"><b style="background:#11130E"></b><div>15 07 Valor, R$31.000+<em>grafite · centralizado</em></div></div>
+    <div class="ri"><b style="background:#EFEFEA"></b><div>16 "O maior valor" + 3 frases<em>off-white · lista</em></div></div>
+    <div class="ri"><b style="background:#5001EB"></b><div>17 Quem está por trás<em>violeta · foto + números</em></div></div>
+    <div class="ri"><b style="background:#131112"></b><div>18 08 FAQ<em>grafite · acordeão</em></div></div>
+    <div class="ri"><b style="background:#0A0A0A"></b><div>19 CTA final + rodapé<em>preto · texto + vídeo</em></div></div>
+  </div>
+  <div class="thumbs">
+    <figure><img src="img/th-00.jpg" alt=""><figcaption>00 s hero</figcaption></figure>
+    <figure><img src="img/th-02.jpg" alt=""><figcaption>02 s arquivos</figcaption></figure>
+    <figure><img src="img/th-05.jpg" alt=""><figcaption>05 s manifesto</figcaption></figure>
+    <figure><img src="img/th-08.jpg" alt=""><figcaption>08 s túnel</figcaption></figure>
+    <figure><img src="img/th-11.jpg" alt=""><figcaption>11 s violeta + 03</figcaption></figure>
+    <figure><img src="img/th-12.jpg" alt=""><figcaption>12 s tabuleiro</figcaption></figure>
+    <figure><img src="img/th-14.jpg" alt=""><figcaption>14 s mesa</figcaption></figure>
+    <figure><img src="img/th-15.jpg" alt=""><figcaption>15 s evolução</figcaption></figure>
+    <figure><img src="img/th-16.jpg" alt=""><figcaption>16 s valor</figcaption></figure>
+    <figure><img src="img/th-17.jpg" alt=""><figcaption>17 s fundadora</figcaption></figure>
+    <figure><img src="img/th-18.jpg" alt=""><figcaption>18 s FAQ + CTA</figcaption></figure>
+    <figure><img src="img/th-20.jpg" alt=""><figcaption>20 s rodapé</figcaption></figure>
+  </div>
+  <p class="note">Padrão: o escuro carrega a dor e a provocação (manifestos), o claro carrega a explicação (o que é, o que recebe), o violeta marca as viradas (direção, autoridade). Verde e violeta noite são cenários de uma seção só, funcionam como "salas" diferentes da mesma casa.</p>
+</section>
+
+<!-- 5 COMPONENTES -->
+<section>
+  <div class="sh"><div class="n">05 / Componentes</div><div><h2>Poucas peças, sempre com uma assinatura física</h2><p>Medidas em px do viewport gravado. Raios e sombras estimados pelo recorte.</p></div></div>
+
+  <div class="comp"><div class="im"><img src="img/btn.jpg" alt="Botão lima e link secundário" style="max-width:290px"></div><div class="tx"><h3>Botão primário + link secundário</h3><table class="spec">
+    <tr><td>Medidas</td><td>231 x 58 px, pílula (raio 29 px), padding lateral ~26 px</td></tr>
+    <tr><td>Cor</td><td>Fundo #CBFF0A, texto #0A0A0A, sem borda, sem sombra</td></tr>
+    <tr><td>Texto</td><td>DM Sans ~12 px, 700, caixa alta, tracking quase zero</td></tr>
+    <tr><td>Secundário</td><td>"Tirar minhas dúvidas" em condensada 12 px, tracking 0,15em, sublinhado 1 px com afastamento ~8 px</td></tr>
+    <tr><td>Observação</td><td>Três rótulos de CTA diferentes ao longo da página</td></tr></table></div></div>
+
+  <div class="comp"><div class="im"><img src="img/card-flutuante.jpg" alt="Card inclinado do hero" style="max-width:240px"></div><div class="tx"><h3>Card flutuante (hero e arquivos)</h3><table class="spec">
+    <tr><td>Medidas</td><td>Hero ~190 x 215 px; arquivos ~210 x 250 px</td></tr>
+    <tr><td>Raio</td><td>16 a 20 px</td></tr>
+    <tr><td>Rotação</td><td>-10° a +10°, nunca reto</td></tr>
+    <tr><td>Sombra</td><td>Profunda e difusa, ~0 30 60 rgba(0,0,0,.5); no hero, placa lima sólida deslocada atrás</td></tr>
+    <tr><td>Anatomia</td><td>Eyebrow condensada ("HEAD / ARQUIVO 01"), título condensado ~32 px, linhas fantasma, rodapé "INFORMAÇÃO ≠ DIREÇÃO"</td></tr></table></div></div>
+
+  <figure class="fig" style="margin-bottom:20px"><img src="img/cards-arquivo.jpg" alt="Cards de arquivo ao redor da headline"><figcaption class="cap"><b>Cards em órbita.</b> Cinco cards nos cantos em violeta, off-white e lima enquadram a headline central. Funcionam como pilha de material acumulado.</figcaption></figure>
+
+  <div class="comp"><div class="im light" style="flex-direction:column;gap:10px;padding:14px"><img src="img/depo-topo.jpg" alt="Topo dos cards de depoimento"><img src="img/depo-base.jpg" alt="Base dos cards e navegação"></div><div class="tx"><h3>Card de depoimento</h3><table class="spec">
+    <tr><td>Medidas</td><td>561 px de largura, gap 23 px, 3 visíveis</td></tr>
+    <tr><td>Raio</td><td>~22 px; branco com borda 1 px clara, sem sombra</td></tr>
+    <tr><td>Cores</td><td>Alterna #6C1FEB, #CBFF0A e #FDFDFD</td></tr>
+    <tr><td>Anatomia</td><td>Rótulo + contador "01 / 08", título caixa alta ~24 px, print de WhatsApp como prova, citação curta, divisor 1 px, nome + "LER CONVERSA"</td></tr>
+    <tr><td>Navegação</td><td>Pontos, "pausar autoplay", setas pretas circulares 48 px com seta lima</td></tr></table></div></div>
+
+  <div class="comp"><div class="im light"><img src="img/selo-numero.jpg" alt="Card +R$10K com sombra lima"></div><div class="tx"><h3>Selo de número</h3><table class="spec">
+    <tr><td>Medidas</td><td>866 x 409 px, raio ~28 px</td></tr>
+    <tr><td>Sombra</td><td>Sólida lima deslocada ~12 px para baixo e direita, sem desfoque</td></tr>
+    <tr><td>Anatomia</td><td>Eyebrow espaçada "SEU PRÓXIMO MARCO", numeral ~180 px, divisor 1 px translúcido, dois dados em condensada (rótulo branco, valor lima)</td></tr>
+    <tr><td>Variante</td><td>Números da fundadora em grade 2 x 2 com divisores, ~60 px bold e rótulo condensado 11 px</td></tr></table>
+    <img src="img/stats.jpg" alt="Grade de números sobre violeta" style="margin-top:14px;border-radius:8px"></div></div>
+
+  <div class="comp"><div class="im"><img src="img/faq.jpg" alt="FAQ em acordeão"></div><div class="tx"><h3>FAQ</h3><table class="spec">
+    <tr><td>Linha</td><td>Passo de 116 px, divisor 1 px ~rgba(255,255,255,.1)</td></tr>
+    <tr><td>Número</td><td>Condensada ~12 px em lima, alinhada à esquerda (151 px)</td></tr>
+    <tr><td>Pergunta</td><td>~26 px, 500, caixa mista, off-white</td></tr>
+    <tr><td>Ícone</td><td>Chevron lima à direita, sem caixa</td></tr>
+    <tr><td>Título</td><td>"Ainda tem alguma dúvida?" alinhado à direita, segunda linha lima</td></tr></table></div></div>
+
+  <div class="comp"><div class="im light"><img src="img/lista-citacoes.jpg" alt="Lista de três frases, a última destacada em lima"></div><div class="tx"><h3>Lista de frases com destaque</h3><table class="spec">
+    <tr><td>Linha</td><td>~120 px, divisor 1 px escuro, número violeta 12 px</td></tr>
+    <tr><td>Texto</td><td>~52 px, 800, caixa mista, entre aspas</td></tr>
+    <tr><td>Ativo</td><td>Fundo lima, raio ~12 px, texto violeta; resolve a sequência</td></tr></table></div></div>
+
+  <div class="comp"><div class="im"><img src="img/rodape.jpg" alt="Rodapé"></div><div class="tx"><h3>Rodapé</h3><table class="spec">
+    <tr><td>Altura</td><td>~160 px, borda superior 1 px</td></tr>
+    <tr><td>Anatomia</td><td>Logo à esquerda, assinatura em duas linhas no centro ("Clareza para decidir." cinza, "Direção para crescer." branco), "VOLTAR AO INÍCIO ↑" condensado à direita</td></tr></table></div></div>
+
+  <div class="comp"><div class="im" style="background:#EFEFEA"><div class="stick"><img src="img/st-raio.jpg" alt="raio"><img src="img/st-lampada.jpg" alt="lâmpada"><img src="img/st-selo.jpg" alt="selo"><img src="img/st-badge.jpg" alt="badge"></div></div><div class="tx"><h3>Stickers flutuantes</h3><table class="spec">
+    <tr><td>Peças</td><td>Raio violeta 3D, lâmpada magenta (ícone da marca), selo circular "HA business school", badge rotativo "feito de alunos para alunos"</td></tr>
+    <tr><td>Posição</td><td>Presos às laterais (~20 a 90 px da borda), trocam de lado entre seções</td></tr>
+    <tr><td>Sombra</td><td>Suave e larga, dão volume de objeto</td></tr></table></div></div>
+
+  <div class="grid2">
+    <figure class="fig"><img src="img/card-plano.jpg" alt="Card violeta do plano de ação sobre foto"><figcaption class="cap"><b>Card crachá.</b> Violeta, inclinado ~2°, furo de crachá no topo, código de barras, sobreposto à foto.</figcaption></figure>
+    <figure class="fig"><img src="img/lista-beneficios.jpg" alt="Lista numerada de benefícios"><figcaption class="cap"><b>Lista de entregas.</b> Número violeta 11 px, título 22 px, descrição 15 px cinza, divisor 1 px.</figcaption></figure>
+  </div>
+  <figure class="fig" style="margin-top:20px"><img src="img/marquee.jpg" alt="Marquee lima"><figcaption class="cap"><b>Marquee.</b> Faixa lima de 80 px, palavras-chave em caixa alta 16 px bold, espaçamento ~55 px.</figcaption></figure>
+</section>
+
+<!-- 6 3D -->
+<section>
+  <div class="sh"><div class="n">06 / Linguagem 3D e imagem</div><div><h2>Cada objeto 3D é uma metáfora literal da oferta</h2><p>Degrau vira túnel, plano vira tabuleiro, grupo vira mesa. A fotografia faz o contrário: puxa para o pessoal e para a atitude.</p></div></div>
+  <div class="d3">
+    <figure class="fig"><img src="img/tunel.jpg" alt="Túnel de molduras com moeda"><figcaption class="cap"><b>Túnel com moeda.</b><ul>
+      <li>Molduras quadradas extrudadas e aninhadas em recursão: metal grafite, lilás neon emissivo e dourado.</li>
+      <li>Piso em grade de perspectiva (synthwave) em violeta, névoa escurecendo as bordas.</li>
+      <li>Câmera frontal central, eixo girado 2° a 4°, avança em Z com a rolagem.</li>
+      <li>Moeda dourada com monograma, PBR metálico, gira em Y. Pilar com brilho lima como luz de recorte.</li></ul></figcaption></figure>
+    <div style="display:grid;gap:20px">
+      <div class="grid2"><figure class="fig"><img class="coin" src="img/moeda-borda.jpg" alt="Moeda de perfil"><figcaption class="cap">Moeda de perfil (degrau 01)</figcaption></figure><figure class="fig"><img class="coin" src="img/moeda-face.jpg" alt="Moeda de frente"><figcaption class="cap">Moeda de frente (degrau 03)</figcaption></figure></div>
+      <figure class="fig"><img src="img/tabuleiro.jpg" alt="Tabuleiro isométrico violeta com cartas"><figcaption class="cap"><b>Tabuleiro isométrico.</b> Placa violeta com chanfro grosso e borda mais escura, câmera 3/4 de cima (~30°) com perspectiva leve. Cartas planas lavanda, lima e off-white, luz difusa de estúdio, sombra de contato larga e suave sobre o off-white.</figcaption></figure>
+    </div>
+    <figure class="fig"><img src="img/mesa.jpg" alt="Mesa oval verde com fichas numeradas"><figcaption class="cap"><b>Mesa do conselho.</b> Mesa oval de feltro verde com filete dourado, vista 3/4 de cima. Oito fichas numeradas em itálico condensado, a ativa em dourado. Spot central suave, vinheta escura e grão. Clima de mesa de jogo e sala de diretoria.</figcaption></figure>
+    <div class="grid2">
+      <figure class="fig"><img src="img/foto-hero.jpg" alt="Foto do hero"><figcaption class="cap"><b>Hero.</b> Escritório, papéis no ar, neon verde e violeta como luz de recorte.</figcaption></figure>
+      <figure class="fig"><img src="img/foto-beneficios.jpg" alt="Foto com quadro branco"><figcaption class="cap"><b>Benefícios.</b> Quadro com "branding" escrito à mão, mesma luz neon.</figcaption></figure>
+      <figure class="fig"><img src="img/foto-jessica.jpg" alt="Foto com claquete e lettering"><figcaption class="cap"><b>Autoridade.</b> Fundo branco recortado, claquete, nome em lettering condensado + script lima.</figcaption></figure>
+      <figure class="fig"><img src="img/foto-cta.jpg" alt="Foto escura com dinheiro queimando"><figcaption class="cap"><b>CTA.</b> Óculos escuros, dinheiro em chamas em vídeo. Pretos profundos, alto contraste.</figcaption></figure>
+    </div>
+  </div>
+  <p class="note">Ponto comum: pretos esmagados, luz colorida de recorte (neon verde e violeta) e personagem sempre de preto. A fotografia já vem na paleta, por isso não briga com o layout. O 3D é limpo, sem texturas sujas, mais próximo de Spline ou Three.js do que de render fotorrealista.</p>
+</section>
+
+<!-- 7 MOTION -->
+<section>
+  <div class="sh"><div class="n">07 / Motion</div><div><h2>A rolagem é o controle remoto</h2><p>Quase tudo é amarrado ao scroll (scrub). Durações de animações por tempo são estimadas pela gravação a 1 quadro por segundo e por isso têm margem larga.</p></div></div>
+  <table class="mt">
+    <thead><tr><th>Elemento</th><th>O que acontece</th><th>Gatilho</th><th>Duração</th><th>Easing</th></tr></thead>
+    <tbody>
+      <tr><td>Marquee</td><td>Palavras correm na horizontal em loop</td><td class="m">sempre</td><td class="m">~30 a 40 s/ciclo</td><td class="m">linear</td></tr>
+      <tr><td>Carrossel de depoimentos</td><td>Desliza um card; controle de pausa exposto</td><td class="m">autoplay + setas</td><td class="m">~600 ms, a cada ~5 s</td><td class="m">ease-out</td></tr>
+      <tr><td>Cards de arquivo</td><td>Sobem mais rápido que o texto (texto 38 px, cards ~50 px no mesmo trecho), leve giro</td><td class="m">scroll</td><td class="m">scrub</td><td class="m">linear</td></tr>
+      <tr><td>Headlines manifesto</td><td>Entrada por linha, opacidade e subida curta</td><td class="m">entrar na tela</td><td class="m">~600 a 800 ms</td><td class="m">ease-out expo</td></tr>
+      <tr><td>Fundo radial violeta</td><td>Gradiente nasce de baixo antes do túnel, preto vira violeta</td><td class="m">scroll</td><td class="m">scrub</td><td class="m">linear</td></tr>
+      <tr><td>Túnel 3D</td><td>Seção pinada; câmera atravessa molduras, degrau 01 a 08 troca texto, moeda gira de perfil para frente</td><td class="m">scroll</td><td class="m">~4 telas de rolagem</td><td class="m">scrub suavizado</td></tr>
+      <tr><td>Tabuleiro</td><td>Cartas espalhadas e giradas deslizam até a grade 5 x 2</td><td class="m">scroll</td><td class="m">~1,5 tela</td><td class="m">scrub</td></tr>
+      <tr><td>Mesa</td><td>Ficha ativa avança 01 a 08, fica dourada, título "Fase n/8" troca, item da lista ganha filete</td><td class="m">scroll ou autoplay</td><td class="m">~400 ms por troca</td><td class="m">ease-in-out</td></tr>
+      <tr><td>Escada "Novo nível"</td><td>Quatro linhas escurecem em sequência e a última fica violeta</td><td class="m">scroll</td><td class="m">scrub</td><td class="m">linear</td></tr>
+      <tr><td>Stickers laterais</td><td>Flutuação vertical, badge gira, aparecem e trocam de lado por seção</td><td class="m">sempre + seção</td><td class="m">~3 a 6 s/loop</td><td class="m">ease-in-out</td></tr>
+      <tr><td>CTA final</td><td>Vídeo em loop de dinheiro queimando, cinzas no ar</td><td class="m">sempre</td><td class="m">loop</td><td class="m">n/a</td></tr>
+    </tbody>
+  </table>
+
+  <div class="mrow"><h4>Cards de arquivo em parallax<span>2 s → 3 s</span></h4><div class="ba two"><img src="img/mo-cards-a.jpg" alt="antes"><div class="ar">→</div><img src="img/mo-cards-b.jpg" alt="depois"></div></div>
+  <div class="mrow"><h4>Entrada do túnel<span>6 s → 10,5 s</span></h4><div class="ba two"><img src="img/mo-entrada-tunel.jpg" alt="gradiente radial antes do túnel"><div class="ar">→</div><img src="img/mo-violeta.jpg" alt="saída do túnel para a faixa violeta"></div></div>
+  <div class="mrow"><h4>Túnel: degraus 01, 03, 05 e 08<span>7 s → 10 s</span></h4><div class="ba four"><img src="img/mo-tunel-a.jpg" alt="degrau 01"><img src="img/mo-tunel-b.jpg" alt="degrau 03"><img src="img/mo-tunel-c.jpg" alt="degrau 05"><img src="img/mo-tunel-d.jpg" alt="degrau 08"></div></div>
+  <div class="mrow"><h4>Tabuleiro montando o plano<span>11 s → 11,5 s → 12 s</span></h4><div class="ba three"><img src="img/mo-board-a.jpg" alt="cartas soltas"><div class="ar">→</div><img src="img/mo-board-b.jpg" alt="cartas se aproximando"><div class="ar">→</div><img src="img/mo-board-c.jpg" alt="grade completa"></div></div>
+  <div class="grid2">
+    <div class="mrow"><h4>Escada de cor por linha<span>15,5 s</span></h4><img src="img/mo-novo.jpg" alt="Quatro linhas em tons crescentes" style="border-radius:8px;border:1px solid var(--line)"></div>
+    <div class="mrow"><h4>Vídeo do CTA<span>18 s → 21,8 s</span></h4><div class="ba two"><img src="img/mo-cta-a.jpg" alt="chama 1"><div class="ar">→</div><img src="img/mo-cta-b.jpg" alt="chama 2"></div></div>
+  </div>
+</section>
+
+<!-- 8 CRÍTICA -->
+<section>
+  <div class="sh"><div class="n">08 / Leitura crítica</div><div><h2>Funciona pela disciplina de cor, tropeça no acúmulo</h2></div></div>
+  <div class="crit">
+    <div><h3>O que faz funcionar</h3><ol>
+      <li><b>Lima escasso.</b> 2% da área, sempre na palavra que importa ou no botão. O olho aprende rápido que lima é "aqui".</li>
+      <li><b>Voz de manifesto.</b> Caixa alta pesada com tracking negativo e última linha em outra cor cria cadência de pergunta e resposta.</li>
+      <li><b>Capítulos por fundo.</b> Escuro provoca, claro explica, violeta vira a chave. Dá para saber em que parte da história se está sem ler.</li>
+      <li><b>Metáfora visível.</b> Túnel, tabuleiro e mesa transformam "mentoria" em objetos que se entendem em um segundo.</li>
+      <li><b>Prova crua.</b> Prints reais de conversa dentro de cards limpos: o contraste entre bruto e polido aumenta a credibilidade.</li>
+      <li><b>Sistema de dossiê.</b> Numeração "02 / DIREÇÃO", "CH / 04", "ARQUIVO 01" dá sensação de método.</li></ol></div>
+    <div><h3>Onde falha</h3><ol>
+      <li><b>Grid sem dono.</b> Margem esquerda em 93, 112, 150 e 170 px. Na rolagem, o texto "pula" de posição.</li>
+      <li><b>Cores duplicadas.</b> Quatro pretos (#0A0A0A, #111111, #131112, #11130E) e dois violetas (#5001EB, #6C1FEB) sem papel distinto.</li>
+      <li><b>Legibilidade no limite.</b> Escada "Novo nível" começa em 1,8:1. Texto sobre o 3D cruza molduras ("EMPRESÁRIA"). Rótulos condensados de 10 a 11 px em cinza.</li>
+      <li><b>Excesso de cenário.</b> Verde e dourado abrem uma terceira paleta; quatro tipos de sticker disputam a margem; túnel longo adia a oferta.</li>
+      <li><b>CTA disperso.</b> "Quero entrar para o conselho", "Quero aprender com ela", "Conversar sobre o conselho": três promessas para uma ação.</li>
+      <li><b>Peso.</b> Três cenas 3D, vídeo e carrossel em autoplay cobram caro no celular e na primeira carga.</li></ol></div>
+  </div>
+  <div class="take"><h3>O que levar para os nossos projetos</h3><p>A lição transferível é a economia: duas cores de fundo, uma de virada e uma de ação usada com avareza. Grid único com uma margem só, CTA único com um rótulo só, e no máximo uma cena "uau" por página, colocada onde ela explica a oferta e não onde atrasa.</p></div>
+</section>
+
+<footer><div>Fonte: gravação de rolagem 02/10/2026, 22 quadros + quadros extras a cada 0,5 s extraídos com ffmpeg. Amostragem de cor e recortes por canvas em Chrome headless. Davi · Marca Digital.</div></footer>
+</div>
+</body>
+</html>
