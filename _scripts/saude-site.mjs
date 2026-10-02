@@ -135,6 +135,19 @@ function certificadoDias(url) {
 
 // clientes do banco (empresa.estagio_crm = 'cliente') que têm site cadastrado.
 // Só lê. Se o banco não existir ou não abrir, segue só com as fichas do vault.
+// Formulário em modal (ex.: Next, aberto por botão) não aparece no HTML da home. Nesse caso,
+// conferimos se a rota que recebe o envio existe: 405/400/200 no GET = rota viva; 404 = sem formulário.
+const ROTAS_FORM = ["/api/lead", "/api/leads", "/api/contato", "/contato-envia.php", "/send-form.php", "/wp-json/contact-form-7/v1/contact-forms"];
+async function formularioPorEndpoint(site) {
+  for (const rota of ROTAS_FORM) {
+    try {
+      const r = await fetch(new URL(rota, site), { method: "GET", redirect: "manual", signal: AbortSignal.timeout(8000) });
+      if ([200, 400, 401, 405, 422].includes(r.status)) return "ok";
+    } catch { /* tenta a próxima */ }
+  }
+  return "falha";
+}
+
 async function clientesDoBanco() {
   try {
     const envTxt = await readFile(ENV_FILE, "utf8").catch(() => "");
@@ -200,7 +213,7 @@ async function main() {
     const { status, html, ms } = await baixar(site);
     const no_ar = html !== null ? status >= 200 && status < 400 : false;
     const certificado_dias = await certificadoDias(site);
-    const formulario = html === null ? null : /<form/i.test(html) ? "ok" : "falha";
+    const formulario = html === null ? null : /<form/i.test(html) ? "ok" : await formularioPorEndpoint(site);
     const verificado_em = new Date().toISOString();
 
     // velocidade_ms: tempo até baixar a home; null quando o site não respondeu
