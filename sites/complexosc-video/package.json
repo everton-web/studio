@@ -1,0 +1,21 @@
+{
+  "name": "complexosc-video",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "studio": "remotion studio",
+    "trilha": "node scripts/trilha.mjs"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.532",
+    "@remotion/fonts": "^4.0.532",
+    "@types/react": "^19.3.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "remotion": "^4.0.532",
+    "typescript": "^7.0.2"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^23.11.1"
+  }
+}
