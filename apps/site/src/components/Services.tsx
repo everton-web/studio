@@ -22,6 +22,7 @@ type Item = {
   priceValue: number;
   note: string;
   from?: boolean;
+  promo?: boolean; // entra no desconto do mês (só projetos; consultoria e mentoria ficam fora)
   area: string;
   grande?: boolean;
 };
@@ -57,6 +58,7 @@ export function Services() {
     priceValue: x.priceValue,
     note: "",
     from: true,
+    promo: true,
     area,
     grande,
   });
@@ -199,7 +201,7 @@ export function Services() {
                       {it.from && (
                         <span className="text-[0.65rem] font-medium uppercase tracking-[0.08em] text-[var(--color-text-dim)]">{s.priceFrom}</span>
                       )}
-                      {ativa ? (
+                      {ativa && it.promo ? (
                         <>
                           <s className="text-[var(--color-text-dim)] text-[0.85rem]">{preco(it.priceValue)}</s>
                           <span className="font-semibold text-[var(--color-accent)]" style={{ fontSize: "1.2rem", letterSpacing: "-0.01em" }}>
