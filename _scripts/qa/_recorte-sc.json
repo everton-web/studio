@@ -1,0 +1,12 @@
+[
+ {"name":"forte-centro-cirurgico","parts":[{"f":"desktop-04.png","box":[160,290,1120,440]}]},
+ {"name":"forte-equipe","parts":[{"f":"desktop-06.png","box":[190,170,1060,730]}]},
+ {"name":"forte-metodo","parts":[{"f":"desktop-03.png","box":[175,420,720,360]}]},
+ {"name":"forte-hotelaria","parts":[{"f":"desktop-05.png","box":[175,340,1090,400]}]},
+ {"name":"fraco-contraste","parts":[{"f":"celular-02.png","box":[0,40,780,760]}]},
+ {"name":"fraco-hierarquia","parts":[{"f":"desktop-02.png","box":[0,0,1440,900],"s":0.75}]},
+ {"name":"fraco-especialidades","parts":[{"f":"desktop-03.png","box":[180,60,1080,840],"s":0.9}]},
+ {"name":"fraco-equipe","parts":[{"f":"celular-09.png","box":[30,520,750,560]}]},
+ {"name":"fraco-fotos","layout":"row","gap":16,"pad":0,"parts":[{"f":"desktop-01.png","box":[830,20,600,800],"s":0.75},{"f":"celular-08.png","box":[36,736,708,688],"s":0.872}]},
+ {"name":"fraco-ctas","layout":"col","gap":28,"pad":36,"parts":[{"f":"desktop-01.png","box":[180,665,360,95]},{"f":"desktop-03.png","box":[500,810,440,95]},{"f":"desktop-08.png","box":[470,630,500,105]}]}
+]

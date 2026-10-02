@@ -59,7 +59,13 @@ function groupByArea(faltas: Falta[]): { area: Area; faltas: Falta[] }[] {
   return order.map((area) => ({ area, faltas: map.get(area)! }));
 }
 
-export function RelatorioView({ data }: { data: RelatorioPublico }) {
+export function RelatorioView({
+  data,
+  temDetalhado = false,
+}: {
+  data: RelatorioPublico;
+  temDetalhado?: boolean;
+}) {
   const premissas = PREMISSAS[data.segmento];
   const dores = doresVisiveis(data.faltas);
   const grupos = groupByArea(data.faltas);
@@ -189,6 +195,12 @@ export function RelatorioView({ data }: { data: RelatorioPublico }) {
               <span className={styles.sep}>·</span>
               <span>{dateFmt.format(new Date(data.geradoEm + "T12:00:00"))}</span>
             </p>
+            {temDetalhado ? (
+              <a className={styles.btnDetalhado} href={`/relatorio/${data.slug}/detalhado`}>
+                Ver relatório detalhado
+                <span aria-hidden="true">→</span>
+              </a>
+            ) : null}
           </div>
         </div>
       </header>

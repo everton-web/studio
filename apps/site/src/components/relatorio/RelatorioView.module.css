@@ -126,6 +126,36 @@
   margin: 0 4px;
 }
 
+.btnDetalhado {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 64, 0, 0.45);
+  background: var(--color-accent-subtle);
+  color: var(--color-text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.btnDetalhado span {
+  color: var(--color-accent);
+  transition: transform 0.2s ease;
+}
+
+.btnDetalhado:hover {
+  background: var(--color-accent-glow);
+  border-color: var(--color-accent);
+}
+
+.btnDetalhado:hover span {
+  transform: translateX(3px);
+}
+
 /* score */
 .score {
   padding: 16px 0 48px;
@@ -523,7 +553,7 @@
   margin-bottom: 24px;
 }
 
-.dot {
+.chip .dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;

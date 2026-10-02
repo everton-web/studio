@@ -4,6 +4,7 @@ import { readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
 import type { RelatorioPublico } from "@/lib/relatorio";
 import { RelatorioView } from "@/components/relatorio/RelatorioView";
+import { existeDetalhado } from "@/lib/relatorio-detalhado";
 
 export const dynamicParams = false;
 
@@ -48,5 +49,5 @@ export default async function RelatorioPage({
   const { slug } = await params;
   const rel = await getRelatorio(slug);
   if (!rel) notFound();
-  return <RelatorioView data={rel} />;
+  return <RelatorioView data={rel} temDetalhado={existeDetalhado(slug)} />;
 }
