@@ -545,7 +545,34 @@ p,li,figcaption,td{text-wrap:pretty}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 
 /* documento responsivo (leitura no celular) */
+
+/* Protótipo animado (seção 09) */
+.pt{margin-top:88px}
+.pt:first-of-type{margin-top:64px}
+.pt__par{display:grid;grid-template-columns:1fr 300px;gap:40px;align-items:start}
+.pt__par .tela img{display:block;width:100%;height:auto}
+.pt__cel{width:300px;border:9px solid #231417;border-radius:40px;overflow:hidden;background:#231417;box-shadow:var(--sh-2)}
+.pt__cel img{display:block;width:100%;height:auto;border-radius:31px}
+.pt__rotulo{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--c-champanhe-texto);margin:40px 0 14px}
+.pt__tira{display:grid;grid-template-columns:repeat(var(--n,4),1fr);gap:16px}
+.pt__tira figure{margin:0}
+.pt__tira img{display:block;width:100%;height:auto;border-radius:var(--r-s);border:1px solid var(--c-linha);box-shadow:0 1px 2px rgba(43,27,31,.06)}
+.pt__tira figcaption{font-size:13.5px;line-height:1.5;color:var(--c-tinta-suave);margin-top:10px;text-wrap:pretty}
+.pt__tira figcaption b{display:block;font-family:var(--f-display);font-style:italic;font-weight:400;font-size:17px;color:var(--c-vinho);margin-bottom:2px}
+.pt__tira--cel{grid-template-columns:repeat(3,200px);gap:24px}
+.pt__tira--cel img{border-radius:22px}
+.pt__legenda{margin:28px 0 0;padding:18px 22px;border-left:2px solid var(--c-champanhe);background:var(--c-linho);border-radius:0 var(--r-s) var(--r-s) 0;font-size:15.5px;color:var(--c-tinta);max-width:860px;text-wrap:pretty}
+.reduzido__grade{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.reduzido__grade > div{background:var(--c-marfim);border:1px solid var(--c-linha);border-radius:var(--r-m);padding:22px}
+.reduzido__grade h4{font-family:var(--f-display);font-weight:400;font-size:20px;margin:0 0 6px}
+.reduzido__grade p{font-size:14px;color:var(--c-tinta-suave);margin:0;text-wrap:pretty}
+.micro td{text-wrap:pretty}
 @media (max-width: 900px){
+  .pt__par{grid-template-columns:1fr}
+  .pt__cel{margin:0 auto;width:min(300px,100%)}
+  .pt__tira{grid-template-columns:1fr 1fr}
+  .pt__tira--cel{grid-template-columns:repeat(3,1fr);gap:12px}
+  .reduzido__grade{grid-template-columns:1fr 1fr}
   .capa__corpo,.essencia,.ativos,.par-fontes,.evitar,.grade,.curva,.arq{grid-template-columns:1fr}
   .capa h1{font-size:48px}
   .indice,.tom,.regras,.motion,.grid-legenda{grid-template-columns:1fr}
@@ -608,7 +635,7 @@ p,li,figcaption,td{text-wrap:pretty}
       <a href="#componentes"><span>06</span>Componentes</a>
       <a href="#imagem"><span>07</span>Direção de imagem</a>
       <a href="#motion"><span>08</span>Movimento</a>
-      <a href="#mockups"><span>09</span>Mockups desktop e celular</a>
+      <a href="#mockups"><span>09</span>Protótipo desktop e celular</a>
     </nav>
   </div>
 </header>
@@ -1211,34 +1238,52 @@ p,li,figcaption,td{text-wrap:pretty}
       <div class="doc__num">08</div>
       <div>
         <h2>Movimento: como uma porta que se abre devagar</h2>
-        <p>O movimento existe para dar calma e orientar o olhar, nunca para impressionar. Se a paciente percebe a animação antes do conteúdo, ela está forte demais.</p>
+        <p>No protótipo, o movimento conduz a leitura: a página anda no ritmo da rolagem, abre fotos como cortinas e acende o texto aos poucos. Se a paciente percebe a animação antes do conteúdo, ela está forte demais.</p>
       </div>
     </div>
 
     <div class="motion">
-      <div class="principio"><span class="n">01</span><h4>Sutil</h4><p>Deslocamentos de 8 a 16 px e opacidade. Nada gira, nada quica, nada pisca.</p></div>
-      <div class="principio"><span class="n">02</span><h4>Lento</h4><p>Entradas entre 700 e 1200 ms, interações entre 200 e 400 ms. Uma curva só para tudo: <code style="font-size:13px;color:var(--c-vinho)">cubic-bezier(.22, 1, .36, 1)</code>.</p></div>
-      <div class="principio"><span class="n">03</span><h4>Uma vez</h4><p>Cada elemento anima ao entrar na tela e não repete. Com "reduzir movimento" ativo no aparelho, tudo aparece direto.</p></div>
+      <div class="principio"><span class="n">01</span><h4>Guiado pela rolagem</h4><p>Quase tudo acompanha a rolagem com um pequeno atraso, entre 0,6 e 0,8 s, e a roda do mouse é suavizada. Quem rola devagar vê devagar; quem para, para a cena.</p></div>
+      <div class="principio"><span class="n">02</span><h4>Abre, não desliza</h4><p>Fotos entram por máscara, de dentro para fora ou de baixo para cima, e assentam de um leve zoom. Texto nasce de dentro da própria linha. Nada gira, quica ou pisca.</p></div>
+      <div class="principio"><span class="n">03</span><h4>Lento e uma vez</h4><p>Entradas por tempo duram de 1,1 a 2,6 s e acontecem uma vez. Com "reduzir movimento" ativo no aparelho, nada fica fixo e tudo aparece direto.</p></div>
     </div>
 
     <div class="bloco curva">
       <svg viewBox="0 0 300 200" width="300" height="200" aria-label="Curva de aceleração">
         <rect x="20" y="10" width="260" height="170" fill="none" stroke="#E3D7C7"/>
-        <path d="M20 180 C 77 10, 113 10, 280 10" fill="none" stroke="#5E1A2E" stroke-width="2.5"/>
+        <path d="M20 180 C 62 10, 98 10, 280 10" fill="none" stroke="#5E1A2E" stroke-width="2.5"/>
         <path d="M20 180 L 280 10" fill="none" stroke="#B8976A" stroke-dasharray="4 5"/>
         <text x="24" y="196" font-size="11" fill="#6A5558" font-family="Manrope">tempo</text>
-        <text x="190" y="30" font-size="11" fill="#5E1A2E" font-family="Manrope">ease do sistema</text>
+        <text x="190" y="30" font-size="11" fill="#5E1A2E" font-family="Manrope">expo.out</text>
       </svg>
       <div>
-        <p class="sub">Entrada de bloco, quadro a quadro</p>
+        <p class="sub">Entrada por tempo, quadro a quadro</p>
         <div class="quadros">
           <div class="quadro" style="opacity:.25"><i style="top:46px;transform:translateY(16px)"></i><i style="top:70px;transform:translateY(16px)"></i><span>0 ms</span></div>
-          <div class="quadro" style="opacity:.75"><i style="top:46px;transform:translateY(5px)"></i><i style="top:70px;transform:translateY(8px)"></i><span>250 ms</span></div>
-          <div class="quadro" style="opacity:.95"><i style="top:46px;transform:translateY(1px)"></i><i style="top:70px;transform:translateY(2px)"></i><span>500 ms</span></div>
-          <div class="quadro"><i style="top:46px"></i><i style="top:70px"></i><span>700 ms</span></div>
+          <div class="quadro" style="opacity:.8"><i style="top:46px;transform:translateY(4px)"></i><i style="top:70px;transform:translateY(7px)"></i><span>300 ms</span></div>
+          <div class="quadro" style="opacity:.97"><i style="top:46px;transform:translateY(1px)"></i><i style="top:70px;transform:translateY(2px)"></i><span>700 ms</span></div>
+          <div class="quadro"><i style="top:46px"></i><i style="top:70px"></i><span>1300 ms</span></div>
         </div>
-        <p class="nota">A maior parte do caminho acontece no começo e o final desacelera longamente: a sensação é de assentar, não de chegar.</p>
+        <p class="nota">Curva principal: <code style="font-size:12.5px;color:var(--c-vinho)">expo.out</code>, perto de <code style="font-size:12.5px;color:var(--c-vinho)">cubic-bezier(.16, 1, .3, 1)</code>. Quase todo o caminho acontece no começo e o final desacelera longamente: a sensação é de assentar, não de chegar. Cortinas usam <code style="font-size:12.5px;color:var(--c-vinho)">power2.inOut</code>.</p>
       </div>
+    </div>
+
+    <div class="bloco">
+      <p class="sub">O que o protótipo faz, seção por seção</p>
+      <table class="micro">
+        <thead><tr><th>Onde</th><th>O que acontece</th><th>Tempo</th></tr></thead>
+        <tbody>
+          <tr><td>Abertura do hero</td><td>A foto da equipe abre do centro para as bordas por máscara e assenta de um zoom de 118%. O título sobe linha a linha de dentro da máscara; texto e botões chegam depois. Ao rolar, a foto recua para 94% e o bloco de texto sobe e esmaece.</td><td><code>2,2 s máscara</code><br><code>1,6 s linhas</code><br><code>expo.out</code></td></tr>
+          <tr><td>Selos de confiança</td><td>Os quatro selos sobem em sequência e o fio champanhe de cada um se desenha da esquerda para a direita.</td><td><code>1,1 s · 140 ms</code></td></tr>
+          <tr><td>Jornada da mama</td><td>No desktop, a seção fica fixa por quatro passos. A cada passo, a próxima foto sobe como cortina, a anterior recua e o passo ativo acende enquanto os outros ficam em 28%. O trilho vertical enche e a rolagem encaixa no passo mais próximo. No celular não há trava: cada foto abre por cortina ao entrar.</td><td><code>scrub 0,8 s</code><br><code>encaixe 0,3 a 0,9 s</code></td></tr>
+          <tr><td>Galeria do cuidado</td><td>A seção fica fixa e a rolagem vertical vira deslocamento lateral da faixa de fotos, com barra de progresso. Cada foto ganha cor e tamanho cheio, de 92% para 100%, ao cruzar o centro da tela.</td><td><code>scrub 0,8 s · linear</code></td></tr>
+          <tr><td>Método RPP</td><td>As letras do letreiro acendem uma a uma, de champanhe apagado a marfim. A frase se preenche palavra por palavra, a sigla RPP ao fundo desliza devagar e o retrato da criadora abre de baixo, em arco.</td><td><code>40 ms por letra</code><br><code>scrub 0,8 s</code></td></tr>
+          <tr><td>Estrutura em camadas</td><td>No desktop, as fotos andam em velocidades diferentes e criam profundidade. Cada moldura abre de dentro para fora e a imagem assenta de 122% para 106%. No celular, só a abertura da moldura fica.</td><td><code>scrub 0,6 s</code></td></tr>
+          <tr><td>Equipe em sequência</td><td>Quando a grade chega a 80% da tela, os cartões sobem 60 px, os retratos abrem de baixo em arco e o fio do registro se desenha, um profissional depois do outro.</td><td><code>1,3 a 1,8 s</code><br><code>140 ms · expo.out</code></td></tr>
+          <tr><td>Cortina do CTA</td><td>A faixa escura aparece recuada, com cantos de 40 px, e cresce até ocupar a largura toda. O monograma gira de &minus;25° até assentar e os botões sobem em sequência.</td><td><code>scrub · 1,1 s botões</code></td></tr>
+          <tr><td>Títulos de seção</td><td>Palavra por palavra saindo de uma máscara quando o título chega a 88% da tela.</td><td><code>1,1 s · 60 ms</code></td></tr>
+        </tbody>
+      </table>
     </div>
 
     <div class="bloco">
@@ -1246,7 +1291,6 @@ p,li,figcaption,td{text-wrap:pretty}
       <table class="micro">
         <thead><tr><th>Onde</th><th>O que acontece</th><th>Tempo</th></tr></thead>
         <tbody>
-          <tr><td>Entrada de seção</td><td>Título, texto e imagem sobem 16 px e ganham opacidade em cascata, 80 ms entre eles.</td><td><code>700 ms · ease</code></td></tr>
           <tr><td>Foto ao passar o mouse</td><td>A imagem aproxima 3% dentro da moldura, como quem chega mais perto. O card não se mexe.</td><td><code>1200 ms · ease</code></td></tr>
           <tr><td>Botão e link</td><td>Fundo escurece para o vinho profundo e a seta anda 4 px para a direita.</td><td><code>200 ms · 400 ms</code></td></tr>
           <tr><td>FAQ</td><td>A resposta abre em altura com fade; o sinal de mais vira menos e o círculo ganha vinho.</td><td><code>400 ms · ease</code></td></tr>
@@ -1255,9 +1299,19 @@ p,li,figcaption,td{text-wrap:pretty}
       </table>
     </div>
 
+    <div class="bloco reduzido">
+      <p class="sub">Com movimento reduzido</p>
+      <div class="reduzido__grade">
+        <div><h4>Rolagem nativa</h4><p>A suavização da roda desliga e nenhuma seção fica fixa na tela.</p></div>
+        <div><h4>Mama em grade</h4><p>No desktop, os quatro passos viram uma grade estática, cada um com sua imagem.</p></div>
+        <div><h4>Cuidado com rolagem lateral</h4><p>A faixa de fotos rola para o lado pelo próprio gesto, sem barra de progresso.</p></div>
+        <div><h4>Tudo visível</h4><p>Títulos, letreiro do RPP e retratos aparecem prontos. Vídeos ficam parados no primeiro quadro.</p></div>
+      </div>
+    </div>
+
     <div class="bloco evitar">
-      <div class="lista lista--nao"><h4>O que não fazer</h4><ul><li>Parallax forte e fotos que deslizam com o scroll</li><li>Brilho dourado pulsando, ondas animadas, partículas</li><li>Contadores numéricos girando</li><li>Carrossel que passa sozinho</li><li>Bounce, giro, zoom de entrada em texto</li><li>Botão do WhatsApp chacoalhando para chamar atenção</li></ul></div>
-      <div class="lista lista--sim"><h4>Na implementação</h4><ul><li>Animar só <b>transform</b> e <b>opacity</b></li><li>Respeitar <b>prefers-reduced-motion</b> em tudo</li><li>Conteúdo legível mesmo se o script não carregar</li><li>Nenhuma animação acima da dobra atrasa o título</li></ul></div>
+      <div class="lista lista--nao"><h4>O que não fazer</h4><ul><li>Movimento que roda sozinho e se repete, sem depender da rolagem</li><li>Seção fixa sem indicador de progresso ou com mais de quatro paradas</li><li>Parallax forte no celular</li><li>Brilho dourado pulsando, ondas animadas, partículas</li><li>Contadores numéricos girando e carrossel que passa sozinho</li><li>Bounce, giro ou zoom de entrada em texto</li><li>Botão do WhatsApp chacoalhando para chamar atenção</li></ul></div>
+      <div class="lista lista--sim"><h4>Na implementação</h4><ul><li>GSAP com <b>ScrollTrigger</b> e <b>SplitText</b>, rolagem suavizada com <b>Lenis</b></li><li>Animar só <b>transform</b>, <b>opacity</b> e <b>clip-path</b></li><li><b>matchMedia</b> separa desktop, celular e movimento reduzido</li><li>Conteúdo legível mesmo se o script não carregar</li><li>O título do hero nunca espera a foto para aparecer</li></ul></div>
     </div>
   </div>
 </section>
@@ -1268,294 +1322,130 @@ p,li,figcaption,td{text-wrap:pretty}
     <div class="doc__head">
       <div class="doc__num">09</div>
       <div>
-        <h2>Mockups com o sistema e as fotos reais</h2>
-        <p>Cinco momentos da página, no desktop e no celular, montados só com os componentes acima. Títulos preservam a voz original da clínica; o restante é copy provisória. Onde falta foto ou dado, o espaço fica marcado.</p>
+        <h2>O protótipo animado, tela por tela</h2>
+        <p>Capturas do protótipo aprovado, no ar em proposta-csc-7k2q.vercel.app, no desktop com 1440 px e no celular com 390 px. Onde há movimento, a tira mostra os estados da rolagem do início ao fim. Textos entre colchetes seguem aguardando confirmação da clínica.</p>
       </div>
     </div>
 
     <!-- HERO -->
-    <div class="mock">
-      <div class="mock__titulo"><h3>Hero</h3><span>desktop 1240 px · celular 390 px</span></div>
-      <div class="tela">
-        <div class="tela__barra"><i></i><i></i><i></i><span>steticclass.com.br</span></div>
-        <div class="s-header">
-          <a class="s-marca" href="#"><img src="img/logo-vinho.png" alt=""><div><b>Complexo SC</b><span>Medicina · Estética · Educação</span></div></a>
-          <nav class="s-nav"><a href="#">Especialidades</a><a href="#">Estrutura</a><a href="#">Equipe</a><a href="#">Dúvidas</a><a href="#">Contato</a></nav>
-          <span class="btn">Agendar avaliação</span>
-          <span class="s-menu"><i></i></span>
-        </div>
-        <section class="hero">
-          <div class="hero__top">
-            <div>
-              <span class="eyebrow">Cirurgia de mama e contorno corporal</span>
-              <h1>O primeiro passo para sua transformação segura, elegante e <em class="it">bem cuidada.</em></h1>
-            </div>
-            <div>
-              <p class="hero__lead">Prótese de mama e mastopexia planejadas para a sua proporção, com centro cirúrgico próprio e acompanhamento da primeira consulta à recuperação, para você se sentir segura em cada etapa.</p>
-              <div class="hero__acoes"><span class="btn">Agendar avaliação <svg><use href="#seta"/></svg></span><span class="link">Entender a cirurgia de mama <svg><use href="#seta"/></svg></span></div>
-            </div>
-          </div>
-          <figure class="hero__midia" style="margin-left:0;margin-right:0;margin-bottom:0"><img src="img/equipe-hero.jpg" alt="Equipe do Complexo SC no lounge da clínica"><figcaption>Equipe Complexo SC</figcaption></figure>
-          <div class="selos">
-            <div class="selo"><svg><use href="#i-cirurgia"/></svg><div><b>Centro cirúrgico próprio</b><span>Equipe anestésica especializada</span></div></div>
-            <div class="selo"><svg><use href="#i-registro"/></svg><div><b>CRM 8688 · RQE 4045</b><span>Cirurgião plástico responsável</span></div></div>
-            <div class="selo"><svg><use href="#i-equipe"/></svg><div><b>Fisioterapia no pós‑operatório</b><span>Acompanhamento até a recuperação</span></div></div>
-            <div class="selo"><svg><use href="#i-cafe"/></svg><div><b>Cafeteria Beike anexa</b><span>Hospitalidade na espera e no pós</span></div></div>
-          </div>
-        </section>
+    <div class="pt">
+      <div class="mock__titulo"><h3>Hero</h3><span>desktop 1440 px · celular 390 px</span></div>
+      <div class="pt__par">
+        <div class="tela"><div class="tela__barra"><i></i><i></i><i></i><span>proposta-csc-7k2q.vercel.app</span></div><img src="img/prototipo/hero-desktop.webp" alt="Hero do protótipo no desktop com a equipe inteira"></div>
+        <div class="pt__cel"><img src="img/prototipo/hero-celular.webp" alt="Hero do protótipo no celular"></div>
       </div>
-
-      <div class="mock__baixo">
-        <div class="cel"><div class="tela">
-          <div class="cel__status"><span>9:41</span><i></i><span>5G</span></div>
-          <div class="s-header">
-            <a class="s-marca" href="#"><img src="img/logo-vinho.png" alt=""><div><b>Complexo SC</b><span>Medicina · Estética · Educação</span></div></a>
-            <nav class="s-nav"></nav><span class="btn">Agendar avaliação</span>
-            <span class="s-menu"><i></i></span>
-          </div>
-          <section class="hero">
-            <div class="hero__top">
-              <div>
-                <span class="eyebrow">Cirurgia de mama e contorno</span>
-                <h1>O primeiro passo para sua transformação segura, elegante e <em class="it">bem cuidada.</em></h1>
-              </div>
-              <div>
-                <p class="hero__lead">Prótese de mama e mastopexia planejadas para a sua proporção, com centro cirúrgico próprio e acompanhamento até a recuperação.</p>
-              </div>
-            </div>
-            <figure class="hero__midia" style="margin-left:0;margin-right:0;margin-bottom:0"><img src="img/equipe-hero.jpg" alt="Equipe do Complexo SC"><figcaption>Equipe Complexo SC</figcaption></figure>
-            <div class="selos">
-              <div class="selo"><svg><use href="#i-cirurgia"/></svg><div><b>Centro cirúrgico próprio</b></div></div>
-              <div class="selo"><svg><use href="#i-registro"/></svg><div><b>CRM 8688 · RQE 4045</b></div></div>
-              <div class="selo"><svg><use href="#i-equipe"/></svg><div><b>Fisioterapia no pós‑operatório</b></div></div>
-              <div class="selo"><svg><use href="#i-cafe"/></svg><div><b>Cafeteria Beike anexa</b></div></div>
-            </div>
-          </section>
-          <div class="barra-cta"><span class="btn">Agendar avaliação</span><span class="btn btn--wa" aria-label="WhatsApp"><svg class="wa"><use href="#wa"/></svg></span></div>
-        </div></div>
-        <div class="decisoes">
-          <h4>Decisões do hero</h4>
-          <ul>
-            <li><b>A headline original fica.</b> "O primeiro passo para sua transformação segura, elegante e bem cuidada" já é a voz da marca; muda a hierarquia, com "bem cuidada" em itálico vinho.</li>
-            <li><b>Eyebrow e texto falam com quem pensa em mama.</b> Prótese e mastopexia nomeadas, com segurança, proporção e acompanhamento. Nenhuma promessa de resultado e nenhum antes e depois no topo.</li>
-            <li><b>A foto aparece inteira.</b> Sem véu bordô: o fundo marfim continua a parede areia da foto, e o site parece uma extensão da clínica.</li>
-            <li><b>Um convite, um caminho alternativo.</b> "Agendar avaliação" no primário; "Entender a cirurgia de mama" como link para quem ainda está pesquisando.</li>
-            <li><b>Prova logo abaixo da dobra.</b> Quatro selos só com fatos que a clínica já declara: centro cirúrgico, registro do cirurgião, fisioterapia no pós e a Beike.</li>
-            <li><b>No celular, o convite fica fixo.</b> Barra inferior com o primário e o WhatsApp, no lugar do botão verde flutuante.</li>
-          </ul>
-        </div>
+      <p class="pt__rotulo">Abertura e rolagem</p>
+      <div class="pt__tira">
+        <figure><img src="img/prototipo/hero-abre-1.webp" alt=""><figcaption><b>0,25 s</b>A foto abre do centro por máscara, ainda com zoom.</figcaption></figure>
+        <figure><img src="img/prototipo/hero-abre-2.webp" alt=""><figcaption><b>0,75 s</b>O título sobe linha a linha de dentro da máscara.</figcaption></figure>
+        <figure><img src="img/prototipo/hero-abre-3.webp" alt=""><figcaption><b>3 s</b>Texto, botões e foto assentados.</figcaption></figure>
+        <figure><img src="img/prototipo/hero-abre-4.webp" alt=""><figcaption><b>Rolagem</b>A foto recua de leve e os selos entram com o fio champanhe.</figcaption></figure>
       </div>
+      <p class="pt__legenda">A equipe aparece inteira, sem cortes, logo abaixo da headline original. Na abertura, a foto se abre do centro para as bordas e o título nasce de dentro da linha.</p>
     </div>
 
-    <!-- ESPECIALIDADES -->
-    <div class="mock">
-      <div class="mock__titulo"><h3>Especialidades</h3><span>mama em primeiro, depois contorno corporal e o método da casa</span></div>
-      <div class="tela">
-        <div class="tela__barra"><i></i><i></i><i></i><span>steticclass.com.br/#especialidades</span></div>
-        <section class="st">
-          <div class="st__cab">
-            <div><span class="eyebrow">Especialidades</span><h2>Cirurgia e estética com <em class="it" style="color:var(--c-vinho)">planejamento individual.</em></h2></div>
-            <p>Procedimentos estéticos e cirúrgicos pensados para realçar a beleza natural, com segurança, cuidado e planejamento individualizado.</p>
-          </div>
-          <div class="esp-grid">
-            <article class="esp esp--mama"><div class="esp__top"><span class="esp__n">01</span><span class="tag">Cirúrgico</span></div><h3>Cirurgia de <em class="it" style="color:var(--c-vinho)">mama</em></h3><p>Prótese e mastopexia planejadas para a sua proporção, com foco em naturalidade, segurança e acompanhamento em cada etapa.</p>
-              <ul class="esp__sub"><li><b>Prótese de mama</b><span>volume e forma</span></li><li><b>Mastopexia</b><span>firmeza e elevação</span></li></ul>
-              <div class="esp__rodape esp__rodape--duplo"><span class="link">Entender a cirurgia de mama <svg><use href="#seta"/></svg></span><span class="link" style="color:var(--c-tinta-suave);border-color:var(--c-linha)">Ver casos autorizados <svg><use href="#seta"/></svg></span></div></article>
-            <article class="esp"><div class="esp__top"><span class="esp__n">02</span><span class="tag">Contorno corporal</span></div><h3>Lipoaspiração HD</h3><p>Contorno corporal preciso, respeitando as curvas e a harmonia do seu corpo.</p><div class="esp__rodape"><span class="link">Entender o procedimento <svg><use href="#seta"/></svg></span></div></article>
-            <article class="esp"><div class="esp__top"><span class="esp__n">03</span><span class="tag">Contorno corporal</span></div><h3>Abdominoplastia</h3><p>Remoção do excesso de pele e restauração da firmeza abdominal.</p><div class="esp__rodape"><span class="link">Entender o procedimento <svg><use href="#seta"/></svg></span></div></article>
-            <article class="esp esp--assinatura esp--rpp"><div class="esp__top"><span class="esp__n">04</span><span class="tag">Método da casa</span></div><h3>Método RPP</h3><p>Reestruturação pós-parto criada pela Dra. Olga Vieira para recuperar funcionalidade e estética depois da maternidade.</p><div class="esp__rodape"><span class="link">Conhecer o método <svg><use href="#seta"/></svg></span></div></article>
-            <div class="esp-mais"><span>Também na clínica</span><a href="#"><div><b>Facelifting</b><small>Rejuvenescimento que preserva suas expressões</small></div><svg><use href="#seta"/></svg></a><a href="#"><div><b>Botox e preenchimentos</b><small>Toques sutis, sem cirurgia</small></div><svg><use href="#seta"/></svg></a></div>
-          </div>
-        </section>
+    <!-- MAMA -->
+    <div class="pt">
+      <div class="mock__titulo"><h3>Cirurgia de mama</h3><span>jornada fixa em quatro passos</span></div>
+      <div class="pt__par">
+        <div class="tela"><div class="tela__barra"><i></i><i></i><i></i><span>proposta-csc-7k2q.vercel.app/#mama</span></div><img src="img/prototipo/mama-desktop.webp" alt="Jornada da mama no desktop, passo 3"></div>
+        <div class="pt__cel"><img src="img/prototipo/mama-celular.webp" alt="Jornada da mama no celular"></div>
       </div>
-      <div class="mock__baixo">
-        <div class="cel"><div class="tela">
-          <div class="cel__status"><span>9:41</span><i></i><span>5G</span></div>
-          <section class="st">
-            <div class="st__cab">
-              <div><span class="eyebrow">Especialidades</span><h2>Cirurgia e estética com <em class="it" style="color:var(--c-vinho)">planejamento individual.</em></h2></div>
-            </div>
-            <div class="esp-grid">
-              <article class="esp esp--mama"><div class="esp__top"><span class="esp__n">01</span><span class="tag">Cirúrgico</span></div><h3>Cirurgia de <em class="it" style="color:var(--c-vinho)">mama</em></h3><p>Prótese e mastopexia planejadas para a sua proporção.</p>
-                <ul class="esp__sub"><li><b>Prótese de mama</b><span>volume e forma</span></li><li><b>Mastopexia</b><span>firmeza e elevação</span></li></ul>
-                <div class="esp__rodape"><span class="link">Entender a cirurgia de mama <svg><use href="#seta"/></svg></span></div></article>
-              <article class="esp"><div class="esp__top"><span class="esp__n">02</span><span class="tag">Contorno corporal</span></div><h3>Lipoaspiração HD</h3><p>Contorno corporal preciso e harmônico.</p></article>
-              <article class="esp"><div class="esp__top"><span class="esp__n">03</span><span class="tag">Contorno corporal</span></div><h3>Abdominoplastia</h3><p>Firmeza abdominal restaurada.</p></article>
-              <article class="esp esp--assinatura esp--rpp"><div class="esp__top"><span class="esp__n">04</span><span class="tag">Método da casa</span></div><h3>Método RPP</h3><p>Reestruturação pós-parto criada pela Dra. Olga Vieira.</p></article>
-              <div class="esp-mais"><span>Também na clínica</span><a href="#"><div><b>Facelifting</b></div><svg><use href="#seta"/></svg></a><a href="#"><div><b>Botox e preenchimentos</b></div><svg><use href="#seta"/></svg></a></div>
-            </div>
-          </section>
-        </div></div>
-        <div class="decisoes">
-          <h4>Decisões das especialidades</h4>
-          <ul>
-            <li><b>Mama primeiro e maior.</b> É o que a clínica mais mostra no Instagram; o card ocupa duas linhas e separa prótese de mastopexia, os dois caminhos que a paciente pesquisa.</li>
-            <li><b>Depois, contorno corporal.</b> Lipo HD e abdominoplastia lado a lado, com a mesma tag, porque costumam ser pesquisadas juntas.</li>
-            <li><b>O Método RPP vira assinatura.</b> Único card em vinho: é o que só esta clínica oferece com esse nome.</li>
-            <li><b>O resto não some, desce.</b> Facelifting e botox ficam numa faixa "Também na clínica", com link para a página de cada um.</li>
-            <li><b>Resultados com aviso.</b> O link "Ver casos autorizados" leva à galeria ética da página de mama (componente na seção 06), nunca a fotos soltas.</li>
-          </ul>
-        </div>
+      <p class="pt__rotulo">Estados da rolagem no desktop</p>
+      <div class="pt__tira">
+        <figure><img src="img/prototipo/mama-1.webp" alt=""><figcaption><b>Passo 01</b>Consulta acesa; os outros passos ficam em segundo plano.</figcaption></figure>
+        <figure><img src="img/prototipo/mama-2.webp" alt=""><figcaption><b>Troca</b>A próxima foto sobe como cortina e a anterior recua.</figcaption></figure>
+        <figure><img src="img/prototipo/mama-3.webp" alt=""><figcaption><b>Passo 02</b>Planejamento aceso e o trilho à esquerda avança.</figcaption></figure>
+        <figure><img src="img/prototipo/mama-4.webp" alt=""><figcaption><b>Passo 04</b>Pós-operatório; o trilho chega ao fim e a página segue.</figcaption></figure>
       </div>
+      <p class="pt__legenda">A seção fica fixa enquanto a rolagem percorre os quatro passos, e cada parada encaixa sozinha no passo mais próximo. No celular não há trava: cada passo traz a própria foto, que abre por cortina ao entrar na tela.</p>
+    </div>
+
+    <!-- CUIDADO -->
+    <div class="pt">
+      <div class="mock__titulo"><h3>Padrão de cuidado</h3><span>galeria fixa, fotos andam para o lado</span></div>
+      <div class="pt__par">
+        <div class="tela"><div class="tela__barra"><i></i><i></i><i></i><span>proposta-csc-7k2q.vercel.app/#cuidado</span></div><img src="img/prototipo/cuidado-desktop.webp" alt="Galeria do cuidado no desktop"></div>
+        <div class="pt__cel"><img src="img/prototipo/cuidado-celular.webp" alt="Galeria do cuidado no celular"></div>
+      </div>
+      <p class="pt__rotulo">Estados da rolagem no desktop</p>
+      <div class="pt__tira" style="--n:3">
+        <figure><img src="img/prototipo/cuidado-1.webp" alt=""><figcaption><b>Entrada</b>A seção trava no topo com a faixa parada.</figcaption></figure>
+        <figure><img src="img/prototipo/cuidado-2.webp" alt=""><figcaption><b>Meio</b>A rolagem vira passo lateral e a barra de progresso acompanha.</figcaption></figure>
+        <figure><img src="img/prototipo/cuidado-3.webp" alt=""><figcaption><b>Fim</b>As últimas fotos chegam e a página volta a descer.</figcaption></figure>
+      </div>
+      <p class="pt__rotulo">No celular</p>
+      <div class="pt__tira pt__tira--cel">
+        <figure><img src="img/prototipo/cuidado-cel-1.webp" alt=""><figcaption><b>Início</b>Uma foto por vez.</figcaption></figure>
+        <figure><img src="img/prototipo/cuidado-cel-2.webp" alt=""><figcaption><b>Meio</b>A faixa anda com o polegar.</figcaption></figure>
+        <figure><img src="img/prototipo/cuidado-cel-3.webp" alt=""><figcaption><b>Fim</b>A barra completa.</figcaption></figure>
+      </div>
+      <p class="pt__legenda">A galeria fica fixa e as fotos passam para o lado conforme a rolagem. Cada foto ganha cor e tamanho cheio ao cruzar o centro da tela, como quem se aproxima de um bastidor real.</p>
+    </div>
+
+    <!-- RPP -->
+    <div class="pt">
+      <div class="mock__titulo"><h3>Método RPP</h3><span>a única faixa vinho do meio da página</span></div>
+      <div class="pt__par">
+        <div class="tela"><div class="tela__barra"><i></i><i></i><i></i><span>proposta-csc-7k2q.vercel.app/#rpp</span></div><img src="img/prototipo/rpp-desktop.webp" alt="Método RPP no desktop"></div>
+        <div class="pt__cel"><img src="img/prototipo/rpp-celular.webp" alt="Método RPP no celular"></div>
+      </div>
+      <p class="pt__rotulo">Estados da rolagem no desktop</p>
+      <div class="pt__tira" style="--n:3">
+        <figure><img src="img/prototipo/rpp-1.webp" alt=""><figcaption><b>Entrando</b>O letreiro chega apagado, em champanhe, e as primeiras letras acendem.</figcaption></figure>
+        <figure><img src="img/prototipo/rpp-2.webp" alt=""><figcaption><b>Meio</b>O nome aceso e a frase se preenchendo palavra por palavra.</figcaption></figure>
+        <figure><img src="img/prototipo/rpp-3.webp" alt=""><figcaption><b>Lido</b>Tudo aceso e o retrato da criadora aberto em arco.</figcaption></figure>
+      </div>
+      <p class="pt__legenda">As letras acendem uma a uma no ritmo da rolagem, e a sigla RPP ao fundo desliza devagar. A leitura acontece junto com o movimento, sem esperar animação terminar.</p>
     </div>
 
     <!-- ESTRUTURA -->
-    <div class="mock">
-      <div class="mock__titulo"><h3>Centro cirúrgico e estrutura</h3><span>foto real onde existe, espaço marcado onde falta</span></div>
-      <div class="tela">
-        <div class="tela__barra"><i></i><i></i><i></i><span>steticclass.com.br/#estrutura</span></div>
-        <section class="st st--areia">
-          <div class="st__cab">
-            <div><span class="eyebrow">Estrutura</span><h2>Um ecossistema completo, <em class="it" style="color:var(--c-vinho)">dedicado a você.</em></h2></div>
-            <p>Centro cirúrgico próprio, recuperação, recepção e cafeteria anexa, pensados para cada etapa da sua jornada.</p>
-          </div>
-          <div class="bento">
-            <figure class="t7">
-              <div class="bento__img"><div class="bento__vazio"><img src="img/logo-vinho.png" alt=""><span><b style="color:var(--c-tinta)">Foto do centro cirúrgico real</b><br>a produzir na sessão de fotos</span></div></div>
-              <figcaption><h3>Centro cirúrgico próprio</h3><p>Infraestrutura hospitalar, equipe anestésica especializada e protocolos de segurança, para você ter tranquilidade antes, durante e depois do procedimento.</p></figcaption>
-            </figure>
-            <figure class="t5">
-              <div class="bento__img"><img src="img/apartamento.jpg" alt="Apartamento de recuperação, imagem ilustrativa" style="object-position:40% 50%"><span class="chip">Imagem ilustrativa</span></div>
-              <figcaption style="grid-template-columns:1fr"><h3>Recuperação</h3><p>Apartamento pensado para o pós-operatório. <span class="ph-claro">[confirmar descrição]</span></p></figcaption>
-            </figure>
-            <figure class="t6">
-              <div class="bento__img"><img src="img/recepcao.jpg" class="tratada" alt="Recepção" style="object-position:60% 60%"><span class="chip chip--aj">Foto provisória</span></div>
-              <figcaption><h3>Recepção e acolhimento</h3><p>Um ambiente calmo, de design contemporâneo, para você se sentir acolhida desde o primeiro instante.</p></figcaption>
-            </figure>
-            <figure class="t6">
-              <div class="bento__img"><img src="img/beike.jpg" alt="Cafeteria Beike" style="object-position:45% 60%"></div>
-              <figcaption><h3>Cafeteria Beike</h3><p>Cafeteria e doceria anexa, que transforma a espera e a recuperação em um momento de cuidado.</p></figcaption>
-            </figure>
-          </div>
-        </section>
+    <div class="pt">
+      <div class="mock__titulo"><h3>Estrutura</h3><span>camadas em velocidades diferentes</span></div>
+      <div class="pt__par">
+        <div class="tela"><div class="tela__barra"><i></i><i></i><i></i><span>proposta-csc-7k2q.vercel.app/#estrutura</span></div><img src="img/prototipo/estrutura-desktop.webp" alt="Estrutura no desktop"></div>
+        <div class="pt__cel"><img src="img/prototipo/estrutura-celular.webp" alt="Estrutura no celular"></div>
       </div>
-      <div class="mock__baixo">
-        <div class="cel"><div class="tela">
-          <div class="cel__status"><span>9:41</span><i></i><span>5G</span></div>
-          <section class="st st--areia">
-            <div class="st__cab">
-              <div><span class="eyebrow">Estrutura</span><h2>Um ecossistema completo, <em class="it" style="color:var(--c-vinho)">dedicado a você.</em></h2></div>
-            </div>
-            <div class="bento">
-              <figure class="t7"><div class="bento__img"><div class="bento__vazio"><img src="img/logo-vinho.png" alt=""><span><b style="color:var(--c-tinta)">Foto do centro cirúrgico</b><br>a produzir</span></div></div><figcaption><h3>Centro cirúrgico próprio</h3><p>Infraestrutura hospitalar e equipe anestésica especializada.</p></figcaption></figure>
-              <figure class="t6"><div class="bento__img"><img src="img/beike.jpg" alt="Cafeteria Beike" style="object-position:40% 60%"></div><figcaption><h3>Cafeteria Beike</h3><p>Cafeteria e doceria anexa, para a espera e o pós.</p></figcaption></figure>
-            </div>
-          </section>
-        </div></div>
-        <div class="decisoes">
-          <h4>Decisões da estrutura</h4>
-          <ul>
-            <li><b>O centro cirúrgico ganha o maior espaço da página</b> e, por isso, precisa da foto real. Até lá, o lugar fica marcado e não é preenchido com render.</li>
-            <li><b>O render do quarto entra só como "imagem ilustrativa"</b>, se a clínica aprovar. Melhor ainda: trocar pela foto do apartamento real.</li>
-            <li><b>Seção em areia</b> separa o bloco por cor de fundo e não por ondas: a página respira sem enfeite.</li>
-            <li><b>No celular, ordem por relevância</b>: centro cirúrgico, recuperação, recepção e Beike, uma foto por vez em 4 : 3.</li>
-          </ul>
-        </div>
+      <p class="pt__rotulo">Estados da rolagem no desktop</p>
+      <div class="pt__tira" style="--n:3">
+        <figure><img src="img/prototipo/estrutura-1.webp" alt=""><figcaption><b>Entrada</b>Recepção e Beike em alturas diferentes.</figcaption></figure>
+        <figure><img src="img/prototipo/estrutura-2.webp" alt=""><figcaption><b>Meio</b>Cada camada anda na sua velocidade e as molduras abrem.</figcaption></figure>
+        <figure><img src="img/prototipo/estrutura-3.webp" alt=""><figcaption><b>Fim</b>Apartamento e o lugar reservado à foto do centro cirúrgico.</figcaption></figure>
       </div>
+      <p class="pt__legenda">As fotos andam em velocidades diferentes e criam profundidade sem efeito forte. O centro cirúrgico segue marcado como foto a produzir na sessão, nunca preenchido com render.</p>
     </div>
 
     <!-- EQUIPE -->
-    <div class="mock">
-      <div class="mock__titulo"><h3>Equipe</h3><span>retratos provisórios recortados da foto de equipe</span></div>
-      <div class="tela">
-        <div class="tela__barra"><i></i><i></i><i></i><span>steticclass.com.br/#equipe</span></div>
-        <section class="st">
-          <div class="st__cab">
-            <div><span class="eyebrow">Equipe</span><h2>Quem cuida de <em class="it" style="color:var(--c-vinho)">você.</em></h2></div>
-            <p>Uma equipe multidisciplinar acompanha você da primeira consulta à recuperação, cada profissional com seu registro à vista.</p>
-          </div>
-          <div class="equipe-grid">
-            <article class="pro"><div class="pro__foto"><img src="img/retrato-valderi.jpg" alt="Valderi Vieira" style="transform:scale(1.1)"></div><h3 class="pro__nome">Valderi Vieira</h3><p class="pro__cargo">Cirurgião plástico</p><p class="pro__reg">CRM 8688 · RQE 4045</p><p class="pro__bio">Contorno corporal e facial, com foco em resultados naturais.</p></article>
-            <article class="pro"><div class="pro__foto"><img src="img/retrato-andreia.jpg" alt="Andreia Mendes"></div><h3 class="pro__nome">Andreia Mendes</h3><p class="pro__cargo">Dermatologista</p><p class="pro__reg">CRM 9683 · RQE <span class="pend">[a confirmar]</span></p><p class="pro__bio">Tecnologias de rejuvenescimento e cuidado com a saúde da pele.</p></article>
-            <article class="pro"><div class="pro__foto"><img src="img/retrato-olga.jpg" alt="Olga Vieira"></div><h3 class="pro__nome">Olga Vieira <span class="pend" style="font-family:var(--f-texto);font-size:11px;vertical-align:middle">[confirmar nome]</span></h3><p class="pro__cargo">Fisioterapeuta, criadora do Método RPP</p><p class="pro__reg">CREFITO 123.553</p><p class="pro__bio">Acompanhamento pós-parto e pós-operatório, com foco na recuperação.</p></article>
-            <article class="pro"><div class="pro__foto pro__foto--vazio"><img src="img/logo-vinho.png" alt=""><span>Retrato individual<br>a produzir</span></div><h3 class="pro__nome">Diana Saboya</h3><p class="pro__cargo">Fisioterapeuta <span class="pend">[confirmar área]</span></p><p class="pro__reg">CREFITO 115.958</p><p class="pro__bio">Pilates e terapias do movimento, com atuação como doula.</p></article>
-          </div>
-        </section>
+    <div class="pt">
+      <div class="mock__titulo"><h3>Equipe</h3><span>entrada em sequência, uma vez</span></div>
+      <div class="pt__par">
+        <div class="tela"><div class="tela__barra"><i></i><i></i><i></i><span>proposta-csc-7k2q.vercel.app/#equipe</span></div><img src="img/prototipo/equipe-desktop.webp" alt="Equipe no desktop"></div>
+        <div class="pt__cel"><img src="img/prototipo/equipe-celular.webp" alt="Equipe no celular"></div>
       </div>
-      <div class="mock__baixo">
-        <div class="cel"><div class="tela">
-          <div class="cel__status"><span>9:41</span><i></i><span>5G</span></div>
-          <section class="st">
-            <div class="st__cab"><div><span class="eyebrow">Equipe</span><h2>Quem cuida de <em class="it" style="color:var(--c-vinho)">você.</em></h2></div></div>
-            <div class="equipe-grid">
-              <article class="pro"><div class="pro__foto"><img src="img/retrato-valderi.jpg" alt="Valderi Vieira" style="transform:scale(1.1)"></div><h3 class="pro__nome">Valderi Vieira</h3><p class="pro__cargo">Cirurgião plástico</p><p class="pro__reg">CRM 8688 · RQE 4045</p></article>
-              <article class="pro"><div class="pro__foto"><img src="img/retrato-andreia.jpg" alt="Andreia Mendes"></div><h3 class="pro__nome">Andreia Mendes</h3><p class="pro__cargo">Dermatologista</p><p class="pro__reg">CRM 9683</p></article>
-              <article class="pro"><div class="pro__foto"><img src="img/retrato-olga.jpg" alt="Olga Vieira"></div><h3 class="pro__nome">Olga Vieira</h3><p class="pro__cargo">Fisioterapeuta</p><p class="pro__reg">CREFITO 123.553</p></article>
-              <article class="pro"><div class="pro__foto pro__foto--vazio"><img src="img/logo-vinho.png" alt=""><span>Retrato a produzir</span></div><h3 class="pro__nome">Diana Saboya</h3><p class="pro__cargo">Fisioterapeuta</p><p class="pro__reg">CREFITO 115.958</p></article>
-            </div>
-          </section>
-        </div></div>
-        <div class="decisoes">
-          <h4>Decisões da equipe</h4>
-          <ul>
-            <li><b>Grade fixa no lugar do carrossel.</b> Os quatro aparecem de uma vez, sem repetição e sem setas.</li>
-            <li><b>Mesmo cenário, mesma luz.</b> Os recortes mostram o efeito de retratos feitos no lounge da foto de equipe; na sessão de fotos, cada um ganha retrato próprio em alta.</li>
-            <li><b>Registro em destaque discreto</b>, em caixa alta e números tabulares, logo abaixo do cargo.</li>
-            <li><b>Tudo que diverge está marcado</b>: nome do Método RPP, área de Diana Saboya, RQE da dermatologista e tratamento Dr./Dra. por conselho.</li>
-            <li><b>No celular, grade 2 × 2</b> sem a bio: nome, cargo e registro bastam para a primeira leitura.</li>
-          </ul>
-        </div>
+      <p class="pt__rotulo">Sequência no desktop</p>
+      <div class="pt__tira">
+        <figure><img src="img/prototipo/equipe-1.webp" alt=""><figcaption><b>0,45 s</b>Título no lugar; os cartões começam a subir.</figcaption></figure>
+        <figure><img src="img/prototipo/equipe-2.webp" alt=""><figcaption><b>0,8 s</b>Os retratos abrem de baixo, em arco, um depois do outro.</figcaption></figure>
+        <figure><img src="img/prototipo/equipe-3.webp" alt=""><figcaption><b>1,15 s</b>Terceiro e quarto retratos chegando.</figcaption></figure>
+        <figure><img src="img/prototipo/equipe-4.webp" alt=""><figcaption><b>2,8 s</b>Grade completa e o fio do registro desenhado.</figcaption></figure>
       </div>
+      <p class="pt__legenda">Os quatro profissionais entram em sequência, com 140 ms entre um e outro, quando a grade chega à tela. No celular, a grade vira 2 × 2.</p>
     </div>
 
-    <!-- CTA FINAL -->
-    <div class="mock">
-      <div class="mock__titulo"><h3>CTA final e rodapé</h3><span>a única faixa escura da página</span></div>
-      <div class="tela">
-        <div class="tela__barra"><i></i><i></i><i></i><span>steticclass.com.br/#contato</span></div>
-        <section class="cta-final">
-          <img class="mono" src="img/logo-champanhe.png" alt="">
-          <h2>Dê o primeiro passo rumo à sua <em class="it" style="color:var(--c-champanhe-claro)">melhor versão.</em></h2>
-          <p class="lead">Agende uma avaliação. Você conversa com a equipe, conhece a estrutura e tira suas dúvidas antes de qualquer decisão.</p>
-          <div class="acoes"><span class="btn btn--claro">Agendar avaliação <svg><use href="#seta"/></svg></span><span class="btn btn--fantasma-escuro"><svg class="wa"><use href="#wa"/></svg>Conversar no WhatsApp</span></div>
-          <div class="info">
-            <div><b>Endereço</b><span class="ph">[Rua, número, bairro]</span></div>
-            <div><b>Horário</b><span class="ph">[Dias e horários]</span></div>
-            <div><b>WhatsApp</b>(85) <span class="ph">[número]</span></div>
-          </div>
-        </section>
-        <footer class="s-rodape" style="border-top:1px solid rgba(216,194,156,.14)">
-          <div class="s-rodape__grid">
-            <div><a class="s-marca" href="#"><img src="img/logo-marfim.png" alt=""><div><b>Complexo SC</b><span>Medicina · Estética · Educação</span></div></a></div>
-            <div><h5>Navegação</h5><ul><li>Especialidades</li><li>Estrutura</li><li>Equipe</li><li>Dúvidas</li></ul></div>
-            <div><h5>Contato</h5><ul><li>WhatsApp (85) <span class="ph">[número]</span></li><li><span class="ph">[Instagram]</span></li></ul></div>
-            <div><h5>Endereço</h5><p><span class="ph">[Endereço completo, Fortaleza/CE]</span></p></div>
-          </div>
-          <div class="s-rodape__base"><span>© 2026 Complexo SC</span><span>Responsável técnico: <span class="ph">[Nome]</span> · CRM <span class="ph">[número]</span></span></div>
-        </footer>
+    <!-- CTA -->
+    <div class="pt">
+      <div class="mock__titulo"><h3>CTA final e rodapé</h3><span>a cortina que fecha a página</span></div>
+      <div class="pt__par">
+        <div class="tela"><div class="tela__barra"><i></i><i></i><i></i><span>proposta-csc-7k2q.vercel.app/#contato</span></div><img src="img/prototipo/cta-desktop.webp" alt="CTA final e rodapé no desktop"></div>
+        <div class="pt__cel"><img src="img/prototipo/cta-celular.webp" alt="CTA final no celular"></div>
       </div>
-      <div class="mock__baixo">
-        <div class="cel"><div class="tela">
-          <div class="cel__status" style="background:var(--c-vinho-profundo);color:var(--c-marfim)"><span>9:41</span><i style="background:#000"></i><span>5G</span></div>
-          <section class="cta-final">
-            <img class="mono" src="img/logo-champanhe.png" alt="">
-            <h2>Dê o primeiro passo rumo à sua <em class="it" style="color:var(--c-champanhe-claro)">melhor versão.</em></h2>
-            <p class="lead">Agende uma avaliação e conheça a equipe e a estrutura antes de decidir.</p>
-            <div class="acoes"><span class="btn btn--claro">Agendar avaliação <svg><use href="#seta"/></svg></span><span class="btn btn--fantasma-escuro"><svg class="wa"><use href="#wa"/></svg>Conversar no WhatsApp</span></div>
-            <div class="info">
-              <div><b>Endereço</b><span class="ph">[Rua, número, bairro]</span></div>
-              <div><b>Horário</b><span class="ph">[Dias e horários]</span></div>
-            </div>
-          </section>
-          <footer class="s-rodape">
-            <div class="s-rodape__grid">
-              <div><a class="s-marca" href="#"><img src="img/logo-marfim.png" alt=""><div><b>Complexo SC</b><span>Medicina · Estética · Educação</span></div></a></div>
-              <div><h5>Navegação</h5><ul><li>Especialidades</li><li>Estrutura</li><li>Equipe</li></ul></div>
-              <div><h5>Contato</h5><ul><li><span class="ph">[WhatsApp]</span></li><li><span class="ph">[Instagram]</span></li></ul></div>
-            </div>
-            <div class="s-rodape__base"><span>© 2026 Complexo SC</span><span>Resp. técnico: <span class="ph">[Nome]</span> · CRM <span class="ph">[nº]</span></span></div>
-          </footer>
-        </div></div>
-        <div class="decisoes">
-          <h4>Decisões do fechamento</h4>
-          <ul>
-            <li><b>A frase final original fica</b>, em caixa de frase: "Dê o primeiro passo rumo à sua melhor versão."</li>
-            <li><b>Mesmo convite do topo.</b> "Agendar avaliação" de novo, sem "VIP": a palavra promete exclusividade e afasta quem compara com cuidado.</li>
-            <li><b>Vinho profundo só aqui.</b> A única faixa escura da página marca o fim e dá peso ao convite.</li>
-            <li><b>Endereço, horário e WhatsApp à vista</b>, e o responsável técnico no rodapé, como pede a publicidade de estabelecimentos de saúde.</li>
-          </ul>
-        </div>
+      <p class="pt__rotulo">Estados da rolagem no desktop</p>
+      <div class="pt__tira" style="--n:3">
+        <figure><img src="img/prototipo/cta-1.webp" alt=""><figcaption><b>Entrada</b>A faixa escura aparece recuada, com cantos arredondados.</figcaption></figure>
+        <figure><img src="img/prototipo/cta-2.webp" alt=""><figcaption><b>Meio</b>Ela cresce até a largura toda e o monograma gira até assentar.</figcaption></figure>
+        <figure><img src="img/prototipo/cta-3.webp" alt=""><figcaption><b>Fim</b>Convite, botões e rodapé no lugar.</figcaption></figure>
       </div>
+      <p class="pt__legenda">A faixa vinho profundo sobe como cortina e marca o fim da página. O convite repete o do topo, "Agendar avaliação", com o WhatsApp como caminho alternativo e o responsável técnico no rodapé.</p>
     </div>
   </div>
 </section>
