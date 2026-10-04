@@ -1,0 +1,11 @@
+{
+  "url": "http://127.0.0.1:4173",
+  "generatedAt": "2026-10-04T16:03:14.043Z",
+  "viewports": [],
+  "errors": [
+    {
+      "name": "Error",
+      "message": "Browser was not found at the configured executablePath (C:/Users/evert/AppData/Local/Google/Chrome/Application/chrome.exe)"
+    }
+  ]
+}

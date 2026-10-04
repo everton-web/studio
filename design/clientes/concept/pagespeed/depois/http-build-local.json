@@ -1,0 +1,179 @@
+{
+  "generatedAt": "2026-10-04T16:03:14.041Z",
+  "url": "http://127.0.0.1:4173",
+  "kind": "HTTP checks, not Lighthouse scores",
+  "status": 200,
+  "htmlBytes": 327198,
+  "htmlGzipBytes": 70251,
+  "htmlCacheControl": "s-maxage=31536000",
+  "imageElements": 15,
+  "initialScripts": 9,
+  "ignoredNoModuleScripts": [
+    "/_next/static/chunks/polyfills-42372ed130431b0a.js"
+  ],
+  "initialJsBytes": 508959,
+  "initialJsGzipBytes": 153433,
+  "instagram": true,
+  "gtm": true,
+  "pixel": true,
+  "methodListDirectLi": true,
+  "allImagesHaveSizes": true,
+  "heroHighPriorityImage": true,
+  "optimizedHeroBackgrounds": 7,
+  "requiredSections": true,
+  "footer": true,
+  "assets": [
+    {
+      "url": "/_next/static/chunks/4bd1b696-92152b0f5947070d.js",
+      "status": 200,
+      "bytes": 201054,
+      "gzipBytes": 63299,
+      "cacheControl": "public, max-age=31536000, immutable",
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "/_next/static/chunks/794-fa85041d1eeb8167.js",
+      "status": 200,
+      "bytes": 240795,
+      "gzipBytes": 65603,
+      "cacheControl": "public, max-age=31536000, immutable",
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "/_next/static/chunks/main-app-6424f292d9c808c3.js",
+      "status": 200,
+      "bytes": 513,
+      "gzipBytes": 222,
+      "cacheControl": "public, max-age=31536000, immutable",
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "/_next/static/chunks/app/layout-a503f1f899997759.js",
+      "status": 200,
+      "bytes": 5470,
+      "gzipBytes": 2064,
+      "cacheControl": "public, max-age=31536000, immutable",
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "/_next/static/chunks/837-a7c58baa1c89561f.js",
+      "status": 200,
+      "bytes": 17384,
+      "gzipBytes": 6541,
+      "cacheControl": "public, max-age=31536000, immutable",
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "/_next/static/chunks/246-b616761035ae60c7.js",
+      "status": 200,
+      "bytes": 7168,
+      "gzipBytes": 2571,
+      "cacheControl": "public, max-age=31536000, immutable",
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "/_next/static/chunks/app/page-be525633e70fb199.js",
+      "status": 200,
+      "bytes": 24995,
+      "gzipBytes": 7847,
+      "cacheControl": "public, max-age=31536000, immutable",
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "/_next/static/chunks/app/not-found-6418c94f4928a56b.js",
+      "status": 200,
+      "bytes": 8133,
+      "gzipBytes": 3506,
+      "cacheControl": "public, max-age=31536000, immutable",
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "/_next/static/chunks/webpack-f78d48dae4bfdc1f.js",
+      "status": 200,
+      "bytes": 3447,
+      "gzipBytes": 1780,
+      "cacheControl": "public, max-age=31536000, immutable",
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "/_next/static/media/438aa629764e75f3-s.woff2",
+      "status": 200,
+      "bytes": 2592,
+      "gzipBytes": 2615,
+      "cacheControl": "public, max-age=31536000, immutable",
+      "contentType": "font/woff2"
+    },
+    {
+      "url": "/_next/static/media/875ae681bfde4580-s.woff2",
+      "status": 200,
+      "bytes": 14544,
+      "gzipBytes": 14567,
+      "cacheControl": "public, max-age=31536000, immutable",
+      "contentType": "font/woff2"
+    },
+    {
+      "url": "/_next/static/media/51251f8b9793cdb3-s.woff2",
+      "status": 200,
+      "bytes": 9360,
+      "gzipBytes": 9383,
+      "cacheControl": "public, max-age=31536000, immutable",
+      "contentType": "font/woff2"
+    },
+    {
+      "url": "/_next/static/media/e857b654a2caa584-s.woff2",
+      "status": 200,
+      "bytes": 8492,
+      "gzipBytes": 8515,
+      "cacheControl": "public, max-age=31536000, immutable",
+      "contentType": "font/woff2"
+    },
+    {
+      "url": "/_next/static/media/cc978ac5ee68c2b6-s.woff2",
+      "status": 200,
+      "bytes": 15240,
+      "gzipBytes": 15263,
+      "cacheControl": "public, max-age=31536000, immutable",
+      "contentType": "font/woff2"
+    },
+    {
+      "url": "/_next/static/media/4c9affa5bc8f420e-s.p.woff2",
+      "status": 200,
+      "bytes": 24576,
+      "gzipBytes": 24604,
+      "cacheControl": "public, max-age=31536000, immutable",
+      "contentType": "font/woff2"
+    },
+    {
+      "url": "/_next/static/css/51923aba12973395.css",
+      "status": 200,
+      "bytes": 53737,
+      "gzipBytes": 11158,
+      "cacheControl": "public, max-age=31536000, immutable",
+      "contentType": "text/css; charset=UTF-8"
+    },
+    {
+      "url": "/marca/logo-concept.png",
+      "status": 200,
+      "bytes": 13775,
+      "gzipBytes": 13772,
+      "cacheControl": "public, max-age=604800, stale-while-revalidate=86400",
+      "contentType": "image/png"
+    },
+    {
+      "url": "/videos/depoimento-nadia-poster.webp",
+      "status": 200,
+      "bytes": 27504,
+      "gzipBytes": 27532,
+      "cacheControl": "public, max-age=604800, stale-while-revalidate=86400",
+      "contentType": "image/webp"
+    },
+    {
+      "url": "/_next/image?url=%2Fhero%2Fsorrisos%2Ffacetas-lateral.webp&w=640&q=75",
+      "status": 200,
+      "bytes": 17634,
+      "gzipBytes": 17636,
+      "cacheControl": "public, max-age=604800, must-revalidate",
+      "contentType": "image/avif"
+    }
+  ]
+}

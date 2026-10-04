@@ -1,0 +1,29 @@
+{
+  "kind": "Baseline informado pelo briefing, nao e uma execucao Lighthouse local",
+  "source": "docs/demandas/2026-10-04/45-theo-pagespeed-concept.md",
+  "date": "2026-10-03",
+  "url": "https://conceptimplantesdentarios.com.br/",
+  "lighthouseVersionReported": "13.5",
+  "mobile": {
+    "performance": 68,
+    "accessibility": 89,
+    "bestPractices": 100,
+    "seo": 100,
+    "FCP_ms": 1700,
+    "LCP_ms": 5400,
+    "TBT_ms": 410,
+    "CLS": 0,
+    "SI_ms": 3600
+  },
+  "desktop": {
+    "performance": 90,
+    "accessibility": null,
+    "bestPractices": null,
+    "seo": null,
+    "FCP_ms": null,
+    "LCP_ms": 2000,
+    "TBT_ms": 20,
+    "CLS": null,
+    "SI_ms": null
+  }
+}

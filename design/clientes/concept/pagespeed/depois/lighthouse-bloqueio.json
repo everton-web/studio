@@ -1,0 +1,20 @@
+{
+  "status": "bloqueado",
+  "etapa": "depois",
+  "lighthouseVersionSolicitada": "13.x, briefing informa 13.5",
+  "medianaDisponivel": false,
+  "execucoesConcluidas": 0,
+  "alvosPlanejados": [
+    "http://127.0.0.1:4173, mobile, 3 execucoes",
+    "http://127.0.0.1:4173, desktop, 3 execucoes",
+    "https://conceptimplantesdentarios.com.br/, mobile, 3 execucoes",
+    "https://conceptimplantesdentarios.com.br/, desktop, 3 execucoes"
+  ],
+  "comandoDeDisponibilidade": "npx --yes --cache D:\\studio\\design\\clientes\\concept\\pagespeed\\.npm-cache lighthouse@13 --version",
+  "erroLighthouse": "npm FetchError ao acessar https://registry.npmjs.org/lighthouse, codigo EACCES. O pacote nao existe no cache local.",
+  "chromeSolicitado": "C:\\Users\\evert\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe",
+  "erroChrome": "Processos Node recebem EPERM ao consultar o executavel. O Puppeteer relata que o navegador nao foi encontrado. Start-Process retorna Acesso negado.",
+  "erroSitePublicado": "curl error 7: Failed to connect to conceptimplantesdentarios.com.br:443.",
+  "fallback": "Nao ha fallback para depois. Os campos Lighthouse permanecem nao medidos.",
+  "observacao": "Nenhuma pontuacao ou mediana foi inferida. O HTTP local foi medido em http-build-local.json."
+}
