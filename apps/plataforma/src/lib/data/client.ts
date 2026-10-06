@@ -1,6 +1,8 @@
 // Camada de dados da plataforma: único ponto que fala com o Supabase.
 // Usa a service role, que contorna RLS, então este código só pode rodar no
 // servidor. As variáveis nunca levam o prefixo NEXT_PUBLIC_.
+import "server-only";
+
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 if (typeof window !== "undefined") {

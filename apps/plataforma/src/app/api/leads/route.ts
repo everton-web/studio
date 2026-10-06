@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { safeEqual } from "@/lib/auth";
 import { pipelineOp } from "@/lib/data";
 
 // Token compartilhado para sites externos enviarem leads (env LEADS_TOKEN).
@@ -25,7 +26,7 @@ export async function POST(req: Request) {
   try { body = await req.json(); } catch {
     return NextResponse.json({ ok: false, error: "json inválido" }, { status: 400, headers: cors() });
   }
-  if (!TOKEN || body.token !== TOKEN) {
+  if (!TOKEN || !safeEqual(String(body.token || ""), TOKEN)) {
     return NextResponse.json({ ok: false, error: "token inválido" }, { status: 401, headers: cors() });
   }
   const nome = String(body.nome || "").trim();
