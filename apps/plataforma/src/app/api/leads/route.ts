@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { pipelineOp } from "@/lib/vault";
+import { pipelineOp } from "@/lib/data";
 
 // Token compartilhado para sites externos enviarem leads (env LEADS_TOKEN).
 // Não depende de cookie — qualquer formulário do ecossistema pode apontar pra cá.

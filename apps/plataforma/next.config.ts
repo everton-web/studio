@@ -18,7 +18,6 @@ const SECURITY_HEADERS = [
 ];
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["node-pty"],
   poweredByHeader: false,
   async headers() {
     return [{ source: "/(.*)", headers: SECURITY_HEADERS }];

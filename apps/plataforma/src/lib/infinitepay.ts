@@ -1,68 +1,26 @@
-// InfinitePay — núcleo compartilhado: criação de link, webhook e placar automático.
+// InfinitePay: criação de link, consulta de status e webhook com placar automático.
 // Docs: https://www.infinitepay.io/checkout-documentacao
+// A persistência fica em src/lib/data/financeiro.ts (Supabase).
+import {
+  acharRegistro as acharNoBanco,
+  atualizarPlacar,
+  lerHistorico,
+  lerRegistrosCliente,
+  registrarWebhook,
+  salvarRegistro,
+  type Registro,
+} from "./data/financeiro";
 
-import { readFile, writeFile, mkdir, readdir } from "node:fs/promises";
-import { join } from "node:path";
+export { lerHistorico, lerRegistrosCliente, type Registro };
 
-const VAULT = process.env.VAULT || "D:/Obsidian - Claude/🏢 Agência";
-export const DIR = join(VAULT, "SaaS", "Financeiro");
 export const HANDLE = process.env.INFINITEPAY_HANDLE || "";
 export const REDIRECT = process.env.INFINITEPAY_REDIRECT_URL || "";
 export const WEBHOOK_URL = process.env.INFINITEPAY_WEBHOOK_URL || "https://app.evertonbrito.com/api/infinitepay/webhook";
 const API_LINKS = "https://api.checkout.infinitepay.io/links";
 const API_CHECK = "https://api.checkout.infinitepay.io/payment_check";
 
-export type Registro = {
-  id: string;
-  data: string;
-  descricao: string;
-  valor: number;
-  quantidade: number;
-  url: string | null;
-  handle: string;
-  ok: boolean;
-  erro?: string;
-  order_nsu?: string;
-  slug?: string;
-  paid?: boolean;
-  paidAt?: string;
-  capture_method?: string;
-  cliente?: string; // empresa.id do banco (v3-04)
-  vencimento?: string; // YYYY-MM-DD, opcional
-  tipo?: "projeto" | "recorrencia"; // sem tipo conta como projeto
-};
-
 export function gerarOrderNsu() {
   return `ag-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
-}
-
-export async function lerHistorico(): Promise<Registro[]> {
-  try {
-    const files = (await readdir(DIR)).filter((f) => f.endsWith(".json") && !f.startsWith("."));
-    const out: Registro[] = [];
-    for (const f of files.sort().reverse().slice(0, 30)) {
-      try {
-        const r = JSON.parse(await readFile(join(DIR, f), "utf8"));
-        if (r.order_nsu) out.push(r);
-      } catch { /* pula */ }
-    }
-    return out;
-  } catch { return []; }
-}
-
-// Todas as cobranças de um cliente (sem o corte de 30 arquivos do histórico geral).
-export async function lerRegistrosCliente(empresaId: string): Promise<Registro[]> {
-  try {
-    const files = (await readdir(DIR)).filter((f) => f.endsWith(".json") && !f.startsWith("."));
-    const out: Registro[] = [];
-    for (const f of files) {
-      try {
-        const r = JSON.parse(await readFile(join(DIR, f), "utf8"));
-        if (r && r.order_nsu && r.cliente === empresaId) out.push(r);
-      } catch { /* pula */ }
-    }
-    return out;
-  } catch { return []; }
 }
 
 export async function criarLink(op: {
@@ -87,7 +45,7 @@ export async function criarLink(op: {
 
   const registro: Registro = {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-    data: new Date().toLocaleString("pt-BR"),
+    data: new Date().toLocaleString("pt-BR", { timeZone: "America/Bahia" }),
     descricao: op.descricao,
     valor: Math.round(op.valor * 100) / 100,
     quantidade: Math.max(1, Math.min(999, op.quantidade || 1)),
@@ -115,13 +73,11 @@ export async function criarLink(op: {
     registro.url = typeof url === "string" ? url : null;
     registro.slug = typeof json?.slug === "string" ? json.slug : undefined;
     registro.erro = !registro.ok ? (json?.message || json?.error || `HTTP ${res.status}: ${txt.slice(0, 200)}`) : undefined;
-    await salvar(registro);
-    return registro;
-  } catch (e: any) {
-    registro.erro = `Falha ao falar com a InfinitePay: ${e?.message || e}`;
-    await salvar(registro);
-    return registro;
+  } catch (e: unknown) {
+    registro.erro = `Falha ao falar com a InfinitePay: ${e instanceof Error ? e.message : String(e)}`;
   }
+  await salvarRegistro(registro);
+  return registro;
 }
 
 export async function consultarStatus(r: Registro) {
@@ -136,77 +92,33 @@ export async function consultarStatus(r: Registro) {
   return res.json();
 }
 
-export async function salvar(r: Registro) {
-  try { await mkdir(DIR, { recursive: true }); await writeFile(join(DIR, `${r.id}.json`), JSON.stringify(r, null, 2), "utf8"); } catch { /* sem vault */ }
+export async function acharRegistro(chave: string): Promise<{ r: Registro } | null> {
+  const r = await acharNoBanco(chave);
+  return r ? { r } : null;
 }
 
-export async function acharRegistro(chave: string): Promise<{ file: string; r: Registro } | null> {
-  try {
-    const files = (await readdir(DIR)).filter((f) => f.endsWith(".json"));
-    for (const f of files) {
-      try {
-        const r = JSON.parse(await readFile(join(DIR, f), "utf8"));
-        if (r.order_nsu === chave || r.slug === chave) return { file: join(DIR, f), r };
-      } catch { /* pula */ }
-    }
-  } catch { /* sem histórico */ }
-  return null;
-}
-
-// webhook recebido da InfinitePay (pagamento aprovado) → grava + marca pago + Placar automático
+// Webhook da InfinitePay (pagamento aprovado): grava, marca pago e soma no placar.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function processarWebhook(body: any): Promise<{ novidade: boolean; registro?: Registro }> {
   const orderNsu = String(body?.order_nsu || "");
   const tx = String(body?.transaction_nsu || "");
   // idempotência: usa transaction_nsu; se ausente, cai para o order_nsu
   const chave = (tx || (orderNsu ? `order-${orderNsu}` : "")).replace(/[^\w.\-]/g, "");
-  const dirWh = join(DIR, "webhooks");
-  try {
-    await mkdir(dirWh, { recursive: true });
-    const ja = chave ? (await readdir(dirWh)).find((f) => f.includes(chave)) : null;
-    if (ja) return { novidade: false };
-    await writeFile(join(dirWh, `${Date.now()}-${chave || "semid"}.json`), JSON.stringify(body, null, 2), "utf8");
-  } catch { /* sem vault */ }
+  const nova = await registrarWebhook(chave, body);
+  if (!nova) return { novidade: false };
 
   if (!orderNsu) return { novidade: false };
-  const achado = await acharRegistro(orderNsu);
-  if (!achado) return { novidade: false }; // webhook de pedido que não criamos — ignora
+  const r = await acharNoBanco(orderNsu);
+  if (!r) return { novidade: false }; // webhook de pedido que não criamos: ignora
 
-  const { file, r } = achado;
   const amount = Number(body?.paid_amount || body?.amount) / 100;
   const jaPago = !!r.paid;
   r.paid = true;
-  r.paidAt = new Date().toLocaleString("pt-BR");
+  r.paidAt = new Date().toLocaleString("pt-BR", { timeZone: "America/Bahia" });
   r.capture_method = String(body?.capture_method || "");
   r.slug = r.slug || String(body?.invoice_slug || "");
-  await salvar(r).catch(() => writeFile(file, JSON.stringify(r, null, 2), "utf8"));
+  await salvarRegistro(r);
 
-  if (!jaPago && amount > 0) await atualizarPlacar(amount, r.descricao, r.capture_method);
+  if (!jaPago && amount > 0) await atualizarPlacar(amount);
   return { novidade: !jaPago, registro: r };
-}
-
-// Placar.md: soma ao acumulado do mês + linha de progresso
-async function atualizarPlacar(valor: number, descricao: string, metodo: string) {
-  const p = join(VAULT, "60 Financeiro", "Placar.md");
-  try {
-    let md = await readFile(p, "utf8");
-    const metaM = md.match(/R\$\s*([\d.]+)\s*\/\s*R\$\s*([\d.]+)\)/);
-    const meta = metaM ? Number(metaM[2].replace(/\./g, "")) : 100000;
-    const atualM = md.match(/Progresso:\*\*\s*[\d.,]+%\s*\(R\$\s*([\d.]+)/i);
-    const atual = atualM ? Number(atualM[1].replace(/\./g, "")) : 0;
-    const novo = atual + Math.round(valor);
-    const pct = Math.min(100, Math.round((novo / meta) * 1000) / 10);
-
-    md = md.replace(
-      /(Progresso:\*\*\s*)[\d.,]+%\s*\(R\$\s*[\d.]+(\s*\/\s*R\$\s*[\d.]+)\)/i,
-      `$1${String(pct).replace(".", ",")}% (R$ ${novo.toLocaleString("pt-BR")}$2)` as string,
-    );
-    // linha do mês atual no Resumo (set/2026): atualiza Total e Acumulado
-    const mes = new Date().toLocaleDateString("pt-BR", { month: "short" }) + "/" + new Date().getFullYear();
-    const mesKey = mes.replace(".", "").toLowerCase();
-    const rowRe = new RegExp(`(\\|\\s*${mesKey.replace("/", "/")}\\s*\\|\\s*R\\$ [\\d.]+\\s*\\|\\s*R\\$ [\\d.]+\\s*\\|\\s*)R\\$ [\\d.]+(\\s*\\|\\s*)R\\$ [\\d.]+(\\s*\\|)`);
-    if (rowRe.test(md)) {
-      md = md.replace(rowRe, `$1R$ ${novo.toLocaleString("pt-BR")}$2R$ ${novo.toLocaleString("pt-BR")}$3`);
-    }
-    await writeFile(p, md, "utf8");
-  } catch { /* placar não encontrado — segue */ }
 }

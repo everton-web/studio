@@ -79,6 +79,7 @@ const CATS: [string, string][] = [
 ];
 const catLbl = (c: string) => CATS.find(([k]) => k === c)?.[1] || c;
 
+// Rótulos dos nichos que a prospecção (feita na VPS) grava no segmento do lead.
 const NICHOS: [string, string][] = [
   ["odontologia", "Odontologia"],
   ["clinicas-medicas", "Clínicas médicas"],
@@ -93,8 +94,6 @@ const NICHOS: [string, string][] = [
   ["construcao-reformas", "Construção e reformas"],
   ["escolas-cursos", "Escolas e cursos"],
 ];
-
-const UFS = ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"];
 
 type Flds = {
   nome: string; segmento: string; cidade: string; nota: string; avaliacoes: string;
@@ -323,28 +322,8 @@ export function Pipeline({ leads, refresh, onIrClientes }: { leads: Lead[]; refr
   const [f, setF] = useState<Flds>(EMPTY);
   const [motivo, setMotivo] = useState("");
   const [busy, setBusy] = useState(false);
-  const [nicho, setNicho] = useState("odontologia");
-  const [regiao, setRegiao] = useState("brasil");
-  const [frentesSel, setFrentesSel] = useState<string[]>(FRENTES.map((x) => x.id));
-  useEffect(() => {
-    try {
-      const salvo = JSON.parse(localStorage.getItem("prospeccao.frentes") || "null");
-      if (Array.isArray(salvo) && salvo.length) setFrentesSel(salvo);
-    } catch {}
-  }, []);
-  const alternarFrente = (id: string) => setFrentesSel((atual) => {
-    const prox = atual.includes(id) ? atual.filter((x) => x !== id) : [...atual, id];
-    const final = prox.length ? prox : atual; // pelo menos uma frente
-    try { localStorage.setItem("prospeccao.frentes", JSON.stringify(final)); } catch {}
-    return final;
-  });
-  const [cidadeCustom, setCidadeCustom] = useState("");
-  const [prospectBusy, setProspectBusy] = useState(false);
-  const [prog, setProg] = useState("");
-  const [prospectRes, setProspectRes] = useState<{ adicionados: string[]; descartados: { nome: string; motivo: string }[]; erros: { nome: string; motivo: string }[]; fonte: string; auditados: number; candidatos: number; aviso: string; tempo: number; regiao: string; cidades: string[]; porFrente?: Record<string, number> } | null>(null);
   const [dragging, setDragging] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState<number | null>(null);
-  const [fonteInfo, setFonteInfo] = useState<{ google_places: boolean; fonte_ativa: string; ia_router: boolean; obs: string } | null>(null);
   const [relatorioRes, setRelatorioRes] = useState<{ slug: string; url: string } | null>(null);
   const [relatorioBusy, setRelatorioBusy] = useState(false);
   const [relatorioCopiado, setRelatorioCopiado] = useState(false);
@@ -352,56 +331,7 @@ export function Pipeline({ leads, refresh, onIrClientes }: { leads: Lead[]; refr
   const relatorioPollRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [janela, setJanela] = useState<JanelaConversao>("tudo");
 
-  // status da fonte de prospecção (chave Google? IA Router no ar?)
-  useEffect(() => {
-    fetch("/api/prospector")
-      .then((r) => (r.ok ? r.json() : null))
-      .then((j) => j && setFonteInfo(j))
-      .catch(() => {});
-  }, []);
-
-  // carrega nicho/região/cidade do localStorage e dispara auto-start se pedido
-  useEffect(() => {
-    let n = "odontologia";
-    let r = "brasil";
-    let c = "";
-    try {
-      n = localStorage.getItem("prospeccao.nicho") || "odontologia";
-      r = localStorage.getItem("prospeccao.regiao") || "brasil";
-      c = localStorage.getItem("prospeccao.cidade") || "";
-    } catch {}
-    setNicho(n);
-    setRegiao(r);
-    setCidadeCustom(c);
-  }, []);
-
-  // grava nicho/região/cidade de volta no localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem("prospeccao.nicho", nicho);
-      localStorage.setItem("prospeccao.regiao", regiao);
-      localStorage.setItem("prospeccao.cidade", cidadeCustom);
-    } catch {}
-  }, [nicho, regiao, cidadeCustom]);
-
-  // auto-start: botão "prospecção" do topo grava a chave e vem direto pra cá
-  useEffect(() => {
-    let auto = false;
-    try { auto = localStorage.getItem("prospeccao.auto-start") === "1"; } catch {}
-    if (!auto) return;
-    try { localStorage.removeItem("prospeccao.auto-start"); } catch {}
-    let n = "odontologia";
-    let r = "brasil";
-    let c = "";
-    try {
-      n = localStorage.getItem("prospeccao.nicho") || "odontologia";
-      r = localStorage.getItem("prospeccao.regiao") || "brasil";
-      c = localStorage.getItem("prospeccao.cidade") || "";
-    } catch {}
-    setNicho(n); setRegiao(r); setCidadeCustom(c);
-    rodarProspeccao(n, r, c);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // A prospecção automática roda na VPS por CLI (opção A da migração Supabase).
 
   // cancela o polling do relatório quando a ficha fecha/troca ou o componente desmonta
   useEffect(() => {
@@ -558,48 +488,6 @@ export function Pipeline({ leads, refresh, onIrClientes }: { leads: Lead[]; refr
     setTimeout(() => setMensagemSalva(false), 1800);
   };
 
-  async function rodarProspeccao(nichoArg?: string, regiaoArg?: string, cidadeArg?: string) {
-    const n = nichoArg ?? nicho;
-    const r = regiaoArg ?? regiao;
-    const c = cidadeArg ?? cidadeCustom;
-    const regiaoEnviar = r === "cidade" ? (c.trim() || "brasil") : r === "brasil" ? "brasil" : r;
-    try {
-      localStorage.setItem("prospeccao.nicho", n);
-      localStorage.setItem("prospeccao.regiao", r);
-      localStorage.setItem("prospeccao.cidade", c);
-    } catch {}
-    setProspectBusy(true); setProspectRes(null); setProg("");
-    const timer = setInterval(() => {
-      fetch("/api/prospector")
-        .then((res) => (res.ok ? res.json() : null))
-        .then((j: { progresso?: { ativo?: boolean; fase?: string; feito?: number; total?: number } } | null) => {
-          if (!j?.progresso?.ativo) return;
-          if (j.progresso.fase === "auditando") {
-            setProg(`auditando ${j.progresso.feito ?? 0} de ${j.progresso.total ?? 0}…`);
-          } else {
-            setProg("buscando empresas…");
-          }
-        })
-        .catch(() => {});
-    }, 900);
-    try {
-      const r = await fetch("/api/prospector", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nicho: n, regiao: regiaoEnviar, limite: 8, frentes: frentesSel }),
-      });
-      const j = await r.json();
-      if (!j.ok) { alert(j.error || "erro na prospecção"); return; }
-      setProspectRes(j.resumo);
-      await refresh();
-    } catch { alert("falha de rede"); }
-    finally {
-      clearInterval(timer);
-      setProg("");
-      setProspectBusy(false);
-    }
-  }
-
   const totalValendo = ativos.filter((l) => l.estagio >= 1).length;
   const fechados = viraramCliente.length;
 
@@ -665,78 +553,6 @@ export function Pipeline({ leads, refresh, onIrClientes }: { leads: Lead[]; refr
             </div>
           ))}
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <select
-            value={nicho}
-            onChange={(e) => setNicho(e.target.value)}
-            aria-label="Nicho da prospecção"
-            className="h-[52px] px-3 rounded-[14px] bg-[var(--bg-2)] border border-[var(--line)] text-[.84rem] text-[#e8e8e6] outline-none focus:border-[#7aa2ff]/60 transition-colors"
-          >
-            {NICHOS.map(([v, l]) => (
-              <option key={v} value={v}>{l}</option>
-            ))}
-          </select>
-          <select
-            value={regiao}
-            onChange={(e) => setRegiao(e.target.value)}
-            aria-label="Região da prospecção"
-            className="h-[52px] px-3 rounded-[14px] bg-[var(--bg-2)] border border-[var(--line)] text-[.84rem] text-[#e8e8e6] outline-none focus:border-[#7aa2ff]/60 transition-colors"
-          >
-            <option value="brasil">Brasil (rodízio)</option>
-            {UFS.map((uf) => (
-              <option key={uf} value={uf}>{uf}</option>
-            ))}
-            <option value="cidade">outra cidade…</option>
-          </select>
-          {regiao === "cidade" && (
-            <input
-              type="text"
-              value={cidadeCustom}
-              onChange={(e) => setCidadeCustom(e.target.value)}
-              placeholder="digite a cidade (ex.: Curitiba)"
-              aria-label="Cidade da prospecção"
-              className="h-[52px] px-3 rounded-[14px] bg-[var(--bg-2)] border border-[var(--line)] text-[.84rem] text-[#e8e8e6] outline-none focus:border-[#7aa2ff]/60 transition-colors placeholder:text-[#5d5d58]"
-            />
-          )}
-          <div role="group" aria-label="Frentes da prospecção" className="flex flex-wrap items-center gap-1.5">
-            {FRENTES.map((fr) => {
-              const on = frentesSel.includes(fr.id);
-              return (
-                <button
-                  key={fr.id}
-                  type="button"
-                  aria-pressed={on}
-                  title={fr.longo}
-                  onClick={() => alternarFrente(fr.id)}
-                  className="h-[52px] px-3 rounded-[14px] border text-[.78rem] transition-colors"
-                  style={on
-                    ? { color: fr.cor, borderColor: fr.cor + "66", background: fr.cor + "18" }
-                    : { color: "#6d6d68", borderColor: "rgba(255,255,255,.08)", background: "transparent" }}
-                >
-                  {on ? "✓ " : ""}{fr.curto}
-                </button>
-              );
-            })}
-          </div>
-          <div className="flex items-center gap-2 min-w-0">
-            <button
-              onClick={() => rodarProspeccao()}
-              disabled={prospectBusy || busy}
-              className="flex items-center justify-center gap-2 h-[52px] px-5 rounded-[14px] bg-[#7aa2ff]/12 border border-[#7aa2ff]/30 text-[#7aa2ff] hover:bg-[#7aa2ff]/20 text-[.86rem] font-medium transition-colors disabled:opacity-60"
-            >
-              {prospectBusy ? (prog || "prospectando…") : "▶ prospecção automática"}
-            </button>
-            {fonteInfo && (
-              <span
-                title={fonteInfo.obs || fonteInfo.fonte_ativa}
-                className={`mono shrink-0 px-2.5 py-1.5 rounded-lg border ${fonteInfo.google_places ? "border-[#3ddc84]/30 text-[#3ddc84] bg-[#3ddc84]/8" : "border-[#d9a03a]/30 text-[#d9a03a] bg-[#d9a03a]/8"} hidden sm:block`}
-                style={{ fontSize: "0.7rem" }}
-              >
-                {fonteInfo.google_places ? "fonte: google" : fonteInfo.fonte_ativa + (fonteInfo.ia_router ? "" : " · IA Router off")}
-              </span>
-            )}
-          </div>
-        </div>
         <button
           onClick={openNovo}
           disabled={busy}
@@ -745,77 +561,6 @@ export function Pipeline({ leads, refresh, onIrClientes }: { leads: Lead[]; refr
           + novo lead
         </button>
       </div>
-
-      {prospectRes && (
-        <div className="mb-6 bg-[var(--bg-2)] border border-[#7aa2ff]/25 rounded-2xl p-5">
-          <div className="flex items-center gap-3 mb-3">
-            <span className="mono text-[#7aa2ff]">prospecção rodada</span>
-            <span className="mono" style={{ fontSize: "0.7rem" }}>fonte: {prospectRes.fonte}</span>
-            <button onClick={() => setProspectRes(null)} aria-label="fechar" className="ml-auto w-8 h-8 grid place-items-center rounded-lg border border-white/10 text-[#8a8a85] hover:text-white transition-colors">✕</button>
-          </div>
-          <div className="mono mb-3 text-[#b8b8b3] text-balance" style={{ fontSize: "0.72rem" }}>
-            {(prospectRes.regiao === "brasil" ? "Brasil (rodízio)" : prospectRes.regiao) + (prospectRes.cidades?.length ? ` · ${prospectRes.cidades.join(" · ")}` : "")}
-          </div>
-          <div className="text-[.9rem] mb-3">
-            <b className="text-[#3ddc84]">{prospectRes.adicionados.length}</b> lead(s) adicionado(s) ao estágio 0 ·
-            <b className="text-[#7aa2ff]"> {prospectRes.auditados}</b> site(s) auditados ·
-            <b className="text-[#b8b8b3]"> {prospectRes.candidatos}</b> candidato(s) da fonte
-            {prospectRes.tempo ? <> · <span className="text-[#8a8a85]">{prospectRes.tempo}s</span></> : null}
-          </div>
-          {prospectRes.porFrente && (
-            <div className="flex flex-wrap gap-2 mb-3">
-              {FRENTES.map((fr) => (
-                <span key={fr.id} className="mono px-2.5 py-1.5 rounded-lg border" style={{ fontSize: "0.7rem", color: fr.cor, borderColor: fr.cor + "40", background: fr.cor + "10" }}>
-                  {fr.curto} · {prospectRes.porFrente?.[fr.id] ?? 0}
-                </span>
-              ))}
-            </div>
-          )}
-          {prospectRes.aviso && (
-            <div className="mb-3 rounded-xl border border-[#d9a03a]/25 bg-[#d9a03a]/6 px-4 py-3 text-[.8rem] text-[#d9a03a]">
-              ⚠ {prospectRes.aviso}
-            </div>
-          )}
-          {prospectRes.erros.length > 0 && (
-            <div className="mb-3">
-              <div className="mono mb-1 text-[#fb7185]" style={{ fontSize: "0.68rem" }}>erros da fonte</div>
-              <div className="space-y-1">
-                {prospectRes.erros.slice(0, 6).map((e: { nome: string; motivo: string }, i: number) => (
-                  <div key={i} className="text-[.74rem] text-[#fb7185]/85">· {e.nome}: {e.motivo}</div>
-                ))}
-              </div>
-            </div>
-          )}
-          {prospectRes.adicionados.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-3">
-              {prospectRes.adicionados.map((n) => {
-                const lead = leads.find((l) => l.nome === n);
-                return lead ? (
-                  <button key={n} onClick={() => openDetalhe(lead)} className="mono px-2.5 py-1.5 rounded-lg bg-[#3ddc84]/10 border border-[#3ddc84]/25 text-[#3ddc84] hover:bg-[#3ddc84]/20 transition-colors" style={{ fontSize: "0.66rem" }}>{n}</button>
-                ) : (
-                  <span key={n} className="mono px-2.5 py-1.5 rounded-lg bg-[#3ddc84]/10 border border-[#3ddc84]/25 text-[#3ddc84]" style={{ fontSize: "0.66rem" }}>{n}</span>
-                );
-              })}
-            </div>
-          )}
-          {prospectRes.adicionados.length === 0 && (
-            <div className="mb-3 rounded-xl border border-[#d9a03a]/25 bg-[#d9a03a]/6 px-4 py-3 text-[.8rem] text-[#d9a03a] text-balance">
-              nenhum lead entrou: os candidatos têm presença digital forte. Experimente outro nicho ou região.
-            </div>
-          )}
-          {prospectRes.descartados.length > 0 && (
-            <>
-              <div className="mono mb-1" style={{ fontSize: "0.68rem" }}>descartados</div>
-              <div className="space-y-1">
-                {prospectRes.descartados.slice(0, 12).map((d, i) => (
-                  <div key={i} className="text-[.74rem] text-[#8a8a85]">· {d.nome}: <span className="text-[#fb7185]/80">{d.motivo}</span></div>
-                ))}
-              </div>
-            </>
-          )}
-          <p className="mono mt-3" style={{ fontSize: "0.68rem" }}>aprovar = estágio 1 · cada auditoria fica registrada na ficha</p>
-        </div>
-      )}
 
       {/* funil de conversão (studio) */}
       <div className="mb-6 card p-5 sm:p-6">

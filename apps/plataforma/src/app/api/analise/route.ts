@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAuthed } from "@/lib/auth";
-import { leadBase, gravarAnaliseNaFicha } from "@/lib/vault";
+import { gravarAnaliseNaFicha, leadBase } from "@/lib/data";
 import { analisarLead, salvarAnalise, lerAnalise, resumoMd } from "@/lib/analise";
 
 // GET /api/analise?id=<lead> → última análise salva (ou null)
@@ -10,7 +10,7 @@ export async function GET(req: Request) {
   return NextResponse.json({ ok: true, analise: await lerAnalise(id) });
 }
 
-// POST { id } → roda a análise agora, salva no vault e devolve
+// POST { id } → roda a análise agora, salva e devolve
 export async function POST(req: Request) {
   if (!(await isAuthed())) return NextResponse.json({ error: "não autenticado" }, { status: 401 });
   let body: { id?: string } = {};
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     await salvarAnalise(analise);
     await gravarAnaliseNaFicha(lead.id, resumoMd(analise), analise.pontuacao, analise);
     return NextResponse.json({ ok: true, analise });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e?.message || "erro na análise" }, { status: 500 });
+  } catch (e: unknown) {
+    return NextResponse.json({ ok: false, error: e instanceof Error ? e.message : "erro na análise" }, { status: 500 });
   }
 }

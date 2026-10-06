@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { isAuthed } from "@/lib/auth";
-import { listarPorEstagio } from "@/lib/empresas";
+import { listarPorEstagio } from "@/lib/data";
 
 // Comercial sobre o mesmo modelo de empresa: lead e oportunidade.
 // Quem virou cliente vive em /api/clientes e nunca aparece aqui.
 export async function GET() {
   if (!(await isAuthed())) return NextResponse.json({ error: "não autenticado" }, { status: 401 });
   try {
-    const leads = listarPorEstagio(["lead", "oportunidade"]).map((e) => ({
+    const leads = (await listarPorEstagio(["lead", "oportunidade"])).map((e) => ({
       id: e.id,
       nome: e.nome,
       segmento: e.segmento,

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAuthed } from "@/lib/auth";
-import { listarReunioes, criarReuniao } from "@/lib/reunioes";
+import { criarReuniao, listarReunioes } from "@/lib/data";
 
 export async function GET() {
   if (!(await isAuthed())) return NextResponse.json({ error: "não autenticado" }, { status: 401 });
@@ -16,11 +16,15 @@ export async function POST(req: Request) {
   if (!quando) return NextResponse.json({ ok: false, error: "quando ausente" }, { status: 400 });
 
   const duracao = Number(body?.duracao);
-  const reuniao = await criarReuniao({
-    titulo,
-    quando,
-    duracao: Number.isFinite(duracao) ? duracao : undefined,
-    participante: body?.participante ? String(body.participante) : undefined,
-  });
-  return NextResponse.json({ ok: true, reuniao }, { status: 201 });
+  try {
+    const reuniao = await criarReuniao({
+      titulo,
+      quando,
+      duracao: Number.isFinite(duracao) ? duracao : undefined,
+      participante: body?.participante ? String(body.participante) : undefined,
+    });
+    return NextResponse.json({ ok: true, reuniao }, { status: 201 });
+  } catch (e) {
+    return NextResponse.json({ ok: false, error: e instanceof Error ? e.message : "erro" }, { status: 400 });
+  }
 }

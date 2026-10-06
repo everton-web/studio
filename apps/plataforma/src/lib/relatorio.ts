@@ -1,10 +1,9 @@
-// Exportador do relatório público do lead — gera o JSON enxuto que o site consome
-// em apps/site/src/data/relatorios/<slug>.json (contrato da story relatorio-publico).
+// Exportador do relatório público do lead: gera o JSON enxuto que o site consome
+// (contrato da story relatorio-publico) e grava em reports (kind lead_publico).
+// O site lê o JSON publicado em GET /api/relatorio/publico/<slug>.
 // SEM telefones, e-mails, WhatsApp do lead, avaliações de terceiros nem dados sensíveis.
-import { writeFile, mkdir } from "node:fs/promises";
-import { join } from "node:path";
+import { gravarRelatorio, gravarRelatorioLead, leadBase } from "@/lib/data";
 import { lerAnalise, type Analise } from "./analise";
-import { leadBase, gravarRelatorio } from "./vault";
 
 export type Segmento = "odontologia" | "clinica" | "restaurante" | "hospedagem" | "outro";
 
@@ -111,9 +110,7 @@ export async function exportarRelatorio(id: string, slug?: string): Promise<{ sl
     faltas: a.faltas.map((f) => oportunidadeDe(f, segmento)).filter((x): x is NonNullable<typeof x> => x !== null),
     fortes: a.fortes.map((s) => s.replace(/\s*\([^)]*\)\s*$/, "").trim()),
   };
-  const dir = join(process.cwd(), "..", "site", "src", "data", "relatorios");
-  await mkdir(dir, { recursive: true });
-  await writeFile(join(dir, slugFinal + ".json"), JSON.stringify(rel, null, 2), "utf8");
+  await gravarRelatorioLead(id, slugFinal, rel);
   const url = "https://evertonbrito.com/relatorio/" + slugFinal;
   await gravarRelatorio(id, url);
   return { slug: slugFinal, url, empresa: a.nome };

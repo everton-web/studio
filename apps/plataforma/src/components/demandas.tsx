@@ -64,7 +64,6 @@ function opcoes(persona: string) {
   return [{ id: persona, nome: persona, desc: "" }, ...AGENTES];
 }
 
-import { Despacho } from "./despacho";
 
 export function Demandas({ agentes }: { agentes?: { nome: string; departamento: string; comando: string; html: string }[] }) {
   const [data, setData] = useState<Data | null>(null);
@@ -220,9 +219,6 @@ export function Demandas({ agentes }: { agentes?: { nome: string; departamento: 
           </button>
         </div>
       </div>
-      {agentes && agentes.length > 0 && (
-        <div className="mt-6"><Despacho agentes={agentes} /></div>
-      )}
     </div>
   );
 }

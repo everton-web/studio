@@ -3,15 +3,15 @@ import { isAuthed } from "@/lib/auth";
 import { exportarRelatorio } from "@/lib/relatorio";
 import { publicarRelatorio } from "@/lib/publicar-relatorio";
 
-// POST { id, slug? } → exporta o JSON público, publica nos repositórios git e
-// responde publicado. Um único clique: exportar → publicar → responder.
+// POST { id, slug? } → grava o JSON público em reports e marca como publicado.
+// O site lê em GET /api/relatorio/publico/<slug>. Sem git e sem disco.
 export async function POST(req: Request) {
   if (!(await isAuthed())) return NextResponse.json({ error: "não autenticado" }, { status: 401 });
   let body: { id?: string; slug?: string } = {};
   try { body = await req.json(); } catch { /* vazio */ }
   try {
     const r = await exportarRelatorio(String(body.id || ""), body.slug);
-    await publicarRelatorio(r.slug, r.empresa);
+    await publicarRelatorio(r.slug);
     return NextResponse.json({ ok: true, slug: r.slug, url: r.url, publicado: true });
   } catch (e: any) {
     return NextResponse.json({ ok: false, error: e?.message || "erro ao exportar relatório" }, { status: 400 });

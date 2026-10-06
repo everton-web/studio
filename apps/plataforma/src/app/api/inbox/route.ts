@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAuthed } from "@/lib/auth";
-import { inboxAdd } from "@/lib/vault";
+import { inboxAdd } from "@/lib/data";
 
 export async function POST(req: Request) {
   if (!(await isAuthed())) return NextResponse.json({ error: "não autenticado" }, { status: 401 });

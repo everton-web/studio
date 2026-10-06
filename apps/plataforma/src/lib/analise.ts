@@ -3,14 +3,11 @@
 //   1. Site do lead (HTML) — redes sociais, WhatsApp, e-mail, telefone, SEO, rastreamento, celular.
 //   2. Google Meu Negócio via Places API (GOOGLE_PLACES_KEY) — nota, avaliações, horário, fotos,
 //      categorias, avaliações recentes. Sem chave: usa nota/avaliações da ficha + link do Maps.
-// Resultado salvo em SaaS/Prospeccao/analises/<id>.json + resumo na ficha do lead (vault = verdade).
+// Resultado salvo em lead_analyses (Supabase) + resumo na ficha do lead.
 
-import { readFile, writeFile, mkdir } from "node:fs/promises";
-import { join } from "node:path";
+import { lerAnaliseLead, salvarAnaliseLead } from "@/lib/data";
 
-const VAULT = process.env.VAULT || "D:/Obsidian - Claude/🏢 Agência";
 const PLACES_KEY = process.env.GOOGLE_PLACES_KEY || "";
-const DIR = join(VAULT, "SaaS", "Prospeccao", "analises");
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36";
 
 export type Prioridade = "alta" | "media" | "baixa";
@@ -317,13 +314,11 @@ export async function analisarLead(lead: LeadBase): Promise<Analise> {
 }
 
 export async function salvarAnalise(a: Analise) {
-  await mkdir(DIR, { recursive: true });
-  await writeFile(join(DIR, `${a.id}.json`), JSON.stringify(a, null, 2), "utf8");
+  await salvarAnaliseLead(a.id, a.pontuacao, a, a.geradoEm);
 }
 
 export async function lerAnalise(id: string): Promise<Analise | null> {
-  if (!/^[a-z0-9-]+$/.test(id)) return null;
-  try { return JSON.parse(await readFile(join(DIR, `${id}.json`), "utf8")); } catch { return null; }
+  return lerAnaliseLead<Analise>(id);
 }
 
 // resumo em markdown para a ficha do lead (lido no Obsidian e pelos agentes)

@@ -2,7 +2,7 @@
 // Cada número cita a fonte e a data; sem dado, estado vazio honesto (nunca zero fabricado).
 import type { ReactNode } from "react";
 import { ExternalLink } from "lucide-react";
-import type { ConteudoRelatorio } from "@/lib/relatorio-mensal";
+import type { ConteudoRelatorio } from "@/lib/data/relatorios";
 
 const MESES = [
   "janeiro", "fevereiro", "março", "abril", "maio", "junho",

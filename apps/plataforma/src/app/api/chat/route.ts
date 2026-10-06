@@ -1,5 +1,5 @@
 import { isAuthed } from "@/lib/auth";
-import { buildData } from "@/lib/vault";
+import { buildData } from "@/lib/data";
 import { AGENTS, stateSummary } from "@/lib/agents";
 
 export const dynamic = "force-dynamic";

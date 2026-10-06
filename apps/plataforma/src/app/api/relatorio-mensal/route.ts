@@ -9,12 +9,12 @@ import {
   revogarToken,
   rotacionarToken,
   validarMes,
-} from "@/lib/relatorio-mensal";
+} from "@/lib/data";
 
 // Lista do Hoje: clientes ativos, situação do relatório do mês e botão de WhatsApp.
 export async function GET() {
   if (!(await isAuthed())) return NextResponse.json({ error: "não autenticado" }, { status: 401 });
-  return NextResponse.json(listarParaHoje());
+  return NextResponse.json(await listarParaHoje());
 }
 
 // Porta única de geração (agendador e disparo manual). Nada é enviado ao cliente
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
     if (acao === "rotacionar" || acao === "revogar" || acao === "enviado") {
       if (!empresaId) return NextResponse.json({ ok: false, error: "cliente ausente" }, { status: 400 });
       const feito =
-        acao === "rotacionar" ? rotacionarToken(empresaId, mes) : acao === "revogar" ? revogarToken(empresaId, mes) : marcarEnviado(empresaId, mes);
+        acao === "rotacionar" ? await rotacionarToken(empresaId, mes) : acao === "revogar" ? await revogarToken(empresaId, mes) : await marcarEnviado(empresaId, mes);
       return NextResponse.json({ ok: feito }, { status: feito ? 200 : 404 });
     }
     return NextResponse.json({ ok: false, error: "ação desconhecida" }, { status: 400 });

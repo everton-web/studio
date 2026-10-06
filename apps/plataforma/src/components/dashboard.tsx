@@ -314,12 +314,6 @@ export function Dashboard() {
                         nova demanda
                       </button>
                     )}
-                    {view === "pipeline" && (
-                      <button onClick={() => { localStorage.setItem("prospeccao.auto-start", "1"); go("pipeline"); }}
-                        className="flex items-center gap-2 h-[42px] px-4 rounded-xl bg-[#FF4000] hover:bg-[#ff5c22] text-[var(--accent-ink)] text-[.8rem] font-semibold transition-colors">
-                        prospecção
-                      </button>
-                    )}
                   </div>
                 </div>
               </motion.div>

@@ -1,33 +1,14 @@
 import { NextResponse } from "next/server";
 import { isAuthed } from "@/lib/auth";
-import { readFile, writeFile, mkdir, readdir } from "node:fs/promises";
-import { join } from "node:path";
+import { atualizarCampanha, criarCampanha, listarCampanhas, removerCampanha, type CamposCampanha } from "@/lib/data";
 
-const VAULT = process.env.VAULT || "D:/Obsidian - Claude/🏢 Agência";
-const DIR = join(VAULT, "SaaS", "Tráfego");
-const FILE = join(DIR, "campanhas.json");
+export type { Campanha } from "@/lib/data";
 
-export type Campanha = {
-  id: string;
-  nome: string;
-  canal: string; // meta | google | tiktok | outro
-  investimento: number;
-  cliques: number;
-  conversoes: number;
-  status: string; // ativa | pausada
-  criada: string;
-};
-
-async function ler(): Promise<Campanha[]> {
-  try { return JSON.parse(await readFile(FILE, "utf8")); } catch { return []; }
-}
-async function salvar(lista: Campanha[]) {
-  try { await mkdir(DIR, { recursive: true }); await writeFile(FILE, JSON.stringify(lista, null, 2), "utf8"); } catch { /* sem vault */ }
-}
+const status = (v: unknown) => (v === "pausada" ? "pausada" : "ativa");
 
 export async function GET() {
   if (!(await isAuthed())) return NextResponse.json({ error: "não autenticado" }, { status: 401 });
-  return NextResponse.json({ campanhas: await ler() });
+  return NextResponse.json({ campanhas: await listarCampanhas() });
 }
 
 export async function POST(req: Request) {
@@ -35,41 +16,37 @@ export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
   if (!body?.action) return NextResponse.json({ ok: false, error: "ação ausente" }, { status: 400 });
 
-  const lista = await ler();
   if (body.action === "add") {
-    const c: Campanha = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-      nome: String(body.nome || "").trim(),
+    const nome = String(body.nome || "").trim();
+    if (!nome) return NextResponse.json({ ok: false, error: "nome ausente" }, { status: 400 });
+    const campanha = await criarCampanha({
+      nome,
       canal: String(body.canal || "meta"),
       investimento: Number(body.investimento) || 0,
       cliques: Number(body.cliques) || 0,
       conversoes: Number(body.conversoes) || 0,
-      status: body.status === "pausada" ? "pausada" : "ativa",
-      criada: new Date().toLocaleDateString("pt-BR"),
-    };
-    if (!c.nome) return NextResponse.json({ ok: false, error: "nome ausente" }, { status: 400 });
-    lista.unshift(c);
-    await salvar(lista);
-    return NextResponse.json({ ok: true, campanha: c }, { status: 201 });
+      status: status(body.status),
+    });
+    return NextResponse.json({ ok: true, campanha }, { status: 201 });
   }
   if (body.action === "update" || body.action === "update-status") {
-    const c = lista.find((x) => x.id === body.id);
-    if (!c) return NextResponse.json({ ok: false, error: "campanha não encontrada" }, { status: 404 });
+    const campos: CamposCampanha = {};
     if (body.action === "update-status") {
-      c.status = body.status === "pausada" ? "pausada" : "ativa";
+      campos.status = status(body.status);
     } else {
-      if (body.nome !== undefined) c.nome = String(body.nome).trim();
-      if (body.canal !== undefined) c.canal = String(body.canal);
-      if (body.investimento !== undefined) c.investimento = Number(body.investimento) || 0;
-      if (body.cliques !== undefined) c.cliques = Number(body.cliques) || 0;
-      if (body.conversoes !== undefined) c.conversoes = Number(body.conversoes) || 0;
-      if (body.status !== undefined) c.status = body.status === "pausada" ? "pausada" : "ativa";
+      if (body.nome !== undefined) campos.nome = String(body.nome).trim();
+      if (body.canal !== undefined) campos.canal = String(body.canal);
+      if (body.investimento !== undefined) campos.investimento = Number(body.investimento) || 0;
+      if (body.cliques !== undefined) campos.cliques = Number(body.cliques) || 0;
+      if (body.conversoes !== undefined) campos.conversoes = Number(body.conversoes) || 0;
+      if (body.status !== undefined) campos.status = status(body.status);
     }
-    await salvar(lista);
-    return NextResponse.json({ ok: true, campanha: c });
+    const campanha = await atualizarCampanha(String(body.id || ""), campos);
+    if (!campanha) return NextResponse.json({ ok: false, error: "campanha não encontrada" }, { status: 404 });
+    return NextResponse.json({ ok: true, campanha });
   }
   if (body.action === "delete") {
-    await salvar(lista.filter((x) => x.id !== body.id));
+    await removerCampanha(String(body.id || ""));
     return NextResponse.json({ ok: true });
   }
   return NextResponse.json({ ok: false, error: "ação desconhecida" }, { status: 400 });

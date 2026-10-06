@@ -1,9 +1,20 @@
 import { NextResponse } from "next/server";
 import { isAuthed } from "@/lib/auth";
-import { criarClienteNovo, detalheCliente, editarCliente, listarClientes, resumoClientes } from "@/lib/clientes";
-import { criarBriefing } from "@/lib/briefing";
-import { cofreConfigurado, gravarCredencial, lerCredencial, removerCredencial } from "@/lib/cofre";
-import { gerarContrato, removerContrato, textoDoContrato } from "@/lib/contrato";
+import {
+  cofreConfigurado,
+  criarBriefing,
+  criarClienteNovo,
+  detalheCliente,
+  editarCliente,
+  gerarContrato,
+  gravarCredencial,
+  lerCredencial,
+  listarClientes,
+  removerContrato,
+  removerCredencial,
+  resumoClientes,
+  textoDoContrato,
+} from "@/lib/data";
 import { lerValor } from "@/lib/formato";
 
 const SEM_CACHE = { "Cache-Control": "no-store" };
@@ -49,7 +60,7 @@ export async function POST(req: Request) {
     if (acao === "criar") {
       const nome = txt(b.nome);
       if (!nome) return NextResponse.json({ ok: false, error: "nome ausente" }, { status: 400 });
-      const r = criarClienteNovo({
+      const r = await criarClienteNovo({
         nome,
         segmento: txt(b.segmento),
         cidade: txt(b.cidade),
@@ -67,11 +78,11 @@ export async function POST(req: Request) {
       for (const k of ["segmento", "cidade", "site"] as const) if (b[k] !== undefined) campos[k] = txt(b[k]) || null;
       if (b.valor_projeto !== undefined) campos.valor_projeto = lerValor(txt(b.valor_projeto, 30));
       if (b.recorrencia !== undefined) campos.recorrencia = lerValor(txt(b.recorrencia, 30));
-      const ok = editarCliente(id, campos);
+      const ok = await editarCliente(id, campos);
       return NextResponse.json({ ok }, { status: ok ? 200 : 404 });
     }
     if (acao === "briefing") {
-      return NextResponse.json({ ok: true, briefing: criarBriefing(id) });
+      return NextResponse.json({ ok: true, briefing: await criarBriefing(id) });
     }
     if (acao === "contrato") {
       const c = await gerarContrato(id, {
@@ -94,7 +105,7 @@ export async function POST(req: Request) {
       const label = txt(b.label, 80);
       const senha = String(b.senha ?? "");
       if (!label || !senha) return NextResponse.json({ ok: false, error: "rótulo e senha são obrigatórios" }, { status: 400 });
-      const r = gravarCredencial(id, {
+      const r = await gravarCredencial(id, {
         label,
         url: txt(b.url) || null,
         usuario: txt(b.usuario) || null,
@@ -105,12 +116,12 @@ export async function POST(req: Request) {
     }
     if (acao === "revelar") {
       if (!cofreConfigurado()) return NextResponse.json({ ok: false, error: "cofre sem chave configurada" }, { status: 503 });
-      const c = lerCredencial(txt(b.credencial, 80));
+      const c = await lerCredencial(txt(b.credencial, 80));
       if (!c || c.empresa_id !== id) return NextResponse.json({ ok: false, error: "credencial não encontrada" }, { status: 404 });
       return NextResponse.json({ ok: true, usuario: c.usuario, senha: c.senha }, { headers: SEM_CACHE });
     }
     if (acao === "remover-credencial") {
-      const ok = removerCredencial(txt(b.credencial, 80), id);
+      const ok = await removerCredencial(txt(b.credencial, 80), id);
       return NextResponse.json({ ok }, { status: ok ? 200 : 404, headers: SEM_CACHE });
     }
     return NextResponse.json({ ok: false, error: "ação desconhecida" }, { status: 400 });

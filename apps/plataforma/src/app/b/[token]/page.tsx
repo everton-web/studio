@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { briefingPorToken } from "@/lib/briefing";
+import { briefingPorToken } from "@/lib/data";
 import { BriefingForm } from "./form";
 
 export const metadata: Metadata = {
@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Page({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
-  const info = briefingPorToken(token);
+  const info = await briefingPorToken(token);
   return (
     <main style={{ maxWidth: 640, margin: "0 auto", padding: "40px 20px 64px" }}>
       {!info ? (

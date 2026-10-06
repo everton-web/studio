@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { brl, dataCurta, dataLonga, hostDoSite, relativo } from "@/lib/formato";
-import type { CardCliente, DetalheCliente } from "@/lib/clientes";
+import type { CardCliente, DetalheCliente } from "@/lib/data/clientes";
 
 type Resumo = { ativos: number; novosNoMes: number };
 

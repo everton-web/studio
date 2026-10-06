@@ -9,8 +9,8 @@ import {
   mensagensSala,
   postarSala,
   estadoAgentes,
-} from "@/lib/orquestra";
-import type { DemandaStatus } from "@/lib/orquestra";
+} from "@/lib/data";
+import type { DemandaStatus } from "@/lib/data";
 
 const STATUS_MAP: Record<string, DemandaStatus> = {
   // legados (fila.json)
