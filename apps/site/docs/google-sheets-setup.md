@@ -1,12 +1,11 @@
 # Integração do formulário com o Google Sheets
 
 O formulário de contato (`src/components/Contact.tsx`) envia os dados para
-`/api/contact` (Route Handler em `src/app/api/contact/route.ts`), que repassa
-para um **Google Apps Script Web App**. O Apps Script grava uma linha na
-planilha.
+`/send-form.php` (o site é estático na Hostinger), que repassa para um
+**Google Apps Script Web App**. O Apps Script grava uma linha na planilha.
 
 ```
-Navegador → /api/contact (Next) → Apps Script Web App → Google Sheets
+Navegador → /send-form.php (PHP) → Apps Script Web App → Google Sheets
 ```
 
 Esse caminho evita problemas de CORS e mantém a URL do Web App fora do bundle
@@ -121,28 +120,21 @@ function json(obj) {
 5. **Implantar** e autorize o acesso (a conta precisa ter acesso à planilha).
 6. Copie a **URL do App da Web** — termina em `/exec`.
 
-## 3. Configurar a variável de ambiente
+## 3. Configurar a URL no servidor
 
-Crie `.env.local` (não versionado) na raiz:
-
-```
-GOOGLE_SHEETS_WEBAPP_URL=https://script.google.com/macros/s/SEU_ID/exec
-```
-
-- **Local:** reinicie `npm run dev` após criar/alterar o `.env.local`.
-- **Produção (Vercel/etc.):** adicione a mesma variável em *Environment
-  Variables* e faça um novo deploy.
+Grave a URL em `form-config.php`, fora do `public_html` (passo a passo em
+`docs/PUBLICAR-HOSTINGER.md`). Nunca versione esse arquivo.
 
 ## 4. Testar
 
 ```bash
-curl -X POST http://localhost:3000/api/contact \
+curl -X POST https://evertonbrito.com/send-form.php \
   -H "Content-Type: application/json" \
   -d '{"name":"Teste","contact":"(11) 99999-9999","project":"Landing","lang":"pt"}'
 ```
 
-Resposta esperada: `{"ok":true}` e uma nova linha na aba **Leads**, com o
-número de WhatsApp clicável (abre `https://wa.me/5511999999999`).
+Resposta esperada: `{"success":true,...}`, o e-mail em contato@evertonbrito.com
+e uma nova linha na aba **Leads**, com o número de WhatsApp clicável.
 
 ---
 
@@ -153,5 +145,5 @@ número de WhatsApp clicável (abre `https://wa.me/5511999999999`).
   e-mail abre o cliente de e-mail (`mailto:`).
 - Ao alterar o código do Apps Script, é preciso **implantar uma nova versão**
   (Implantar → Gerenciar implantações → editar → Nova versão).
-- Sem `GOOGLE_SHEETS_WEBAPP_URL`, o endpoint responde `503 not_configured` e o
-  formulário ainda abre o WhatsApp normalmente.
+- Sem `GOOGLE_SHEETS_WEBAPP_URL`, o PHP ainda envia o e-mail; o formulário abre
+  o WhatsApp de qualquer forma.

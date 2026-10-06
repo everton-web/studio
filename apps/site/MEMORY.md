@@ -22,7 +22,7 @@
 - Cursor customizado segue o ponteiro sem atraso (removido `useSpring`).
 - Favicon atualizado (`src/app/icon.svg`).
 - **Formulário de contato integrado ao Google Sheets** (planilha `1UqaWnSn...YGzU`):
-  - `src/app/api/contact/route.ts` → proxy para o Apps Script Web App (evita CORS, esconde a URL).
+  - `send-form.php` (site estático na Hostinger desde 2026-10) → e-mail, Apps Script Web App e lead no SaaS; segredos em `form-config.php` fora do `public_html`.
   - `Contact.tsx` registra o lead e ainda abre o WhatsApp; mostra status de sucesso/erro.
   - Setup: `docs/google-sheets-setup.md`; env `GOOGLE_SHEETS_WEBAPP_URL` (`.env.example`).
   - Apps Script grava a coluna **Contato** como link clicável: telefone → `wa.me` (DDI 55), e-mail → `mailto:`.
@@ -49,7 +49,7 @@
 - Memória persistente em `MEMORY.md` (este arquivo), lida/atualizada a cada sessão.
 - Sessões do pi já persistem em `~/.pi/agent/sessions/` (`pi --continue` / `/resume`); `MEMORY.md` é o resumo curado, complementar ao transcript.
 - **Sempre commit + push ao final de cada tarefa relevante** (regra 9 do `APPEND_SYSTEM.md`); nada de trabalho só local.
-- **Leads via Apps Script, não pela API do Sheets:** o browser chama `/api/contact` (same-origin) e o servidor repassa ao Web App do Apps Script. Dispensa service account e mantém a URL fora do cliente.
+- **Leads via Apps Script, não pela API do Sheets:** o browser chama `/send-form.php` (same-origin) e o PHP repassa ao Web App do Apps Script. Dispensa service account e mantém a URL fora do cliente.
 - **Dropdown de projeto derivado de `t.services`** (core + support) no `Contact.tsx`: nunca sai de sincronia com a seção “O que eu entrego”, já que ambos leem o mesmo i18n.
 - **Valores client-only via `useSyncExternalStore`** (`lang` em `LanguageContext`, detecção de touch em `CustomCursor`): evita `setState` em effect e divergência de hidratação.
 
