@@ -1,10 +1,22 @@
-# Plano de migração para Supabase
+# Migração para Supabase, etapa 2
 
 ## Escopo e premissas
 
-Este documento planeja a troca do disco local, SQLite e processos locais por Supabase Postgres e Storage no ambiente Node.js gerenciado da Hostinger. Esta etapa não altera o código da aplicação. A migração deve preservar respostas e regras das rotas atuais, usar a service role somente no servidor e manter o vault atual em modo somente leitura durante a validação.
+Esta etapa conclui a troca da persistência local da plataforma por Supabase Postgres e Storage no ambiente Node.js gerenciado da Hostinger. A aplicação usa a service role somente no servidor. O vault e o SQLite ficam como fontes de importação e evidência até a validação do corte.
 
-O alvo é uma camada de dados única, por exemplo `DataStore`, com contratos por domínio. Rotas não devem importar SDK do Supabase diretamente. Isso permite migrar uma rota por vez, testar equivalência e manter um adaptador legado temporário.
+O código usa uma camada única em `src/lib/data`, sem adaptador legado. Rotas não importam o SDK do Supabase diretamente.
+
+## Resultado da etapa 2
+
+A opção A foi escolhida e implementada. Console do pi, mirror e disparo do prospector não fazem parte da plataforma hospedada. Essas operações continuam na VPS por CLI, fora do processo web. A orquestração de demandas permanece na plataforma porque foi convertida para dados no Supabase e não inicia processos locais.
+
+As 32 rotas originais foram cobertas da seguinte forma:
+
+1. Vinte e seis rotas permaneceram: `/api/agenda`, `/api/analise`, `/api/analytics`, `/api/b/[token]`, `/api/banco`, `/api/briefing`, `/api/chat`, `/api/clientes`, `/api/comercial`, `/api/data`, `/api/file/[...name]`, `/api/files`, `/api/financas`, `/api/inbox`, `/api/infinitepay/webhook`, `/api/kanban`, `/api/leads`, `/api/login`, `/api/logout`, `/api/orquestra`, `/api/pipeline`, `/api/relatorio-mensal`, `/api/relatorio`, `/api/saude`, `/api/t` e `/api/upload`.
+2. Seis rotas saíram pela opção A: `/api/console`, `/api/console/input`, `/api/console/resize`, `/api/console/stream`, `/api/mirror` e `/api/prospector`.
+3. Uma rota pública nova foi criada: `GET /api/relatorio/publico/[slug]`, que serve somente diagnósticos de lead já publicados no Supabase.
+
+O resultado atual é de 27 rotas: 26 rotas originais preservadas e uma rota pública nova.
 
 ## Inventário das dependências atuais
 
@@ -164,7 +176,7 @@ Manter na VPS um serviço pequeno responsável por PTY, mirror e execução do p
 
 Custo: preserva a experiência web e centraliza o disparo, mas exige daemon supervisionado, domínio ou túnel, certificados, monitoramento, rotação de segredo, protocolo de reconexão, controle de concorrência e resposta a incidentes. Também mantém a VPS como dependência operacional e amplia a superfície de segurança. O fluxo de relatório por Git, se delegado, deve ser uma ação fixa e não um endpoint de shell genérico.
 
-Nenhuma opção é escolhida neste plano. A decisão deve ocorrer antes da migração das rotas de console, mirror, orquestra e prospector.
+A opção A foi escolhida nesta etapa. Não existe ponte HTTP, endpoint de shell ou dependência de processo filho na plataforma hospedada.
 
 ## Segurança e validação
 
@@ -178,9 +190,11 @@ Nenhuma opção é escolhida neste plano. A decisão deve ocorrer antes da migra
 
 ## Pendências de decisão
 
-1. Escolher opção A ou B para console, mirror, orquestra viva e prospector.
-2. Definir projeto, região, plano, backups e retenção do Supabase.
-3. Definir se documentos gerais do vault continuam no Obsidian com sincronização unidirecional ou passam a ter o Postgres como fonte única.
-4. Definir política de expiração e rotação dos links públicos de briefing e relatório.
-5. Confirmar tratamento de credenciais cifradas e responsabilidade pela chave antes do primeiro import.
+1. Definir projeto, região, plano, backups e retenção do Supabase.
+2. Executar `scan`, `dry-run`, `apply` e `verify` com os caminhos reais do vault e do SQLite na janela de corte.
+3. Rotacionar links legados de briefing e relatório. Tokens novos ficam somente como hash e usam versão para rotação.
+4. Definir política de expiração dos links públicos. Revogação e rotação já estão disponíveis.
+5. Confirmar `AGENCIA_COFRE_KEY` antes de importar credenciais cifradas.
 6. Definir rate limit compartilhado para login, pixel e endpoints públicos.
+7. Validar contagens, somas financeiras, arquivos e amostras antes de retirar as fontes locais.
+8. Executar smoke tests no ambiente de homologação e documentar o rollback antes do deploy.
