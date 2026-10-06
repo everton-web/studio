@@ -21,6 +21,7 @@ export async function POST(req: Request) {
 // GET ?slug=<slug> → checa server-side se a página já está no ar.
 // O site não manda CORS, então o navegador não consegue checar direto.
 export async function GET(req: Request) {
+  if (!(await isAuthed())) return NextResponse.json({ error: "não autenticado" }, { status: 401 });
   const slug = new URL(req.url).searchParams.get("slug") || "";
   if (!/^[a-z0-9-]+$/.test(slug)) {
     return NextResponse.json({ ok: false, status: null });

@@ -44,6 +44,22 @@ function arquivos(dir) {
 const rel = (p) => relative(RAIZ, p).split(sep).join("/");
 const erros = [];
 
+function handlersHttp(codigo) {
+  const handlers = [];
+  const assinatura = /export\s+async\s+function\s+(GET|POST|PUT|PATCH|DELETE|OPTIONS|HEAD)\s*\([^)]*\)\s*\{/g;
+  let match;
+  while ((match = assinatura.exec(codigo))) {
+    let nivel = 1;
+    let i = assinatura.lastIndex;
+    for (; i < codigo.length && nivel > 0; i++) {
+      if (codigo[i] === "{") nivel++;
+      else if (codigo[i] === "}") nivel--;
+    }
+    handlers.push({ metodo: match[1], corpo: codigo.slice(assinatura.lastIndex, i - 1) });
+  }
+  return handlers;
+}
+
 for (const p of arquivos(SRC)) {
   const r = rel(p);
   const s = readFileSync(p, "utf8");
@@ -57,8 +73,10 @@ for (const p of arquivos(SRC)) {
   if (!r.startsWith("src/lib/data/") && /["']@supabase\/supabase-js["']/.test(s)) {
     erros.push(`${r}: só src/lib/data pode importar @supabase/supabase-js`);
   }
-  if (r.startsWith("src/app/api/") && r.endsWith("/route.ts") && !ROTAS_PUBLICAS.has(r) && !/isAuthed\(\)/.test(s)) {
-    erros.push(`${r}: rota sem isAuthed() e fora da lista de rotas públicas`);
+  if (r.startsWith("src/app/api/") && r.endsWith("/route.ts") && !ROTAS_PUBLICAS.has(r)) {
+    for (const handler of handlersHttp(s)) {
+      if (!/isAuthed\(\)/.test(handler.corpo)) erros.push(`${r}: método ${handler.metodo} sem isAuthed()`);
+    }
   }
 }
 

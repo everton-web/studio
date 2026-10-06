@@ -36,6 +36,7 @@ Ready for Review. Ajustes pós-revisão implementados pelo Theo em 2026-10-06.
 - Tokens de briefing e relatório ficam somente como hash. O servidor reconstitui o token com HMAC, ID e versão, e links legados exigem rotação.
 - Privilégios atuais e futuros de tabelas, sequências e funções foram revogados para `anon` e `authenticated`.
 - Cliente Supabase do servidor ganhou `server-only` e `LEADS_TOKEN` passou a usar comparação em tempo constante.
+- O guard de autenticação passou a validar cada método HTTP, e `GET /api/relatorio` agora exige sessão.
 
 ## File list
 
