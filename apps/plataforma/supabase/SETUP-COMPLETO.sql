@@ -127,6 +127,7 @@ create table public.briefings (
   id uuid primary key default gen_random_uuid(),
   company_id text references public.companies(id) on delete set null,
   token_hash text not null unique,
+  token_version integer not null default 1 check (token_version > 0),
   page_type text,
   answers jsonb,
   submitted_at timestamptz,
@@ -140,6 +141,7 @@ create table public.reports (
   report_month date not null,
   content jsonb not null default '{}'::jsonb,
   link_token_hash text unique,
+  token_version integer not null default 1 check (token_version > 0),
   generated_at timestamptz,
   sent_at timestamptz,
   unique (company_id, report_month)
@@ -324,6 +326,16 @@ begin
   end loop;
 end $$;
 
+-- O Supabase concede acesso padrao a tabelas novas. Revogamos os privilegios
+-- atuais e futuros para que toda tabela criada depois deste setup continue
+-- acessivel somente pela service role no servidor.
+revoke all on all tables in schema public from anon, authenticated;
+revoke all on all sequences in schema public from anon, authenticated;
+revoke all on all functions in schema public from anon, authenticated;
+alter default privileges for role postgres in schema public revoke all on tables from anon, authenticated;
+alter default privileges for role postgres in schema public revoke all on sequences from anon, authenticated;
+alter default privileges for role postgres in schema public revoke all on functions from anon, authenticated;
+
 -- Storage, executar no projeto Supabase depois de revisar limite e MIME types:
 -- insert into storage.buckets (id, name, public, file_size_limit)
 -- values ('plataforma-arquivos', 'plataforma-arquivos', false, 26214400);
@@ -353,8 +365,10 @@ on conflict (id) do update set
 alter table public.reports
   add column if not exists kind text not null default 'mensal',
   add column if not exists slug text,
-  add column if not exists link_token text,
+  add column if not exists token_version integer not null default 1,
   add column if not exists published_at timestamptz;
+
+alter table public.reports drop column if exists link_token;
 
 do $$
 begin
@@ -376,6 +390,24 @@ create unique index if not exists reports_mensal_empresa_mes_idx
 create unique index if not exists reports_lead_slug_idx
   on public.reports (slug) where kind = 'lead_publico';
 
--- Briefing: o token fica guardado para o sócio autenticado copiar o link de
--- novo. A busca pública continua só pelo token_hash.
-alter table public.briefings add column if not exists token text;
+-- Tokens publicos ficam somente como hash. O servidor reconstroi o valor com
+-- AGENCIA_SECRET, id e versao. Links legados devem ser rotacionados no corte.
+alter table public.briefings add column if not exists token_version integer not null default 1;
+alter table public.briefings drop column if exists token;
+
+do $$
+begin
+  if not exists (select 1 from pg_constraint where conname = 'briefings_token_version_check') then
+    alter table public.briefings add constraint briefings_token_version_check check (token_version > 0);
+  end if;
+  if not exists (select 1 from pg_constraint where conname = 'reports_token_version_check') then
+    alter table public.reports add constraint reports_token_version_check check (token_version > 0);
+  end if;
+end $$;
+
+revoke all on all tables in schema public from anon, authenticated;
+revoke all on all sequences in schema public from anon, authenticated;
+revoke all on all functions in schema public from anon, authenticated;
+alter default privileges for role postgres in schema public revoke all on tables from anon, authenticated;
+alter default privileges for role postgres in schema public revoke all on sequences from anon, authenticated;
+alter default privileges for role postgres in schema public revoke all on functions from anon, authenticated;

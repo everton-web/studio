@@ -198,7 +198,7 @@ function Briefing({ d, recarregar }: { d: DetalheCliente; recarregar: () => Prom
   const [copiado, setCopiado] = useState(false);
   const [aberto, setAberto] = useState(false);
   const b = d.briefing;
-  const link = b ? `${typeof location !== "undefined" ? location.origin : ""}/b/${b.token}` : "";
+  const link = b?.token ? `${typeof location !== "undefined" ? location.origin : ""}/b/${b.token}` : "";
   return (
     <Bloco titulo="Briefing" extra={b && <Chip tom={b.status === "respondido" ? "ok" : "aviso"}>{b.status === "respondido" ? "respondido" : "aguardando resposta"}</Chip>}>
       {!b && (
@@ -209,7 +209,7 @@ function Briefing({ d, recarregar }: { d: DetalheCliente; recarregar: () => Prom
       )}
       {b && (
         <div className="grid gap-3">
-          {b.status === "aguardando" && (
+          {b.status === "aguardando" && b.token && (
             <>
               <div data-briefing-link className="rounded-xl bg-black/40 px-3 py-2 text-[.78rem] break-all text-[#b8b8b3]">{link}</div>
               <button
@@ -219,6 +219,9 @@ function Briefing({ d, recarregar }: { d: DetalheCliente; recarregar: () => Prom
                 {copiado ? "link copiado" : "copiar link"}
               </button>
             </>
+          )}
+          {b.status === "aguardando" && !b.token && (
+            <button className={btnSecundario} onClick={async () => { await api({ action: "briefing", id: d.id }); await recarregar(); }}>rotacionar link legado</button>
           )}
           {b.status === "respondido" && (
             <>

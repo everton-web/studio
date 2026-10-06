@@ -117,6 +117,7 @@ create table public.briefings (
   id uuid primary key default gen_random_uuid(),
   company_id text references public.companies(id) on delete set null,
   token_hash text not null unique,
+  token_version integer not null default 1 check (token_version > 0),
   page_type text,
   answers jsonb,
   submitted_at timestamptz,
@@ -130,6 +131,7 @@ create table public.reports (
   report_month date not null,
   content jsonb not null default '{}'::jsonb,
   link_token_hash text unique,
+  token_version integer not null default 1 check (token_version > 0),
   generated_at timestamptz,
   sent_at timestamptz,
   unique (company_id, report_month)
@@ -313,6 +315,16 @@ begin
     );
   end loop;
 end $$;
+
+-- O Supabase concede acesso padrao a tabelas novas. Revogamos os privilegios
+-- atuais e futuros para que toda tabela criada depois desta migration continue
+-- acessivel somente pela service role no servidor.
+revoke all on all tables in schema public from anon, authenticated;
+revoke all on all sequences in schema public from anon, authenticated;
+revoke all on all functions in schema public from anon, authenticated;
+alter default privileges for role postgres in schema public revoke all on tables from anon, authenticated;
+alter default privileges for role postgres in schema public revoke all on sequences from anon, authenticated;
+alter default privileges for role postgres in schema public revoke all on functions from anon, authenticated;
 
 -- Storage, executar no projeto Supabase depois de revisar limite e MIME types:
 -- insert into storage.buckets (id, name, public, file_size_limit)

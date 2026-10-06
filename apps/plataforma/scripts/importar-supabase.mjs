@@ -411,7 +411,7 @@ async function montarPlano(op) {
     try { respostas = b.respostas ? JSON.parse(b.respostas) : null; } catch { avisos.push(`respostas ilegíveis no briefing ${b.id}`); }
     plano.briefings.push({
       id: uuidDe(`briefing:${b.id}`), company_id: existe(b.empresa_id) ? String(b.empresa_id) : null,
-      token: String(b.token), token_hash: sha256(String(b.token)), page_type: b.tipo_pagina ?? null, answers: respostas,
+      token_hash: sha256(String(b.token)), token_version: 1, page_type: b.tipo_pagina ?? null, answers: respostas,
       submitted_at: dataIso(b.enviado_em), created_at: dataIso(b.criado_em) || new Date().toISOString(),
     });
   }
@@ -422,7 +422,7 @@ async function montarPlano(op) {
     try { conteudo = r.conteudo ? JSON.parse(r.conteudo) : {}; } catch { avisos.push(`conteúdo ilegível no relatório ${r.id}`); }
     plano.reports.push({
       id: uuidDe(`relatorio:${r.id}`), kind: "mensal", slug: null, company_id: String(r.empresa_id), report_month: `${r.mes}-01`,
-      content: conteudo, link_token: r.link_token ?? null, link_token_hash: r.link_token ? sha256(String(r.link_token)) : null,
+      content: conteudo, link_token_hash: r.link_token ? sha256(String(r.link_token)) : null, token_version: 1,
       generated_at: dataIso(r.gerado_em), sent_at: dataIso(objeto(conteudo).enviadoEm), published_at: null,
     });
   }
@@ -439,7 +439,7 @@ async function montarPlano(op) {
     const quando = soData(j.geradoEm) || new Date().toISOString().slice(0, 10);
     plano.reports.push({
       id: uuidDe(`relatorio-lead:${s}`), kind: "lead_publico", slug: s, company_id: s, report_month: `${quando.slice(0, 7)}-01`,
-      content: j, link_token: null, link_token_hash: null, generated_at: dataIso(quando), sent_at: null,
+      content: j, link_token_hash: null, token_version: 1, generated_at: dataIso(quando), sent_at: null,
       published_at: new Date(statSync(p).mtimeMs).toISOString(),
     });
   }

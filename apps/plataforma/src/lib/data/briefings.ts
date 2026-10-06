@@ -1,28 +1,28 @@
-// Briefing por link (tabela briefings). A busca pública usa só o hash do token;
-// o token em si fica na coluna token (migration 0002) para o sócio autenticado
-// poder copiar o link de novo.
-import { createHash, randomBytes } from "node:crypto";
+// Briefing por link (tabela briefings). O banco guarda somente o hash. O token
+// pode ser reconstituido no servidor a partir do id e da versao do link.
+import { randomUUID } from "node:crypto";
 import { LIMITE_RESPOSTA, PERGUNTAS } from "../briefing-perguntas";
 import { agoraIso, dados, objeto, supabase, textoOuNull, type Linha } from "./client";
+import { hashTokenPublico, tokenPublico } from "./public-tokens";
 
 export type BriefingInfo = {
   id: string;
   token: string;
+  versaoToken: number;
   status: "aguardando" | "respondido";
   criadoEm: string | null;
   respondidoEm: string | null;
   respostas: { pergunta: string; resposta: string }[];
 };
 
-function hashToken(token: string): string {
-  return createHash("sha256").update(token).digest("hex");
-}
-
 function mapear(l: Linha): BriefingInfo {
   const obj = objeto(l.answers);
+  const versao = Number(l.token_version) || 1;
+  const token = tokenPublico("briefing", String(l.id), versao);
   return {
     id: String(l.id),
-    token: String(l.token || ""),
+    token: String(l.token_hash) === hashTokenPublico(token) ? token : "",
+    versaoToken: versao,
     status: l.submitted_at ? "respondido" : "aguardando",
     criadoEm: textoOuNull(l.created_at),
     respondidoEm: textoOuNull(l.submitted_at),
@@ -45,11 +45,23 @@ export async function briefingDaEmpresa(empresaId: string): Promise<BriefingInfo
 // Cria o link único. Se já existe um briefing aguardando resposta, reaproveita.
 export async function criarBriefing(empresaId: string): Promise<BriefingInfo> {
   const atual = await briefingDaEmpresa(empresaId);
-  if (atual && atual.status === "aguardando" && atual.token) return atual;
-  const token = randomBytes(18).toString("base64url");
+  if (atual && atual.status === "aguardando") {
+    if (atual.token) return atual;
+    const versao = atual.versaoToken + 1;
+    const token = tokenPublico("briefing", atual.id, versao);
+    const r = await supabase()
+      .from("briefings")
+      .update({ token_hash: hashTokenPublico(token), token_version: versao })
+      .eq("id", atual.id)
+      .select()
+      .single();
+    return mapear(dados<Linha>(r, "rotacionar briefing legado"));
+  }
+  const id = randomUUID();
+  const token = tokenPublico("briefing", id, 1);
   const r = await supabase()
     .from("briefings")
-    .insert({ company_id: empresaId, token, token_hash: hashToken(token), page_type: "site", created_at: agoraIso() })
+    .insert({ id, company_id: empresaId, token_hash: hashTokenPublico(token), token_version: 1, page_type: "site", created_at: agoraIso() })
     .select()
     .single();
   return mapear(dados<Linha>(r, "criar briefing"));
@@ -57,7 +69,7 @@ export async function criarBriefing(empresaId: string): Promise<BriefingInfo> {
 
 async function linhaPorToken(token: string): Promise<Linha | null> {
   if (!/^[A-Za-z0-9_-]{16,64}$/.test(token)) return null;
-  const r = await supabase().from("briefings").select("id, company_id, submitted_at").eq("token_hash", hashToken(token)).maybeSingle();
+  const r = await supabase().from("briefings").select("id, company_id, submitted_at").eq("token_hash", hashTokenPublico(token)).maybeSingle();
   return dados<Linha | null>(r, "ler briefing por token");
 }
 

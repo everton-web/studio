@@ -1,10 +1,11 @@
 // Relatórios na tabela reports (colunas extras na migration 0002):
 //   kind = "mensal":       relatório do cliente servido em /r/<token>
 //   kind = "lead_publico": diagnóstico público do lead, identificado por slug
-// A busca pública do mensal usa só link_token_hash. O token fica em link_token
-// para o sócio autenticado montar o link do WhatsApp.
-import { createHash, randomBytes } from "node:crypto";
+// A busca pública do mensal usa só link_token_hash. O token e reconstituido no
+// servidor a partir do id e da versao, sem texto puro no banco.
+import { randomUUID } from "node:crypto";
 import { agoraIso, dados, objeto, slug as slugDe, supabase, type Linha } from "./client";
+import { hashTokenPublico, tokenPublico } from "./public-tokens";
 import { DOC, lerConfig } from "./documentos";
 import { whatsappPorEmpresa } from "./contatos";
 import { contarLeadsDeFormulario } from "./leads";
@@ -54,19 +55,15 @@ export function rotuloMes(mes: string): string {
   return `${MESES[Number(m) - 1] ?? ""} de ${a}`;
 }
 
-export function novoToken(): string {
-  return randomBytes(24).toString("base64url");
-}
-
 export function tokenValido(token: string): boolean {
   return /^[A-Za-z0-9_-]{20,64}$/.test(token);
 }
 
-export function hashToken(token: string): string {
-  return createHash("sha256").update(token).digest("hex");
-}
-
 const primeiroDia = (mes: string) => `${mes}-01`;
+
+function tokenDaLinha(l: Linha): string {
+  return tokenPublico("relatorio", String(l.id), Number(l.token_version) || 1);
+}
 
 function hostDe(site: string | null): string {
   if (!site) return "";
@@ -159,23 +156,26 @@ export async function gerarRelatorioMensal(empresaId: string, mes: string = mesA
   const agora = agoraIso();
   if (atual) {
     const patch: Record<string, unknown> = { content: c, generated_at: agora };
-    if (!atual.link_token_hash) {
-      const t = novoToken();
-      patch.link_token = t;
-      patch.link_token_hash = hashToken(t);
+    const candidato = tokenDaLinha(atual);
+    if (String(atual.link_token_hash || "") !== hashTokenPublico(candidato)) {
+      const versao = (Number(atual.token_version) || 0) + 1;
+      patch.token_version = versao;
+      patch.link_token_hash = hashTokenPublico(tokenPublico("relatorio", String(atual.id), versao));
     }
     dados(await supabase().from("reports").update(patch).eq("id", String(atual.id)), "atualizar relatório");
     return { empresaId, nome: e.nome, mes, criado: false };
   }
-  const t = novoToken();
+  const id = randomUUID();
+  const t = tokenPublico("relatorio", id, 1);
   dados(
     await supabase().from("reports").insert({
+      id,
       kind: "mensal",
       company_id: empresaId,
       report_month: primeiroDia(mes),
       content: c,
-      link_token: t,
-      link_token_hash: hashToken(t),
+      link_token_hash: hashTokenPublico(t),
+      token_version: 1,
       generated_at: agora,
     }),
     "criar relatório",
@@ -199,10 +199,14 @@ export async function gerarRelatoriosAtivos(mes: string = mesAtual()) {
   return { mes, geradas, falhas };
 }
 
-async function trocarToken(empresaId: string, mes: string, token: string | null): Promise<boolean> {
+async function trocarToken(empresaId: string, mes: string, ativo: boolean): Promise<boolean> {
+  const atual = await linhaMensal(empresaId, mes);
+  if (!atual) return false;
+  const versao = (Number(atual.token_version) || 0) + 1;
+  const hash = ativo ? hashTokenPublico(tokenPublico("relatorio", String(atual.id), versao)) : null;
   const r = await supabase()
     .from("reports")
-    .update({ link_token: token, link_token_hash: token ? hashToken(token) : null })
+    .update({ link_token_hash: hash, token_version: versao })
     .eq("kind", "mensal")
     .eq("company_id", empresaId)
     .eq("report_month", primeiroDia(mes))
@@ -212,18 +216,18 @@ async function trocarToken(empresaId: string, mes: string, token: string | null)
 
 // O link antigo passa a responder 404, o novo funciona.
 export function rotacionarToken(empresaId: string, mes: string): Promise<boolean> {
-  return trocarToken(empresaId, mes, novoToken());
+  return trocarToken(empresaId, mes, true);
 }
 
 // Revoga o link: 404 até gerar de novo ou rotacionar.
 export function revogarToken(empresaId: string, mes: string): Promise<boolean> {
-  return trocarToken(empresaId, mes, null);
+  return trocarToken(empresaId, mes, false);
 }
 
 // Busca pública. Qualquer token que não sirva devolve null (a página responde 404).
 export async function relatorioPorToken(token: string): Promise<ConteudoRelatorio | null> {
   if (!tokenValido(token)) return null;
-  const r = await supabase().from("reports").select("content").eq("kind", "mensal").eq("link_token_hash", hashToken(token)).maybeSingle();
+  const r = await supabase().from("reports").select("content").eq("kind", "mensal").eq("link_token_hash", hashTokenPublico(token)).maybeSingle();
   return conteudo(dados<Linha | null>(r, "ler relatório por token"));
 }
 
@@ -266,7 +270,7 @@ export async function listarParaHoje(mes: string = mesAtual()): Promise<{ mes: s
   if (ids.length) {
     const rr = await supabase()
       .from("reports")
-      .select("company_id, content, link_token")
+      .select("id, company_id, content, link_token_hash, token_version")
       .eq("kind", "mensal")
       .eq("report_month", primeiroDia(mes))
       .in("company_id", ids);
@@ -279,12 +283,14 @@ export async function listarParaHoje(mes: string = mesAtual()): Promise<{ mes: s
     const nome = String(c.name);
     const rel = relatorios.get(id) || null;
     const cont = conteudo(rel);
-    const link = rel?.link_token ? `${URL_BASE}/r/${String(rel.link_token)}` : null;
+    const candidato = rel?.link_token_hash ? tokenDaLinha(rel) : null;
+    const token = candidato && hashTokenPublico(candidato) === String(rel?.link_token_hash) ? candidato : null;
+    const link = token ? `${URL_BASE}/r/${token}` : null;
     const num = numeroWa(whats.get(id));
     return {
       empresaId: id,
       nome,
-      gerado: !!cont,
+      gerado: !!cont && !!token,
       enviado: !!cont?.enviadoEm,
       semWhatsapp: !num,
       link,
