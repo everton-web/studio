@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",
+    "export": "node scripts/export.mjs",
     "start": "next start",
     "lint": "eslint"
   },
