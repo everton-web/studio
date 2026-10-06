@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { useScroll } from "framer-motion";
+import { motion, useReducedMotion, useScroll } from "framer-motion";
+import { Counter } from "./Counter";
 import { AnimatedSection } from "./AnimatedSection";
 import { WordReveal } from "./TextReveal";
 import { TriangleIcon } from "./TriangleIcon";
@@ -13,6 +14,14 @@ export function About() {
   const { scrollYProgress } = useScroll({
     target: statementRef,
     offset: ["start end", "center center"],
+  });
+
+  const reduced = useReducedMotion();
+  const skillsRef = useRef<HTMLDivElement>(null);
+  // Linha do processo: desenha de cima para baixo (scaleY) conforme a lista atravessa a tela.
+  const { scrollYProgress: skillsProgress } = useScroll({
+    target: skillsRef,
+    offset: ["start 85%", "end 55%"],
   });
 
   const metrics = [
@@ -84,7 +93,7 @@ export function About() {
                         lineHeight: 1,
                       }}
                     >
-                      {m.value}
+                      <Counter to={Number(m.value)} />
                       <span className="text-[var(--color-accent)]">{m.suffix}</span>
                     </span>
                     <span
@@ -104,9 +113,15 @@ export function About() {
 
               <div className="divider mb-6" />
 
-              <div className="space-y-4">
+              <div ref={skillsRef} className="relative space-y-4 pl-5">
+                <span aria-hidden className="absolute left-[4px] top-1 bottom-1 w-px bg-[var(--color-border)]" />
+                <motion.span
+                  aria-hidden
+                  className="absolute left-[4px] top-1 bottom-1 w-px origin-top bg-[var(--color-accent)]"
+                  style={{ scaleY: reduced ? 1 : skillsProgress }}
+                />
                 {t.about.skills.map((item) => (
-                  <div key={item} className="flex items-center gap-3">
+                  <div key={item} className="relative flex items-center gap-3">
                     <TriangleIcon className="w-2.5 h-2.5 text-[var(--color-accent)] shrink-0" />
                     <span className="text-sm text-[var(--color-text-secondary)]">{item}</span>
                   </div>

@@ -17,9 +17,9 @@ export function AnimatedSection({
   direction = "up",
 }: Props) {
   const offsets = {
-    up: { x: 0, y: 40 },
-    left: { x: -40, y: 0 },
-    right: { x: 40, y: 0 },
+    up: { x: 0, y: 24 },
+    left: { x: -24, y: 0 },
+    right: { x: 24, y: 0 },
   };
 
   return (

@@ -7,22 +7,28 @@ import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
 import { CustomCursor } from "@/components/CustomCursor";
 import { DotGrid } from "@/components/DotGrid";
+import { ServicesMarquee } from "@/components/ServicesMarquee";
+import { SmoothScroll } from "@/components/SmoothScroll";
+import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { LanguageProvider } from "@/context/LanguageContext";
 
 export default function Home() {
   return (
     <LanguageProvider>
+      <SmoothScroll />
       <DotGrid />
       <CustomCursor />
       <Header />
       <main>
         <Hero />
+        <ServicesMarquee />
         <Services />
         <Portfolio />
         <About />
         <Contact />
       </main>
       <Footer />
+      <WhatsAppFloat />
     </LanguageProvider>
   );
 }

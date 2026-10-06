@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { Fragment, useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { TriangleIcon } from "./TriangleIcon";
 import { MagneticButton } from "./MagneticButton";
 import { HeroWaves } from "./HeroWaves";
@@ -24,12 +24,13 @@ function colarUltimaPalavra(
   return copia;
 }
 
-const lineReveal = {
+// Título entra palavra por palavra (stagger .07), cada palavra subindo de dentro da sua máscara.
+const wordReveal = {
   hidden: { y: "110%", opacity: 0 },
   visible: (i: number) => ({
     y: "0%",
     opacity: 1,
-    transition: { duration: 1.1, ease, delay: 0.6 + i * 0.12 },
+    transition: { duration: 0.9, ease, delay: 0.5 + i * 0.07 },
   }),
 };
 
@@ -41,7 +42,13 @@ export function Hero() {
     offset: ["start start", "end start"],
   });
 
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const reduced = useReducedMotion();
+  // Parallax: o fundo cresce e some; o conteúdo sobe e apaga enquanto o hero sai da tela.
+  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.4]);
+  const bgOpacity = useTransform(scrollYProgress, [0, 0.9], [1, 0]);
+  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "-18%"]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  let palavra = 0;
 
   return (
     <section
@@ -50,9 +57,11 @@ export function Hero() {
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
       style={{ background: "var(--color-bg)", paddingTop: "var(--header-h)" }}
     >
-      <HeroWaves />
+      <motion.div className="absolute inset-0" style={reduced ? undefined : { scale: bgScale, opacity: bgOpacity }}>
+        <HeroWaves />
+      </motion.div>
       <motion.div
-        style={{ y: contentY }}
+        style={reduced ? undefined : { y: contentY, opacity: contentOpacity }}
         className="relative z-[2] container-site text-center flex flex-col items-center mt-[14vh] max-md:mt-[10vh]"
       >
         <motion.div
@@ -80,24 +89,28 @@ export function Hero() {
           {t.hero.lines.map((rawLine, i) => {
             const line = colarUltimaPalavra(rawLine);
             return (
-            <span key={i} className="block overflow-hidden pb-[0.18em] -mb-[0.18em]">
-              <motion.span
-                custom={i}
-                variants={lineReveal}
-                initial="hidden"
-                animate="visible"
-                className="block"
-              >
-                {line.map((seg, j) =>
-                  seg.accent ? (
-                    <span key={j} className="serif">
-                      {seg.t}
-                    </span>
-                  ) : (
-                    <span key={j}>{seg.t}</span>
-                  )
-                )}
-              </motion.span>
+            <span key={i} className="block">
+              {line.map((seg, j) =>
+                seg.t.split(" ").filter(Boolean).map((w, k) => {
+                  const idx = palavra++;
+                  // o espaço fica fora da máscara: dentro de inline-block ele some
+                  return (
+                    <Fragment key={`${j}-${k}`}>
+                      <span className="inline-block overflow-hidden align-bottom pb-[0.18em] -mb-[0.18em]">
+                        <motion.span
+                          custom={idx}
+                          variants={wordReveal}
+                          initial={reduced ? false : "hidden"}
+                          animate="visible"
+                          className={`inline-block${seg.accent ? " serif" : ""}`}
+                        >
+                          {w}
+                        </motion.span>
+                      </span>{" "}
+                    </Fragment>
+                  );
+                })
+              )}
             </span>
             );
           })}
@@ -123,14 +136,12 @@ export function Hero() {
           <MagneticButton
             href="#contact"
             as="a"
-            className="group inline-flex items-center gap-3 bg-[var(--color-text)] text-[var(--color-bg)] rounded-full font-medium text-sm"
+            className="btn-roll group inline-flex items-center gap-3 bg-[var(--color-text)] text-[var(--color-bg)] rounded-full font-medium text-sm"
             style={{ padding: "13px 30px" }}
             data-cursor={t.cursor.open}
           >
-            {t.hero.cta}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-0.5 transition-transform">
-              <path d="m7 17 9.2-9.2M17 17V8H8" />
-            </svg>
+            <span className="btn-roll__txt"><span data-t={t.hero.cta}>{t.hero.cta}</span></span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="btn-roll__seta" aria-hidden><path d="M5 12h14M13 6l6 6-6 6" /></svg>
           </MagneticButton>
         </motion.div>
       </motion.div>
@@ -139,7 +150,7 @@ export function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2, duration: 1 }}
-        className="absolute bottom-8 right-8 max-md:right-6 z-[3] flex flex-col items-center gap-2"
+        className="absolute bottom-8 left-8 max-md:left-6 z-[3] flex flex-col items-center gap-2"
       >
         <span className="text-[0.6rem] font-medium uppercase tracking-[0.15em] text-[var(--color-text-dim)]" style={{ writingMode: "vertical-rl" }}>
           scroll

@@ -21,12 +21,12 @@ export function RelatorioRemoto() {
 
   useEffect(() => {
     const slug = slugDaUrl();
-    if (!slug) {
-      setEstado({ fase: "erro", mensagem: "Relatório não encontrado." });
-      return;
-    }
     const ctrl = new AbortController();
     (async () => {
+      if (!slug) {
+        setEstado({ fase: "erro", mensagem: "Relatório não encontrado." });
+        return;
+      }
       try {
         const res = await fetch(API + slug, { signal: ctrl.signal, headers: { Accept: "application/json" } });
         if (res.status === 404) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   motion,
   useMotionValue,
@@ -22,7 +22,6 @@ const springConfig = { damping: 20, stiffness: 200, mass: 0.5 };
 const GRAIN =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
 
-const restRatios = ["16 / 10", "4 / 3", "16 / 10", "4 / 3", "16 / 10", "4 / 3"];
 
 function ProjectCard({
   project,
@@ -153,7 +152,7 @@ function SeeAllCard() {
       }}
     >
       <span
-        className="text-[var(--color-text)]"
+        className="link-sub text-[var(--color-text)]"
         style={{ fontSize: "clamp(1.5rem, 3vw, 2.4rem)", fontWeight: 500, letterSpacing: "-0.04em", lineHeight: 1.1 }}
       >
         {t.portfolio.seeAll}
@@ -176,8 +175,76 @@ function SeeAllCard() {
   );
 }
 
+// Cases em showreel horizontal: a seção fica alta e o trilho fica preso (sticky)
+// enquanto a rolagem vertical vira deslocamento lateral. No celular e com movimento
+// reduzido vira um carrossel nativo com scroll-snap.
+function Showreel({ items }: { items: typeof projects }) {
+  const wrap = useRef<HTMLDivElement>(null);
+  const track = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  const [ativo, setAtivo] = useState(false);
+  const [dist, setDist] = useState(0);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const medir = () => {
+      const on = mq.matches && !reduced;
+      setAtivo(on);
+      setDist(on && track.current ? Math.max(0, track.current.scrollWidth - window.innerWidth) : 0);
+    };
+    medir();
+    const ro = new ResizeObserver(medir);
+    if (track.current) ro.observe(track.current);
+    mq.addEventListener("change", medir);
+    window.addEventListener("resize", medir);
+    return () => {
+      ro.disconnect();
+      mq.removeEventListener("change", medir);
+      window.removeEventListener("resize", medir);
+    };
+  }, [reduced]);
+
+  const { scrollYProgress } = useScroll({ target: wrap, offset: ["start start", "end end"] });
+  const x = useTransform(scrollYProgress, [0, 1], [0, -dist]);
+
+  return (
+    <div ref={wrap} style={{ height: ativo ? `calc(100vh + ${dist}px)` : "auto" }}>
+      <div className={ativo ? "sticky top-0 h-screen flex flex-col justify-center overflow-hidden" : ""}>
+        <motion.div
+          ref={track}
+          style={{ x: ativo ? x : 0 }}
+          className={
+            ativo
+              ? "flex w-max items-center gap-6 px-[var(--gutter)]"
+              : "flex gap-4 overflow-x-auto snap-x snap-mandatory px-[var(--gutter)] pb-4 [scrollbar-width:none]"
+          }
+        >
+          {items.map((p) => (
+            <div key={p.slug} className={ativo ? "w-[min(52vw,760px)] shrink-0" : "w-[86vw] max-w-[560px] shrink-0 snap-start"}>
+              <ProjectCard project={p} ratio="16 / 10" />
+              <div className="mt-4 flex items-baseline justify-between gap-4">
+                <span className="text-[var(--color-text)] font-medium" style={{ fontSize: "1.05rem", letterSpacing: "-0.01em" }}>{semViuva(p.title)}</span>
+                <span className="text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-text-dim)]">{semViuva(p.category)}</span>
+              </div>
+            </div>
+          ))}
+          <div className={ativo ? "w-[min(40vw,520px)] shrink-0" : "w-[86vw] max-w-[560px] shrink-0 snap-start"}>
+            <SeeAllCard />
+          </div>
+        </motion.div>
+        {ativo && (
+          <div className="container-site mt-10">
+            <div className="h-px w-full bg-[var(--color-border)] overflow-hidden">
+              <motion.div className="h-full origin-left bg-[var(--color-accent)]" style={{ scaleX: scrollYProgress }} />
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function Portfolio() {
-  const [featured, ...rest] = projects;
   const { t } = useLang();
 
   return (
@@ -212,31 +279,17 @@ export function Portfolio() {
             />
             <a
               href="#contact"
-              className="inline-flex items-center gap-2 px-7 py-3 text-sm font-medium text-[var(--color-text)] border border-[var(--color-border)] rounded-full hover:border-[var(--color-text)] transition-all hover:-translate-y-0.5 group"
+              className="btn-roll inline-flex items-center gap-2 px-7 py-3 text-sm font-medium text-[var(--color-text)] border border-[var(--color-border)] rounded-full hover:border-[var(--color-text)] transition-all hover:-translate-y-0.5 group"
             >
-              {t.portfolio.cta}
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-0.5 transition-transform">
-                <path d="m7 17 9.2-9.2M17 17V8H8" />
-              </svg>
+              <span className="btn-roll__txt"><span data-t={t.portfolio.cta}>{t.portfolio.cta}</span></span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="btn-roll__seta" aria-hidden><path d="M5 12h14M13 6l6 6-6 6" /></svg>
             </a>
           </div>
         </AnimatedSection>
 
-        <AnimatedSection className="mb-6">
-          <ProjectCard project={featured} featured />
-        </AnimatedSection>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {rest.map((project, i) => (
-            <AnimatedSection key={project.slug} delay={0.05 * (i + 1)}>
-              <ProjectCard project={project} ratio={restRatios[i] ?? "16 / 10"} />
-            </AnimatedSection>
-          ))}
-          <AnimatedSection delay={0.05 * (rest.length + 1)} className="md:col-span-2">
-            <SeeAllCard />
-          </AnimatedSection>
-        </div>
       </div>
+
+      <Showreel items={projects} />
     </section>
   );
 }
