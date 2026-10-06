@@ -1,6 +1,7 @@
 // InfinitePay: criação de link, consulta de status e webhook com placar automático.
 // Docs: https://www.infinitepay.io/checkout-documentacao
 // A persistência fica em src/lib/data/financeiro.ts (Supabase).
+import { randomBytes } from "node:crypto";
 import {
   acharRegistro as acharNoBanco,
   atualizarPlacar,
@@ -20,7 +21,7 @@ const API_LINKS = "https://api.checkout.infinitepay.io/links";
 const API_CHECK = "https://api.checkout.infinitepay.io/payment_check";
 
 export function gerarOrderNsu() {
-  return `ag-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+  return `ag-${Date.now().toString(36)}-${randomBytes(10).toString("hex")}`;
 }
 
 export async function criarLink(op: {
@@ -44,7 +45,7 @@ export async function criarLink(op: {
   }
 
   const registro: Registro = {
-    id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    id: `${Date.now()}-${randomBytes(8).toString("hex")}`,
     data: new Date().toLocaleString("pt-BR", { timeZone: "America/Bahia" }),
     descricao: op.descricao,
     valor: Math.round(op.valor * 100) / 100,
@@ -80,8 +81,24 @@ export async function criarLink(op: {
   return registro;
 }
 
-export async function consultarStatus(r: Registro) {
-  const body = { handle: r.handle, order_nsu: r.order_nsu, transaction_nsu: "", slug: r.slug || "" };
+type StatusPagamento = {
+  success?: boolean;
+  paid?: boolean;
+  amount?: number;
+  paid_amount?: number;
+  capture_method?: string;
+};
+
+export async function consultarStatus(
+  r: Registro,
+  identificadores: { transaction_nsu?: string; slug?: string } = {},
+): Promise<StatusPagamento> {
+  const body = {
+    handle: r.handle,
+    order_nsu: r.order_nsu,
+    transaction_nsu: identificadores.transaction_nsu || "",
+    slug: identificadores.slug || r.slug || "",
+  };
   const res = await fetch(API_CHECK, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -89,7 +106,9 @@ export async function consultarStatus(r: Registro) {
     cache: "no-store",
     signal: AbortSignal.timeout(10000),
   });
-  return res.json();
+  const json = (await res.json().catch(() => ({}))) as StatusPagamento;
+  if (!res.ok) throw new Error(`payment_check recusou a consulta: HTTP ${res.status}`);
+  return json;
 }
 
 export async function acharRegistro(chave: string): Promise<{ r: Registro } | null> {
@@ -102,20 +121,29 @@ export async function acharRegistro(chave: string): Promise<{ r: Registro } | nu
 export async function processarWebhook(body: any): Promise<{ novidade: boolean; registro?: Registro }> {
   const orderNsu = String(body?.order_nsu || "");
   const tx = String(body?.transaction_nsu || "");
-  // idempotência: usa transaction_nsu; se ausente, cai para o order_nsu
-  const chave = (tx || (orderNsu ? `order-${orderNsu}` : "")).replace(/[^\w.\-]/g, "");
-  const nova = await registrarWebhook(chave, body);
-  if (!nova) return { novidade: false };
-
   if (!orderNsu) return { novidade: false };
   const r = await acharNoBanco(orderNsu);
   if (!r) return { novidade: false }; // webhook de pedido que não criamos: ignora
 
-  const amount = Number(body?.paid_amount || body?.amount) / 100;
+  const status = await consultarStatus(r, {
+    transaction_nsu: tx,
+    slug: String(body?.invoice_slug || r.slug || ""),
+  });
+  if (status.success !== true || status.paid !== true) {
+    throw new Error("pagamento nao confirmado pelo payment_check");
+  }
+
+  // A idempotencia so e registrada depois da confirmacao no provedor. Assim,
+  // um payload falso nao bloqueia uma notificacao legitima posterior.
+  const chave = (tx || `order-${orderNsu}`).replace(/[^\w.\-]/g, "");
+  const nova = await registrarWebhook(chave, body);
+  if (!nova) return { novidade: false };
+
+  const amount = Number(status.paid_amount || status.amount) / 100;
   const jaPago = !!r.paid;
   r.paid = true;
   r.paidAt = new Date().toLocaleString("pt-BR", { timeZone: "America/Bahia" });
-  r.capture_method = String(body?.capture_method || "");
+  r.capture_method = String(status.capture_method || body?.capture_method || "");
   r.slug = r.slug || String(body?.invoice_slug || "");
   await salvarRegistro(r);
 
