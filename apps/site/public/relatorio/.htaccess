@@ -2,3 +2,12 @@
 <IfModule mod_headers.c>
   Header always set X-Robots-Tag "noindex, nofollow"
 </IfModule>
+
+# Relatório publicado na plataforma depois do último export não tem pasta aqui:
+# a casca /relatorio/ver/ busca os dados na API da plataforma pelo slug da URL.
+# As regras do .htaccess raiz (HTTPS e barra final) continuam valendo.
+RewriteEngine On
+RewriteOptions Inherit
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z0-9-]+)/?$ /relatorio/ver/index.html [L]

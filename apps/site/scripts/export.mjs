@@ -11,6 +11,8 @@ const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const build = spawnSync(npmCommand, ["run", "build"], {
   cwd: appDir,
   stdio: "inherit",
+  // No Windows o npm.cmd só roda via shell (Node recusa .cmd direto com EINVAL).
+  shell: process.platform === "win32",
 });
 if (build.status !== 0) process.exit(build.status ?? 1);
 
