@@ -41,6 +41,7 @@ export function Contact() {
     const name = String(data.get("name") ?? "").trim();
     const contact = String(data.get("contact") ?? "").trim();
     const project = String(data.get("project") ?? "").trim();
+    const website = String(data.get("website") ?? "");
 
     const message = encodeURIComponent(t.contact.waGreeting(name, project, contact));
 
@@ -49,13 +50,15 @@ export function Contact() {
 
     // Registra o lead na planilha em paralelo.
     setStatus("sending");
-    fetch("/api/contact", {
+    fetch("/send-form.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, contact, project, lang }),
+      body: JSON.stringify({ name, contact, project, lang, website }),
     })
-      .then((res) => res.json().catch(() => ({ ok: false })))
-      .then((res: { ok?: boolean }) => setStatus(res.ok ? "sent" : "error"))
+      .then((res) => res.json().catch(() => ({ success: false })))
+      .then((res: { success?: boolean }) =>
+        setStatus(res.success ? "sent" : "error"),
+      )
       .catch(() => setStatus("error"));
   };
 
@@ -219,6 +222,16 @@ export function Contact() {
                   {t.contact.error}
                 </p>
               )}
+
+              {/* Honeypot: invisível para pessoas, robôs preenchem e o PHP descarta. */}
+              <input
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                className="absolute left-[-9999px] w-px h-px opacity-0"
+              />
             </form>
           </AnimatedSection>
         </div>

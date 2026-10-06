@@ -1,0 +1,4 @@
+# Relatórios são privados: fora do Google (as páginas também têm meta robots noindex).
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow"
+</IfModule>
