@@ -1,20 +1,27 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import type { PlayerRef } from "@remotion/player";
 import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from "framer-motion";
 
-// Manifesto: o filme da identidade segue a rolagem. Primeiro o cartão cresce até a
-// tela inteira; depois cada pedaço de rolagem avança (ou volta) o tempo do vídeo.
-// Os arquivos *-scrub.mp4 têm todos os quadros como quadro-chave (-g 1), o que deixa
-// a busca de tempo instantânea. Celular usa a versão vertical.
+// O player do Remotion só existe no navegador (e só carrega quando a seção chega perto).
+const IdvPlayer = dynamic(() => import("./IdvPlayer"), { ssr: false });
+
+// Manifesto: o filme da identidade (projeto Remotion, vetorial e nítido em qualquer tela)
+// segue a rolagem. Primeiro o cartão cresce até a tela inteira; depois cada pedaço de
+// rolagem avança (ou volta) um quadro do filme. Celular usa a composição vertical.
+const IDV_FRAMES = 900; // mesmo total do filme (IdvPlayer); fica aqui para não puxar o player no carregamento
 const CRESCER = 0.12; // fração da rolagem gasta crescendo o cartão
 
 export function ManifestoVideo() {
   const secao = useRef<HTMLElement>(null);
-  const video = useRef<HTMLVideoElement>(null);
+  const player = useRef<PlayerRef>(null);
   const alvo = useRef(0);
+  const atual = useRef(0);
   const reduced = useReducedMotion();
   const [vertical, setVertical] = useState(false);
+  const [perto, setPerto] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
@@ -22,6 +29,15 @@ export function ManifestoVideo() {
     ler();
     mq.addEventListener("change", ler);
     return () => mq.removeEventListener("change", ler);
+  }, []);
+
+  // Carrega o player um pouco antes da seção entrar na tela.
+  useEffect(() => {
+    const el = secao.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => e.isIntersecting && setPerto(true), { rootMargin: "100% 0px" });
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
 
   const { scrollYProgress } = useScroll({ target: secao, offset: ["start start", "end end"] });
@@ -33,44 +49,34 @@ export function ManifestoVideo() {
   const fraseOpacidade = useTransform(scrollYProgress, (v) => (v <= 0.03 ? 1 : v >= 0.1 ? 0 : 1 - (v - 0.03) / 0.07));
   const fraseY = useTransform(scrollYProgress, (v) => `${-Math.min(1, v / 0.1) * 40}%`);
 
-  // Rolagem define o tempo-alvo; um laço suaviza o caminho até ele (sem saltos).
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    const d = video.current?.duration || 0;
-    alvo.current = d * Math.min(1, Math.max(0, (v - CRESCER) / (1 - CRESCER)));
+    alvo.current = (IDV_FRAMES - 1) * Math.min(1, Math.max(0, (v - CRESCER) / (1 - CRESCER)));
   });
 
+  // Laço suave: caminha até o quadro-alvo sem saltos quando a rolagem é rápida.
   useEffect(() => {
-    if (reduced) return;
-    const v = video.current;
-    if (!v) return;
+    if (reduced || !perto) return;
     let raf = 0;
+    let ultimo = -1;
     const loop = () => {
-      if (v.readyState >= 1) {
-        const atual = v.currentTime;
-        const diff = alvo.current - atual;
-        if (Math.abs(diff) > 0.01) v.currentTime = atual + diff * 0.25;
+      atual.current += (alvo.current - atual.current) * 0.2;
+      const q = Math.round(atual.current);
+      if (q !== ultimo && player.current) {
+        player.current.seekTo(q);
+        ultimo = q;
       }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
-    // iOS só permite buscar tempo depois de um play iniciado por gesto.
-    const destravar = () => {
-      v.play().then(() => v.pause()).catch(() => {});
-      window.removeEventListener("touchstart", destravar);
-    };
-    window.addEventListener("touchstart", destravar, { passive: true });
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("touchstart", destravar);
-    };
-  }, [reduced, vertical]);
-
-  const base = vertical ? "/idv/idv-vertical" : "/idv/idv-horizontal";
+    return () => cancelAnimationFrame(raf);
+  }, [reduced, perto, vertical]);
 
   if (reduced) {
     return (
       <section id="manifesto" aria-label="Filme da marca" className="container-site" style={{ padding: "var(--section-pad) var(--gutter)" }}>
-        <video src={`${base}-scrub.mp4`} poster={`${base}.jpg`} controls muted playsInline preload="none" className="w-full rounded-[18px]" />
+        <p className="text-center text-[var(--color-text)]" style={{ fontSize: "clamp(2.2rem, 6vw, 5rem)", fontWeight: 500, letterSpacing: "-0.075em", lineHeight: 1 }}>
+          Design que <span className="text-[var(--color-accent)]">conecta.</span>
+        </p>
       </section>
     );
   }
@@ -79,19 +85,20 @@ export function ManifestoVideo() {
     <section ref={secao} id="manifesto" aria-label="Filme da marca" style={{ height: "600vh", background: "var(--color-bg)" }}>
       <div className="sticky top-0 z-[2] h-screen overflow-hidden grid place-items-center" style={{ background: "var(--color-bg)" }}>
         <motion.div
-          className="absolute inset-0 overflow-hidden"
-          style={{ scale: escala, borderRadius: raio, willChange: "transform" }}
+          className="absolute inset-0 overflow-hidden grid place-items-center"
+          style={{ scale: escala, borderRadius: raio, willChange: "transform", background: "#0a0a0b" }}
         >
-          <video
-            key={base}
-            ref={video}
-            src={`${base}-scrub.mp4`}
-            muted
-            playsInline
-            preload="auto"
+          {/* "cover": o quadro mantém a proporção do filme e cobre a tela inteira */}
+          <div
             aria-hidden
-            className="h-full w-full object-cover"
-          />
+            style={{
+              aspectRatio: vertical ? "9 / 16" : "16 / 9",
+              width: vertical ? "max(100vw, calc(100svh * 9 / 16))" : "max(100vw, calc(100svh * 16 / 9))",
+              flexShrink: 0,
+            }}
+          >
+            {perto && <IdvPlayer key={vertical ? "v" : "h"} ref={player} vertical={vertical} />}
+          </div>
         </motion.div>
 
         <motion.p
