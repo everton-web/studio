@@ -7,6 +7,7 @@ import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
 import { CustomCursor } from "@/components/CustomCursor";
 import { DotGrid } from "@/components/DotGrid";
+import { ManifestoVideo } from "@/components/ManifestoVideo";
 import { ServicesMarquee } from "@/components/ServicesMarquee";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
@@ -24,6 +25,7 @@ export default function Home() {
         <ServicesMarquee />
         <Services />
         <Portfolio />
+        <ManifestoVideo />
         <About />
         <Contact />
       </main>
