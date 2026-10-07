@@ -1,15 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from "framer-motion";
 
-// Manifesto: o filme da identidade começa como um cartão pequeno no meio da tela
-// e cresce até ocupar a tela inteira conforme a rolagem, preso (sticky) enquanto toca.
-// O vídeo roda sozinho, mudo e em loop; a rolagem controla só o tamanho.
-// Celular usa a versão vertical. Só toca enquanto está visível.
+// Manifesto: o filme da identidade segue a rolagem. Primeiro o cartão cresce até a
+// tela inteira; depois cada pedaço de rolagem avança (ou volta) o tempo do vídeo.
+// Os arquivos *-scrub.mp4 têm todos os quadros como quadro-chave (-g 1), o que deixa
+// a busca de tempo instantânea. Celular usa a versão vertical.
+const CRESCER = 0.12; // fração da rolagem gasta crescendo o cartão
+
 export function ManifestoVideo() {
   const secao = useRef<HTMLElement>(null);
   const video = useRef<HTMLVideoElement>(null);
+  const alvo = useRef(0);
   const reduced = useReducedMotion();
   const [vertical, setVertical] = useState(false);
 
@@ -21,36 +24,59 @@ export function ManifestoVideo() {
     return () => mq.removeEventListener("change", ler);
   }, []);
 
-  useEffect(() => {
-    const v = video.current;
-    if (!v || reduced) return;
-    const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) v.play().catch(() => {});
-      else v.pause();
-    }, { threshold: 0.15 });
-    io.observe(v);
-    return () => io.disconnect();
-  }, [reduced, vertical]);
-
   const { scrollYProgress } = useScroll({ target: secao, offset: ["start start", "end end"] });
-  const escala = useTransform(scrollYProgress, [0, 0.55], [vertical ? 0.62 : 0.42, 1]);
-  const raio = useTransform(scrollYProgress, [0, 0.55], [28, 0]);
-  // Função em vez de faixas: evita a aceleração nativa (ScrollTimeline) que erra a faixa com sticky.
-  const fraseOpacidade = useTransform(scrollYProgress, (v) => (v <= 0.15 ? 1 : v >= 0.32 ? 0 : 1 - (v - 0.15) / 0.17));
-  const fraseY = useTransform(scrollYProgress, [0, 0.32], ["0%", "-40%"]);
+  const escala = useTransform(scrollYProgress, (v) => {
+    const ini = vertical ? 0.62 : 0.42;
+    return v >= CRESCER ? 1 : ini + (1 - ini) * (v / CRESCER);
+  });
+  const raio = useTransform(scrollYProgress, (v) => (v >= CRESCER ? 0 : 28 * (1 - v / CRESCER)));
+  const fraseOpacidade = useTransform(scrollYProgress, (v) => (v <= 0.03 ? 1 : v >= 0.1 ? 0 : 1 - (v - 0.03) / 0.07));
+  const fraseY = useTransform(scrollYProgress, (v) => `${-Math.min(1, v / 0.1) * 40}%`);
+
+  // Rolagem define o tempo-alvo; um laço suaviza o caminho até ele (sem saltos).
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    const d = video.current?.duration || 0;
+    alvo.current = d * Math.min(1, Math.max(0, (v - CRESCER) / (1 - CRESCER)));
+  });
+
+  useEffect(() => {
+    if (reduced) return;
+    const v = video.current;
+    if (!v) return;
+    let raf = 0;
+    const loop = () => {
+      if (v.readyState >= 1) {
+        const atual = v.currentTime;
+        const diff = alvo.current - atual;
+        if (Math.abs(diff) > 0.01) v.currentTime = atual + diff * 0.25;
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    // iOS só permite buscar tempo depois de um play iniciado por gesto.
+    const destravar = () => {
+      v.play().then(() => v.pause()).catch(() => {});
+      window.removeEventListener("touchstart", destravar);
+    };
+    window.addEventListener("touchstart", destravar, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("touchstart", destravar);
+    };
+  }, [reduced, vertical]);
 
   const base = vertical ? "/idv/idv-vertical" : "/idv/idv-horizontal";
 
   if (reduced) {
     return (
       <section id="manifesto" aria-label="Filme da marca" className="container-site" style={{ padding: "var(--section-pad) var(--gutter)" }}>
-        <video src={`${base}.mp4`} poster={`${base}.jpg`} controls muted playsInline preload="none" className="w-full rounded-[18px]" />
+        <video src={`${base}-scrub.mp4`} poster={`${base}.jpg`} controls muted playsInline preload="none" className="w-full rounded-[18px]" />
       </section>
     );
   }
 
   return (
-    <section ref={secao} id="manifesto" aria-label="Filme da marca" style={{ height: "260vh", background: "var(--color-bg)" }}>
+    <section ref={secao} id="manifesto" aria-label="Filme da marca" style={{ height: "600vh", background: "var(--color-bg)" }}>
       <div className="sticky top-0 z-[2] h-screen overflow-hidden grid place-items-center" style={{ background: "var(--color-bg)" }}>
         <motion.div
           className="absolute inset-0 overflow-hidden"
@@ -59,12 +85,10 @@ export function ManifestoVideo() {
           <video
             key={base}
             ref={video}
-            src={`${base}.mp4`}
-            poster={`${base}.jpg`}
+            src={`${base}-scrub.mp4`}
             muted
-            loop
             playsInline
-            preload="metadata"
+            preload="auto"
             aria-hidden
             className="h-full w-full object-cover"
           />
