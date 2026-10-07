@@ -73,7 +73,7 @@ const Contador: React.FC<{ valor: string; legenda: string; claro: boolean }> = (
 export const Contadores: React.FC = () => (
   <AbsoluteFill>
     {contadores.map((c, i) => (
-      <Sequence key={i} from={i * 42} durationInFrames={42}>
+      <Sequence key={i} from={i * 60} durationInFrames={60}>
         <Contador valor={c.valor} legenda={c.legenda} claro={i === 0} />
       </Sequence>
     ))}

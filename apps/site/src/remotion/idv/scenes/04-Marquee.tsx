@@ -27,7 +27,7 @@ export const Marquee: React.FC = () => {
           const dir = i % 2 === 0 ? -1 : 1;
           const offset = (i * 3) % ITENS.length;
           const seq = [...ITENS.slice(offset), ...ITENS.slice(0, offset)];
-          const x = dir * (frame * 9 * u) - 1400 * u + (1 - entrada) * dir * -600 * u;
+          const x = dir * (frame * 6 * u) - 1400 * u + (1 - entrada) * dir * -600 * u;
           return (
             <div
               key={i}

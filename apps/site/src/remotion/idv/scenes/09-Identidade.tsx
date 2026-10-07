@@ -22,10 +22,10 @@ const Infinitas: React.FC = () => {
   const frame = useCurrentFrame();
   const { u, width, height, vertical } = useLayout();
   const size = vertical ? 260 * u : 300 * u;
-  const x1 = anim(frame, [0, 50], [width * 0.25, -width * 0.02], (t) => t);
-  const x2 = anim(frame, [0, 50], [-width * 0.25, width * 0.02], (t) => t);
+  const x1 = anim(frame, [0, 70], [width * 0.25, -width * 0.02], (t) => t);
+  const x2 = anim(frame, [0, 70], [-width * 0.25, width * 0.02], (t) => t);
   const raio = Math.hypot(width, height);
-  const circ = anim(frame, [24, 46], [0, raio], easeInOut);
+  const circ = anim(frame, [44, 66], [0, raio], easeInOut);
   return (
     <Fundo claro grade={false}>
       <AbsoluteFill style={{ justifyContent: "center", gap: 20 * u }}>
@@ -53,10 +53,10 @@ const Infinitas: React.FC = () => {
 
 export const Identidade: React.FC = () => (
   <AbsoluteFill>
-    <Sequence durationInFrames={42}>
+    <Sequence durationInFrames={60}>
       <Uma />
     </Sequence>
-    <Sequence from={42} durationInFrames={48}>
+    <Sequence from={60} durationInFrames={70}>
       <Infinitas />
     </Sequence>
   </AbsoluteFill>

@@ -30,13 +30,13 @@ export const contadores = [
 
 // Duração de cada cena em frames (30 fps, total 900).
 export const duracoes = {
-  palavras: 36,
-  simbolo: 84,
-  tunel: 90,
-  marquee: 84,
-  cards: 96,
-  contadores: 84,
-  manifesto: 90,
-  identidade: 90,
-  logo: 150,
+  palavras: 66,
+  simbolo: 110,
+  tunel: 120,
+  marquee: 110,
+  cards: 130,
+  contadores: 120,
+  manifesto: 126,
+  identidade: 130,
+  logo: 205,
 };

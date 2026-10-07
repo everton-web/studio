@@ -14,10 +14,10 @@ export const SimboloOrbita: React.FC = () => {
   const { u } = useLayout();
   const entrada = anim(frame, [0, 24], [0.6, 1]);
   const opac = anim(frame, [0, 14], [0, 1]);
-  const zoom = anim(frame, [48, 80], [1, 90], easeInOut);
-  const orbitasOut = anim(frame, [44, 56], [1, 0]);
-  const rot = anim(frame, [0, 60], [-10, 6]);
-  const cobre = anim(frame, [76, 82], [0, 1]);
+  const zoom = anim(frame, [72, 104], [1, 90], easeInOut);
+  const orbitasOut = anim(frame, [68, 80], [1, 0]);
+  const rot = anim(frame, [0, 90], [-10, 6]);
+  const cobre = anim(frame, [100, 106], [0, 1]);
 
   return (
     <Fundo>

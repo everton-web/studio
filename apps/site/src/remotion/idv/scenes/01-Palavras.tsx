@@ -4,13 +4,13 @@ import { Fundo, ComPonto, anim, titulo, useLayout } from "../components/base";
 import { cor } from "../tokens";
 
 const PALAVRAS = ["sites.", "sistemas.", "landing pages."];
-const CADA = 12;
+const CADA = 22;
 
 const Palavra: React.FC<{ texto: string; claro: boolean }> = ({ texto, claro }) => {
   const frame = useCurrentFrame();
   const { u, width } = useLayout();
   const size = Math.min(300 * u, (width * 0.86) / (texto.length * 0.5));
-  const s = anim(frame, [0, CADA], [1.08, 1]);
+  const s = anim(frame, [0, 14], [1.08, 1]);
   return (
     <Fundo claro={claro} grade={!claro}>
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>

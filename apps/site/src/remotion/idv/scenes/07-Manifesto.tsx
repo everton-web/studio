@@ -47,16 +47,16 @@ const Desfoque: React.FC<{ texto: string }> = ({ texto }) => {
 
 export const Manifesto: React.FC = () => (
   <AbsoluteFill>
-    <Sequence durationInFrames={24}>
-      <Slam texto="Estratégia." claro dur={24} />
+    <Sequence durationInFrames={36}>
+      <Slam texto="Estratégia." claro dur={20} />
     </Sequence>
-    <Sequence from={24} durationInFrames={24}>
-      <Slam texto="Essência." claro={false} dur={24} />
+    <Sequence from={36} durationInFrames={36}>
+      <Slam texto="Essência." claro={false} dur={20} />
     </Sequence>
-    <Sequence from={48} durationInFrames={6}>
+    <Sequence from={72} durationInFrames={6}>
       <AbsoluteFill style={{ background: cor.laranja }} />
     </Sequence>
-    <Sequence from={54} durationInFrames={36}>
+    <Sequence from={78} durationInFrames={48}>
       <Desfoque texto="Público certo." />
     </Sequence>
   </AbsoluteFill>

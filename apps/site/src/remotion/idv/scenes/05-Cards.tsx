@@ -39,7 +39,7 @@ export const Cards: React.FC = () => {
   const clique = frame >= 18 && frame < 24 ? 0.85 : 1;
   const cursorOut = anim(frame, [24, 30], [1, 0]);
 
-  const pan = anim(frame, [24, 96], [60 * u, -60 * u], (t) => t);
+  const pan = anim(frame, [24, 130], [60 * u, -60 * u], (t) => t);
   const tiltIn = anim(frame, [24, 60], [0, 1]);
 
   return (

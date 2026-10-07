@@ -26,12 +26,12 @@ const Construcao: React.FC = () => {
 
   // Palavras abrindo a partir do símbolo
   const abre = anim(frame, [72, 96], [0, 1]);
-  const some = anim(frame, [100, 106], [1, 0]);
+  const some = anim(frame, [124, 130], [1, 0]);
   const dist = (vertical ? 150 : 330) * u * abre;
 
   // Assinatura final
-  const lock = anim(frame, [104, 120], [0, 1], easeInOut);
-  const nomeW = anim(frame, [106, 124], [0, 1]);
+  const lock = anim(frame, [128, 144], [0, 1], easeInOut);
+  const nomeW = anim(frame, [130, 148], [0, 1]);
   const tamFinal = tam * (1 - 0.25 * lock);
 
   return (
@@ -145,10 +145,10 @@ const Final: React.FC = () => {
 
 export const Logo: React.FC = () => (
   <AbsoluteFill>
-    <Sequence durationInFrames={120}>
+    <Sequence durationInFrames={160}>
       <Construcao />
     </Sequence>
-    <Sequence from={120} durationInFrames={30}>
+    <Sequence from={160} durationInFrames={45}>
       <Final />
     </Sequence>
   </AbsoluteFill>

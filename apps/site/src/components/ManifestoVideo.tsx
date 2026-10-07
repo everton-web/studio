@@ -11,34 +11,36 @@ const IdvPlayer = dynamic(() => import("./IdvPlayer"), { ssr: false });
 // Manifesto: o filme da identidade (projeto Remotion, vetorial e nítido em qualquer tela)
 // segue a rolagem. Primeiro o cartão cresce até a tela inteira; depois cada pedaço de
 // rolagem avança (ou volta) um quadro do filme. Celular usa a composição vertical.
-const IDV_FRAMES = 804; // mesmo total do filme (IdvPlayer); fica aqui para não puxar o player no carregamento
+const IDV_FRAMES = 1117; // mesmo total do filme (IdvPlayer); fica aqui para não puxar o player no carregamento
 const CRESCER = 0.06; // fração da rolagem gasta crescendo o cartão
 
-// Ritmo de leitura: duração de cada cena (igual a duracoes em remotion/idv/tokens.ts,
-// copiada para não puxar o Remotion no carregamento). Em cada cena o filme corre até
-// o texto assentar (PONTO da cena) e PARA por PAUSA "quadros de rolagem" antes de seguir.
-const CENAS = [36, 84, 90, 84, 96, 84, 90, 90, 150];
-const PONTO = 0.72;
-const PAUSA = 70;
+// Ritmo de leitura: quadros (do filme inteiro) em que cada frase acabou de assentar.
+// Ali o filme PARA por PAUSA "unidades" de rolagem antes de seguir (1 unidade = 1 quadro andando).
+// Se o filme mudar em remotion/idv, revise estes quadros (cenas e duracoes em tokens.ts).
+const PAUSAS = [
+  14, 36, 58, // sites. · sistemas. · landing pages.
+  121, // símbolo
+  246, // O que vamos criar hoje?
+  356, // faixa de serviços
+  496, // cartões
+  581, 641, // 100% online · 27 estados
+  680, 716, 776, // Estratégia. · Essência. · Público certo.
+  822, 880, // Uma identidade. · Infinitas criações. (antes do círculo cobrir a tela)
+  1116, // assinatura
+];
+const PAUSA = 45;
 
-// Trechos [unidadeIni, unidadeFim, quadroIni, quadroFim] da rolagem (1 unidade = 1 quadro andando).
+// Trechos [unidadeIni, unidadeFim, quadroIni, quadroFim].
 const TRECHOS: [number, number, number, number][] = (() => {
   const t: [number, number, number, number][] = [];
   let u = 0;
   let q = 0;
-  CENAS.forEach((dur, i) => {
-    const ultima = i === CENAS.length - 1;
-    const meio = ultima ? q + dur - 1 : q + Math.round(dur * PONTO);
-    t.push([u, u + (meio - q), q, meio]);
-    u += meio - q;
-    t.push([u, u + PAUSA, meio, meio]);
+  for (const p of PAUSAS) {
+    if (p > q) { t.push([u, u + (p - q), q, p]); u += p - q; q = p; }
+    t.push([u, u + PAUSA, p, p]);
     u += PAUSA;
-    if (!ultima) {
-      t.push([u, u + (q + dur - meio), meio, q + dur]);
-      u += q + dur - meio;
-    }
-    q += dur;
-  });
+  }
+  if (q < IDV_FRAMES - 1) t.push([u, u + (IDV_FRAMES - 1 - q), q, IDV_FRAMES - 1]);
   return t;
 })();
 const TOTAL_UNIDADES = TRECHOS[TRECHOS.length - 1][1];
@@ -59,13 +61,21 @@ export function ManifestoVideo() {
   const reduced = useReducedMotion();
   const [vertical, setVertical] = useState(false);
   const [perto, setPerto] = useState(false);
+  const [proporcao, setProporcao] = useState(16 / 9);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
-    const ler = () => setVertical(mq.matches);
+    const ler = () => {
+      setVertical(mq.matches);
+      setProporcao(window.innerWidth / window.innerHeight);
+    };
     ler();
     mq.addEventListener("change", ler);
-    return () => mq.removeEventListener("change", ler);
+    window.addEventListener("resize", ler);
+    return () => {
+      mq.removeEventListener("change", ler);
+      window.removeEventListener("resize", ler);
+    };
   }, []);
 
   // Carrega o player um pouco antes da seção entrar na tela.
@@ -119,22 +129,15 @@ export function ManifestoVideo() {
   }
 
   return (
-    <section ref={secao} id="manifesto" aria-label="Filme da marca" style={{ height: "1300vh", background: "var(--color-bg)" }}>
+    <section ref={secao} id="manifesto" aria-label="Filme da marca" style={{ height: "1600vh", background: "var(--color-bg)" }}>
       <div className="sticky top-0 z-[2] h-screen overflow-hidden grid place-items-center" style={{ background: "var(--color-bg)" }}>
         <motion.div
           className="absolute inset-0 overflow-hidden grid place-items-center"
           style={{ scale: escala, borderRadius: raio, willChange: "transform", background: "#0a0a0b" }}
         >
-          {/* "cover": o quadro mantém a proporção do filme e cobre a tela inteira */}
-          <div
-            aria-hidden
-            style={{
-              aspectRatio: vertical ? "9 / 16" : "16 / 9",
-              width: vertical ? "max(100vw, calc(100svh * 9 / 16))" : "max(100vw, calc(100svh * 16 / 9))",
-              flexShrink: 0,
-            }}
-          >
-            {perto && <IdvPlayer key={vertical ? "v" : "h"} ref={player} vertical={vertical} />}
+          {/* O filme é composto na proporção da própria tela: as cenas se adaptam e nada é cortado. */}
+          <div aria-hidden className="absolute inset-0">
+            {perto && <IdvPlayer key={vertical ? "v" : "h"} ref={player} vertical={vertical} proporcao={proporcao} />}
           </div>
         </motion.div>
 
