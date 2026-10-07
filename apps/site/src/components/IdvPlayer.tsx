@@ -5,7 +5,7 @@ import { Player, type PlayerRef } from "@remotion/player";
 import { Video } from "@/remotion/idv/Video";
 
 export const IDV_FPS = 30;
-export const IDV_FRAMES = 900;
+export const IDV_FRAMES = 804; // soma de duracoes em remotion/idv/tokens.ts
 
 // O filme da identidade (projeto Remotion) renderizado ao vivo no navegador.
 // Sem controles nem reprodução própria: quem decide o quadro é a rolagem.

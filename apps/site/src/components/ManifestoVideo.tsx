@@ -11,8 +11,45 @@ const IdvPlayer = dynamic(() => import("./IdvPlayer"), { ssr: false });
 // Manifesto: o filme da identidade (projeto Remotion, vetorial e nítido em qualquer tela)
 // segue a rolagem. Primeiro o cartão cresce até a tela inteira; depois cada pedaço de
 // rolagem avança (ou volta) um quadro do filme. Celular usa a composição vertical.
-const IDV_FRAMES = 900; // mesmo total do filme (IdvPlayer); fica aqui para não puxar o player no carregamento
-const CRESCER = 0.12; // fração da rolagem gasta crescendo o cartão
+const IDV_FRAMES = 804; // mesmo total do filme (IdvPlayer); fica aqui para não puxar o player no carregamento
+const CRESCER = 0.06; // fração da rolagem gasta crescendo o cartão
+
+// Ritmo de leitura: duração de cada cena (igual a duracoes em remotion/idv/tokens.ts,
+// copiada para não puxar o Remotion no carregamento). Em cada cena o filme corre até
+// o texto assentar (PONTO da cena) e PARA por PAUSA "quadros de rolagem" antes de seguir.
+const CENAS = [36, 84, 90, 84, 96, 84, 90, 90, 150];
+const PONTO = 0.72;
+const PAUSA = 70;
+
+// Trechos [unidadeIni, unidadeFim, quadroIni, quadroFim] da rolagem (1 unidade = 1 quadro andando).
+const TRECHOS: [number, number, number, number][] = (() => {
+  const t: [number, number, number, number][] = [];
+  let u = 0;
+  let q = 0;
+  CENAS.forEach((dur, i) => {
+    const ultima = i === CENAS.length - 1;
+    const meio = ultima ? q + dur - 1 : q + Math.round(dur * PONTO);
+    t.push([u, u + (meio - q), q, meio]);
+    u += meio - q;
+    t.push([u, u + PAUSA, meio, meio]);
+    u += PAUSA;
+    if (!ultima) {
+      t.push([u, u + (q + dur - meio), meio, q + dur]);
+      u += q + dur - meio;
+    }
+    q += dur;
+  });
+  return t;
+})();
+const TOTAL_UNIDADES = TRECHOS[TRECHOS.length - 1][1];
+
+function quadroDaRolagem(p: number): number {
+  const u = p * TOTAL_UNIDADES;
+  const tr = TRECHOS.find(([, b]) => u <= b) ?? TRECHOS[TRECHOS.length - 1];
+  const [a, b, q0, q1] = tr;
+  const k = b > a ? Math.min(1, Math.max(0, (u - a) / (b - a))) : 1;
+  return Math.min(IDV_FRAMES - 1, q0 + (q1 - q0) * k);
+}
 
 export function ManifestoVideo() {
   const secao = useRef<HTMLElement>(null);
@@ -46,11 +83,11 @@ export function ManifestoVideo() {
     return v >= CRESCER ? 1 : ini + (1 - ini) * (v / CRESCER);
   });
   const raio = useTransform(scrollYProgress, (v) => (v >= CRESCER ? 0 : 28 * (1 - v / CRESCER)));
-  const fraseOpacidade = useTransform(scrollYProgress, (v) => (v <= 0.03 ? 1 : v >= 0.1 ? 0 : 1 - (v - 0.03) / 0.07));
-  const fraseY = useTransform(scrollYProgress, (v) => `${-Math.min(1, v / 0.1) * 40}%`);
+  const fraseOpacidade = useTransform(scrollYProgress, (v) => (v <= 0.015 ? 1 : v >= 0.05 ? 0 : 1 - (v - 0.015) / 0.035));
+  const fraseY = useTransform(scrollYProgress, (v) => `${-Math.min(1, v / 0.05) * 40}%`);
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    alvo.current = (IDV_FRAMES - 1) * Math.min(1, Math.max(0, (v - CRESCER) / (1 - CRESCER)));
+    alvo.current = quadroDaRolagem(Math.min(1, Math.max(0, (v - CRESCER) / (1 - CRESCER))));
   });
 
   // Laço suave: caminha até o quadro-alvo sem saltos quando a rolagem é rápida.
@@ -59,7 +96,7 @@ export function ManifestoVideo() {
     let raf = 0;
     let ultimo = -1;
     const loop = () => {
-      atual.current += (alvo.current - atual.current) * 0.2;
+      atual.current += (alvo.current - atual.current) * 0.14;
       const q = Math.round(atual.current);
       if (q !== ultimo && player.current) {
         player.current.seekTo(q);
@@ -82,7 +119,7 @@ export function ManifestoVideo() {
   }
 
   return (
-    <section ref={secao} id="manifesto" aria-label="Filme da marca" style={{ height: "600vh", background: "var(--color-bg)" }}>
+    <section ref={secao} id="manifesto" aria-label="Filme da marca" style={{ height: "1300vh", background: "var(--color-bg)" }}>
       <div className="sticky top-0 z-[2] h-screen overflow-hidden grid place-items-center" style={{ background: "var(--color-bg)" }}>
         <motion.div
           className="absolute inset-0 overflow-hidden grid place-items-center"
