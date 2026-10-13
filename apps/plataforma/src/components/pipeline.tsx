@@ -95,6 +95,20 @@ const NICHOS: [string, string][] = [
   ["escolas-cursos", "Escolas e cursos"],
 ];
 
+type ProspectRes = {
+  fonte: string;
+  candidatos: number;
+  auditados: number;
+  adicionados: string[];
+  descartados: { nome: string; motivo: string }[];
+  erros: { nome: string; motivo: string }[];
+  aviso: string;
+  tempo: number;
+  regiao: string;
+  cidades: string[];
+  porFrente?: Record<string, number>;
+};
+
 type Flds = {
   nome: string; segmento: string; cidade: string; nota: string; avaliacoes: string;
   site: string; contato: string; whatsapp: string; email: string; categoria: string;
@@ -330,8 +344,16 @@ export function Pipeline({ leads, refresh, onIrClientes }: { leads: Lead[]; refr
   const [relatorioStatus, setRelatorioStatus] = useState<"" | "entrando" | "noAr" | "demorado">("");
   const relatorioPollRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [janela, setJanela] = useState<JanelaConversao>("tudo");
+  const [prospectBusy, setProspectBusy] = useState(false);
+  const [prospectRes, setProspectRes] = useState<ProspectRes | null>(null);
+  const [fonteInfo, setFonteInfo] = useState<{ fonte_ativa: string; ia_router: boolean; obs: string } | null>(null);
 
-  // A prospecção automática roda na VPS por CLI (opção A da migração Supabase).
+  useEffect(() => {
+    fetch("/api/prospector")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => { if (j) setFonteInfo(j); })
+      .catch(() => {});
+  }, []);
 
   // cancela o polling do relatório quando a ficha fecha/troca ou o componente desmonta
   useEffect(() => {
@@ -488,6 +510,23 @@ export function Pipeline({ leads, refresh, onIrClientes }: { leads: Lead[]; refr
     setTimeout(() => setMensagemSalva(false), 1800);
   };
 
+  const rodarProspeccao = async () => {
+    setProspectBusy(true);
+    setProspectRes(null);
+    try {
+      const r = await fetch("/api/prospector", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nicho: "odontologia", regiao: "Brasil", limite: 6 }),
+      });
+      const j = await r.json();
+      if (!j.ok) { alert(j.error || "erro ao prospectar"); return; }
+      setProspectRes(j.resumo);
+      await refresh();
+    } catch { alert("falha de rede na prospecção"); }
+    finally { setProspectBusy(false); }
+  };
+
   const totalValendo = ativos.filter((l) => l.estagio >= 1).length;
   const fechados = viraramCliente.length;
 
@@ -553,14 +592,65 @@ export function Pipeline({ leads, refresh, onIrClientes }: { leads: Lead[]; refr
             </div>
           ))}
         </div>
-        <button
-          onClick={openNovo}
-          disabled={busy}
-          className="shrink-0 flex items-center justify-center gap-2 h-[52px] px-6 bg-[#FF4000] hover:bg-[#ff5c22] disabled:opacity-60 text-white rounded-[14px] text-[.9rem] font-medium transition-colors"
-        >
-          + novo lead
-        </button>
+        <div className="flex flex-col sm:flex-row gap-2 shrink-0">
+          <button
+            onClick={rodarProspeccao}
+            disabled={prospectBusy || busy}
+            title={fonteInfo?.obs || fonteInfo?.fonte_ativa || "ChatGPT"}
+            className="flex items-center justify-center gap-2 h-[52px] px-5 rounded-[14px] bg-[#7aa2ff]/12 border border-[#7aa2ff]/30 text-[#7aa2ff] hover:bg-[#7aa2ff]/20 text-[.86rem] font-medium transition-colors disabled:opacity-60"
+          >
+            {prospectBusy ? "prospectando…" : "▶ prospecção automática"}
+          </button>
+          <button
+            onClick={openNovo}
+            disabled={busy}
+            className="flex items-center justify-center gap-2 h-[52px] px-6 bg-[#FF4000] hover:bg-[#ff5c22] disabled:opacity-60 text-white rounded-[14px] text-[.9rem] font-medium transition-colors"
+          >
+            + novo lead
+          </button>
+        </div>
       </div>
+
+      {prospectRes && (
+        <div className="mb-6 bg-[var(--bg-2)] border border-[#7aa2ff]/25 rounded-2xl p-5">
+          <div className="flex items-center gap-3 mb-3">
+            <span className="mono text-[#7aa2ff]">prospecção rodada</span>
+            <span className="mono" style={{ fontSize: "0.7rem" }}>fonte: {prospectRes.fonte}</span>
+            <button onClick={() => setProspectRes(null)} aria-label="fechar" className="ml-auto w-8 h-8 grid place-items-center rounded-lg border border-white/10 text-[#8a8a85] hover:text-white transition-colors">✕</button>
+          </div>
+          <div className="mono mb-3 text-[#b8b8b3] text-balance" style={{ fontSize: "0.72rem" }}>
+            {prospectRes.regiao}{prospectRes.cidades?.length ? ` · ${prospectRes.cidades.join(" · ")}` : ""}
+          </div>
+          <div className="text-[.9rem] mb-3">
+            <b className="text-[#3ddc84]">{prospectRes.adicionados.length}</b> lead(s) adicionado(s) ao estágio 0 ·
+            <b className="text-[#7aa2ff]"> {prospectRes.auditados}</b> site(s) auditados ·
+            <b className="text-[#b8b8b3]"> {prospectRes.candidatos}</b> candidato(s) da fonte
+            {prospectRes.tempo ? <> · <span className="text-[#8a8a85]">{prospectRes.tempo}s</span></> : null}
+          </div>
+          {prospectRes.aviso && (
+            <div className="mb-3 rounded-xl border border-[#d9a03a]/25 bg-[#d9a03a]/6 px-4 py-3 text-[.8rem] text-[#d9a03a]">
+              ⚠ {prospectRes.aviso}
+            </div>
+          )}
+          {prospectRes.adicionados.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-3">
+              {prospectRes.adicionados.map((n) => <span key={n} className="mono px-2.5 py-1.5 rounded-lg bg-[#3ddc84]/10 border border-[#3ddc84]/25 text-[#3ddc84]" style={{ fontSize: "0.66rem" }}>{n}</span>)}
+            </div>
+          )}
+          {prospectRes.erros.length > 0 && (
+            <div className="mb-3">
+              <div className="mono mb-1 text-[#fb7185]" style={{ fontSize: "0.68rem" }}>erros</div>
+              {prospectRes.erros.slice(0, 6).map((e, i) => <div key={i} className="text-[.74rem] text-[#fb7185]/85">· {e.nome}: {e.motivo}</div>)}
+            </div>
+          )}
+          {prospectRes.descartados.length > 0 && (
+            <div>
+              <div className="mono mb-1" style={{ fontSize: "0.68rem" }}>descartados</div>
+              {prospectRes.descartados.slice(0, 12).map((d, i) => <div key={i} className="text-[.74rem] text-[#8a8a85]">· {d.nome}: <span className="text-[#fb7185]/80">{d.motivo}</span></div>)}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* funil de conversão (studio) */}
       <div className="mb-6 card p-5 sm:p-6">
