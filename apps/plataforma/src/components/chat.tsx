@@ -14,7 +14,7 @@ const AGENT_LABEL: Record<string, { name: string; sub: string }> = {
 };
 
 export function Chat() {
-  const [agent, setAgent] = useState("comando");
+  const [agent, setAgent] = useState("caio");
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -120,9 +120,9 @@ export function Chat() {
       <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-4 pr-2 mb-4">
         {messages.length === 0 && (
           <div className="text-center mt-16">
-            <p className="text-[.95rem] text-[#8a8a85] mb-3">Fale com um agente da agência.</p>
+            <p className="text-[.95rem] text-[#8a8a85] mb-3">ChatGPT com o Caio para prospecção, qualificação e follow-up.</p>
             <p className="mono" style={{ fontSize: "0.66rem" }}>
-              ex: "Caio, me ajude a qualificar a clínica X" · "Mia, drafts um case da Concept"
+              ex: "Caio, priorize meus leads de hoje" · "monte um diagnóstico para esta clínica" · "escreva follow-up 3 dias"
             </p>
           </div>
         )}
@@ -159,7 +159,7 @@ export function Chat() {
         </button>
       </div>
       <p className="mono mt-3" style={{ fontSize: "0.7rem" }}>
-        gemini · contexto real do vault (kanban, placar, inbox)
+        ChatGPT · contexto real do vault (kanban, placar, inbox e prospecção)
       </p>
     </div>
   );
