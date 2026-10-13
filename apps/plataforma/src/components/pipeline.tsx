@@ -352,7 +352,7 @@ export function Pipeline({ leads, refresh, onIrClientes }: { leads: Lead[]; refr
   const relatorioPollRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [janela, setJanela] = useState<JanelaConversao>("tudo");
 
-  // status da fonte de prospecção (chave Google? IA Router no ar?)
+  // status da fonte de prospecção (Google Places ou ChatGPT direto via OpenAI)
   useEffect(() => {
     fetch("/api/prospector")
       .then((r) => (r.ok ? r.json() : null))
@@ -732,7 +732,7 @@ export function Pipeline({ leads, refresh, onIrClientes }: { leads: Lead[]; refr
                 className={`mono shrink-0 px-2.5 py-1.5 rounded-lg border ${fonteInfo.google_places ? "border-[#3ddc84]/30 text-[#3ddc84] bg-[#3ddc84]/8" : "border-[#d9a03a]/30 text-[#d9a03a] bg-[#d9a03a]/8"} hidden sm:block`}
                 style={{ fontSize: "0.7rem" }}
               >
-                {fonteInfo.google_places ? "fonte: google" : fonteInfo.fonte_ativa + (fonteInfo.ia_router ? "" : " · IA Router off")}
+                {fonteInfo.google_places ? "fonte: google" : fonteInfo.fonte_ativa + (fonteInfo.ia_router ? "" : " · configure OpenAI")}
               </span>
             )}
           </div>

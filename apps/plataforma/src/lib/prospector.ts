@@ -1,8 +1,7 @@
 // Prospector automático — o agente encontra leads e audita os sites sozinho.
 // Fontes, em ordem de tentativa:
 //   1. Google Places API  (chave em GOOGLE_PLACES_KEY — critério ouro: nota, avaliações, site)
-//   2. Kimi-discovery     (IA Router `_scripts/ia.mjs --engine leitura` lista candidatos; cada
-//                          site é VALIDADO com HTTP antes de virar candidato — barra alucinação)
+//   2. ChatGPT-discovery (OPENAI_API_KEY lista candidatos; cada site é VALIDADO antes de virar candidato)
 //   3. Overpass/OSM       (fallback sem chave — só funciona se algum mirror global estiver no ar)
 //   4. Cache da última leva boa (24h)
 // Fluxo: buscar → diagnosticar o site → classificar em uma das 3 frentes → criar ficha (estágio 0).
@@ -12,8 +11,7 @@
 //   site-ruim      Site funcionando, porém mal construído (a auditoria de sempre).
 
 import { readdir, mkdir, writeFile, readFile } from "node:fs/promises";
-import { join, dirname } from "node:path";
-import { spawn } from "node:child_process";
+import { join } from "node:path";
 import { lookup, resolveNs } from "node:dns/promises";
 import { pipelineOp, gravarAnaliseNaFicha } from "./vault";
 import { analisarLead, salvarAnalise, resumoMd } from "./analise";
@@ -23,16 +21,8 @@ const LEADS_DIR = join(VAULT, "40 Comercial", "Leads");
 const PLACES_KEY = process.env.GOOGLE_PLACES_KEY || "";
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36";
 
-// localiza o IA Router do monorepo (_scripts/ia.mjs) a partir do cwd do app
-function localizarRaiz(): string {
-  const candidatos = [process.cwd()];
-  let p = process.cwd();
-  for (let i = 0; i < 3; i++) { p = dirname(p); candidatos.push(p); }
-  const fs = require("node:fs");
-  return candidatos.find((c) => fs.existsSync(join(c, "_scripts", "ia.mjs"))) || dirname(process.cwd());
-}
-const ROOT = localizarRaiz();
-const IA_MJS = join(ROOT, "_scripts", "ia.mjs");
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
+const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-5-mini";
 const CACHE_FILE = join(VAULT, "SaaS", "Prospeccao", "ultima-leva.json");
 const ROTACAO_FILE = join(VAULT, "SaaS", "Prospeccao", "rotacao-brasil.json");
 
@@ -290,35 +280,56 @@ async function fontePlaces(nicho: string, cidade: string, limite: number): Promi
   return out.filter((c) => c.nome); // sem site também entra: é a frente "sem-gmn"
 }
 
-// ---------- fonte 2: Kimi-discovery (IA Router) ----------
-// Kimi (leitura) tem contexto gigante e lista negócios com site próprio. Cada site é
-// validado com HTTP antes de virar candidato — o modelo pode errar, o fetch não.
+// ---------- fonte 2: ChatGPT-discovery (OpenAI direto) ----------
+// O ChatGPT lista negócios com site próprio. Cada domínio é validado por DNS/HTTP antes
+// de virar candidato, então o modelo ajuda na descoberta mas não decide sozinho.
 
-function runIa(engine: string, prompt: string, timeoutMs: number): Promise<string> {
-  return new Promise((resolve) => {
-    let child: any = null;
-    try {
-      child = spawn(process.execPath, [IA_MJS, prompt, "--engine", engine], { cwd: ROOT, windowsHide: true });
-    } catch { resolve(""); return; }
-    let out = "";
-    const timer = setTimeout(() => { try { child.kill(); } catch {} }, timeoutMs);
-    child.stdout?.on("data", (d: Buffer) => (out += d.toString()));
-    child.stderr?.on("data", (d: Buffer) => (out += d.toString()));
-    child.on("close", () => { clearTimeout(timer); resolve(out); });
-    child.on("error", () => { clearTimeout(timer); resolve(""); });
-  });
+async function chamarChatGpt(prompt: string, timeoutMs = 60000): Promise<string> {
+  if (!OPENAI_API_KEY) return "";
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      signal: ctrl.signal,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: OPENAI_MODEL,
+        messages: [
+          { role: "system", content: "Você ajuda a prospecção comercial. Responda somente JSON válido, sem markdown." },
+          { role: "user", content: prompt },
+        ],
+      }),
+    });
+    const txt = await res.text();
+    if (!res.ok) throw new Error(`${res.status} ${txt.slice(0, 180)}`);
+    const j = JSON.parse(txt);
+    return j.choices?.[0]?.message?.content || "";
+  } finally { clearTimeout(t); }
 }
 
 function extrairJsonArray(texto: string): { nome?: string; site?: string }[] {
-  const ini = texto.indexOf("[");
-  const fim = texto.lastIndexOf("]");
+  const limpo = texto.trim().replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```$/i, "").trim();
+  const iniObj = limpo.indexOf("{");
+  const fimObj = limpo.lastIndexOf("}");
+  if (iniObj !== -1 && fimObj > iniObj) {
+    try {
+      const obj = JSON.parse(limpo.slice(iniObj, fimObj + 1));
+      if (Array.isArray(obj.empresas)) return obj.empresas;
+      if (Array.isArray(obj.candidatos)) return obj.candidatos;
+    } catch { /* tenta array */ }
+  }
+  const ini = limpo.indexOf("[");
+  const fim = limpo.lastIndexOf("]");
   if (ini === -1 || fim <= ini) return [];
   try {
-    const arr = JSON.parse(texto.slice(ini, fim + 1));
+    const arr = JSON.parse(limpo.slice(ini, fim + 1));
     return Array.isArray(arr) ? arr : [];
   } catch {
-    // fallback por linha: "Nome — https://…"
-    return texto.split(/\r?\n/).map((l) => {
+    return limpo.split(/\r?\n/).map((l) => {
       const m = l.match(/(?:["'“”]?)([^"'“”:,-]{4,})(?:["'”]?)\s*[—:|]\s*(https?:\/\/[^\s"'”]+)/);
       if (!m) return {};
       return { nome: m[1].trim(), site: m[2].replace(/[.,;)\]}>]+$/, "") };
@@ -326,20 +337,15 @@ function extrairJsonArray(texto: string): { nome?: string; site?: string }[] {
   }
 }
 
-async function fonteKimi(nicho: string, lugar: string, ficha: string, limite: number): Promise<Candidato[]> {
-  if (!ROOT || !require("node:fs").existsSync(IA_MJS)) return [];
+async function fonteChatGpt(nicho: string, lugar: string, ficha: string, limite: number): Promise<Candidato[]> {
+  if (!OPENAI_API_KEY) return [];
   const alvo = Math.min(24, limite * 3);
   const prompt =
     `Liste ${alvo} negócios LOCAIS reais de pequeno e médio porte do segmento "${nicho}" em ${lugar}, que hoje (2026) tenham SITE PRÓPRIO funcionando. ` +
     `Priorize consultórios, clínicas de bairro, escritórios, lojas, restaurantes, pousadas e similares independentes. ` +
     `EXCLUA: redes, franquias, grandes marcas, portais, agregadores, marketplaces, páginas de rede social, ifood/agenda. ` +
-    `Responda APENAS com um JSON array válido e nada mais, no formato: [{"nome":"Nome da Empresa","site":"https://dominio.br"}]`;
-  // 30/09: OpenCode Go (Kimi) sem crédito. Ordem: Gemini (API, rápido) → Codex (assinatura) → Kimi.
-  let arr: { nome?: string; site?: string }[] = [];
-  for (const [motor, ms] of [["gemini", 60000], ["codex", 150000], ["leitura", 60000]] as const) {
-    arr = extrairJsonArray(await runIa(motor, prompt, ms));
-    if (arr.length) break;
-  }
+    `Responda somente JSON no formato {"empresas":[{"nome":"Nome da Empresa","site":"https://dominio.br"}]}.`;
+  const arr = extrairJsonArray(await chamarChatGpt(prompt));
   const out: Candidato[] = [];
   const vistos = new Set<string>();
   for (const it of arr) {
@@ -347,8 +353,6 @@ async function fonteKimi(nicho: string, lugar: string, ficha: string, limite: nu
     const site = it.site.trim().startsWith("http") ? it.site.trim() : `https://${it.site.trim()}`;
     const chave = `${it.nome.trim()}|${site}`.toLowerCase();
     if (vistos.has(chave)) continue; vistos.add(chave);
-    // Domínio que nem existe no DNS costuma ser invenção da IA: fora. Domínio real com site
-    // fora do ar fica (é a frente "site-quebrado"); o diagnóstico decide depois.
     if (!(await dominioExiste(site))) continue;
     out.push({ nome: it.nome.trim(), site, cidade: ficha, segmento: nicho });
     if (out.length >= limite) break;
@@ -499,14 +503,14 @@ export async function prospectar(op: { nicho?: string; cidade?: string; regiao?:
     if (encontrados.length) { candidatos = encontrados; res.fonte = "google-places"; }
   }
 
-  // 2. Kimi-discovery (IA Router — sem precisar de chave), uma chamada por alvo
-  if (!candidatos.length) {
+  // 2. ChatGPT-discovery (OpenAI direto), uma chamada por alvo
+  if (!candidatos.length && OPENAI_API_KEY) {
     const encontrados: Candidato[] = [];
     for (const alvo of alvos) {
-      try { encontrados.push(...(await fonteKimi(nicho, alvo.prompt, alvo.ficha, subLimite))); }
-      catch (e: any) { res.erros.push({ nome: "kimi", motivo: e?.message || "falha no IA Router" }); }
+      try { encontrados.push(...(await fonteChatGpt(nicho, alvo.prompt, alvo.ficha, subLimite))); }
+      catch (e: any) { res.erros.push({ nome: "chatgpt", motivo: e?.message || "falha no ChatGPT" }); }
     }
-    if (encontrados.length) { candidatos = encontrados; res.fonte = "kimi-discovery"; }
+    if (encontrados.length) { candidatos = encontrados; res.fonte = "chatgpt-discovery"; }
   }
 
   // 3. Overpass/OSM (só para Salvador, que tem células pré-mapeadas)
@@ -525,7 +529,7 @@ export async function prospectar(op: { nicho?: string; cidade?: string; regiao?:
 
   if (!candidatos.length) {
     res.aviso = `Nenhuma fonte retornou candidatos de "${nicho}" em ${label}. ` +
-      (temChave ? "As fontes falharam: confira a chave Google Places e a rede." : "Sem GOOGLE_PLACES_KEY, usei IA (Gemini, Codex) + OSM: rode node _scripts/ia.mjs --check para ver quais motores estão vivos.");
+      (temChave ? "As fontes falharam: confira a chave Google Places e a rede." : OPENAI_API_KEY ? "ChatGPT não retornou candidatos válidos e o fallback OSM/cache também não encontrou empresas." : "Configure OPENAI_API_KEY para usar ChatGPT na prospecção; sem ela, só OSM/cache ficam disponíveis.");
     res.tempo = Math.round((Date.now() - t0) / 1000);
     progressoAtual.ativo = false;
     progressoAtual.fase = "";
@@ -655,18 +659,11 @@ async function salvarCache(candidatos: Candidato[]) {
     await writeFile(CACHE_FILE, JSON.stringify({ quando: new Date().toISOString(), candidatos }, null, 2), "utf8");
   } catch { /* sem vault */ }
 }
-async function iaDisponivel(): Promise<boolean> {
-  try {
-    const fs = require("node:fs");
-    return fs.existsSync(IA_MJS);
-  } catch { return false; }
-}
-
 export async function prospectorStatus() {
   return {
     google_places: !!PLACES_KEY,
-    fonte_ativa: PLACES_KEY ? "google-places" : "kimi-discovery",
-    ia_router: await iaDisponivel(),
-    obs: PLACES_KEY ? "" : "sem GOOGLE_PLACES_KEY: descoberta via Kimi (IA Router) + OSM fallback",
+    fonte_ativa: PLACES_KEY ? "google-places" : OPENAI_API_KEY ? "chatgpt-discovery" : "osm-cache",
+    ia_router: !!OPENAI_API_KEY,
+    obs: PLACES_KEY ? "" : OPENAI_API_KEY ? `ChatGPT direto via OpenAI (${OPENAI_MODEL}) + OSM/cache fallback` : "configure OPENAI_API_KEY para usar ChatGPT na prospecção",
   };
 }
